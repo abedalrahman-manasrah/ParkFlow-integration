@@ -35,6 +35,11 @@ useAuthStore.subscribe(state=>{
 function requireLogin(binding:LoginBinding|undefined){
  if(binding!==currentLogin)throw new AppError('unauthorized','Session changed',{serverCode:'SESSION_CHANGED'});
 }
+/** Bind completion to one login while allowing that login to refresh its credentials. */
+export function captureLoginGuard(): () => void {
+ const binding=currentLogin;
+ return () => requireLogin(binding);
+}
 export async function refreshSession():Promise<AuthSession>{
  const previous=useAuthStore.getState().session;
  if(!previous)throw new AppError('unauthorized','Sign in to continue');

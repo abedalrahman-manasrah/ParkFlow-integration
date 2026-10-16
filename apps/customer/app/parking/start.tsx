@@ -44,7 +44,8 @@ export default function StartParkingScreen() {
   const router = useRouter();
   const { colors } = useTheme();
   const { t, row, dateLocale, locale } = useLocale();
-  const { zoneId } = useLocalSearchParams<{ zoneId: string }>();
+  const { zoneId, entryMethod: requestedEntryMethod } = useLocalSearchParams<{ zoneId: string; entryMethod?: string }>();
+  const entryMethod = requestedEntryMethod === 'qr' || requestedEntryMethod === 'zone_code' ? requestedEntryMethod : 'gps';
   const userId = useUserId();
 
   const { data: zone, isPending, isError, error, refetch } = useZone(zoneId);
@@ -101,7 +102,7 @@ export default function StartParkingScreen() {
         zoneId: zone.id,
         mode: effectiveMode,
         durationMinutes: effectiveMode === 'prepaid' ? durationMinutes : undefined,
-        entryMethod: 'gps',
+        entryMethod,
         idempotencyKey: idempotency.key(),
       },
       {

@@ -41,7 +41,10 @@ export function rankParkingForDestination(
   now = new Date(),
   options: ParkingRecommendationOptions = {},
 ): ParkingRecommendation[] {
-  const deduped = [...new Map(zones.map((zone) => [zone.id, zone])).values()];
+  // Callers place API zones first and collected demo locations last as fallbacks.
+  const preferred = new Map<string, ParkingZone>();
+  for (const zone of zones) if (!preferred.has(zone.id)) preferred.set(zone.id, zone);
+  const deduped = [...preferred.values()];
   return deduped
     .map((zone): ParkingRecommendation => {
       const distance = distanceMeters(destination, zone.location);

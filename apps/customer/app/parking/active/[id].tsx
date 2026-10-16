@@ -34,11 +34,10 @@ import {
   useSessionBreakdown,
   useSessionById,
   useStopParking,
-  useZone,
 } from '@parkflow/client/hooks/useParking';
 import { useVehicle } from '@parkflow/client/hooks/useVehicles';
 import { useWallet } from '@parkflow/client/hooks/useWallet';
-import { PREPAID_DURATION_OPTIONS, estimatePrepaidCost } from '@parkflow/client/utils/pricing';
+import { PREPAID_DURATION_OPTIONS, estimatePrepaidExtensionCost } from '@parkflow/client/utils/pricing';
 import { formatDuration, formatDurationShort, formatTime, secondsBetween } from '@parkflow/client/utils/time';
 import { formatMoney, formatRate } from '@parkflow/client/utils/money';
 import { errorMessage } from '@parkflow/client/utils/errors';
@@ -55,7 +54,6 @@ export default function ActiveParkingScreen() {
 
   const { data: session, isPending, isError, error, refetch } = useSessionById(id);
   const { data: vehicle } = useVehicle(session?.vehicleId);
-  const { data: zone } = useZone(session?.parkingZoneId);
   const { data: wallet } = useWallet();
   const breakdown = useSessionBreakdown(session);
 
@@ -439,7 +437,7 @@ export default function ActiveParkingScreen() {
                     {formatDurationShort(option.minutes * 60)}
                   </AppText>
                   <AppText variant="caption" color="textTertiary" numeric align="center">
-                    {zone ? formatMoney(estimatePrepaidCost(zone.tariff, option.minutes)) : '—'}
+                    {formatMoney(estimatePrepaidExtensionCost(session, option.minutes))}
                   </AppText>
                 </PressableScale>
               );

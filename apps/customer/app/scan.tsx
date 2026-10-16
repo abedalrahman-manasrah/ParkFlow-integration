@@ -39,7 +39,7 @@ export default function ScanScreen() {
     mutationFn: (code: string) => services.parking.getZoneByCode(code),
     onSuccess: (zone) => {
       haptics.success();
-      router.replace({ pathname: '/parking/start', params: { zoneId: zone.id } });
+      router.replace({ pathname: '/parking/start', params: { zoneId: zone.id, entryMethod: 'qr' } });
     },
     onError: () => {
       haptics.error();

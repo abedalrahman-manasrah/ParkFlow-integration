@@ -7,7 +7,7 @@ import { api, mutation, query, segment } from './apiClient';
 
 const collectedZoneMetadata = new Map(ramallahParkingZones.map((zone) => [zone.id, zone]));
 
-/** The API owns live availability; the collected dataset owns prototype metadata. */
+/** Published API values take precedence; collected data only fills missing metadata. */
 type ApiParkingZone = Omit<ParkingZone, 'location'> & {
   location?: unknown;
   latitude?: number | string;
@@ -24,23 +24,7 @@ const normalizeZone = (zone: ApiParkingZone): ParkingZone => {
     throw new AppError('validation', `Parking zone ${zone.id} has invalid coordinates`);
   }
   const normalized = { ...zone, location };
-  return metadata
-    ? {
-        ...normalized,
-        ownership: metadata.ownership,
-        accessRestriction: metadata.accessRestriction,
-        accessRestrictionAr: metadata.accessRestrictionAr,
-        parkingAllowed: metadata.parkingAllowed,
-        prototypeData: metadata.prototypeData,
-        // Collected availability is prototype metadata. Keep live API
-        // `unknown` unknown unless the API explicitly marks this zone as a
-        // prototype/demo response, so provenance cannot be contradicted by a
-        // concrete client-side claim.
-        ...(normalized.availability === 'unknown' && normalized.prototypeData === true
-          ? { availability: metadata.availability }
-          : {}),
-      }
-    : normalized;
+  return metadata ? { ...metadata, ...normalized } : normalized;
 };
 
 export const httpParkingService: ParkingService = {

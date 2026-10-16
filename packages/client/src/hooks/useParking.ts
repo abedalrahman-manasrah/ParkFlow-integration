@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import type { ParkingSession, SessionCostBreakdown } from '@parkflow/contracts';
+import type { ParkingSession, ParkingZone, SessionCostBreakdown } from '@parkflow/contracts';
 import { services, type StartSessionInput } from '../services/index';
 import { computeSessionBreakdown } from '../utils/pricing';
 import { queryKeys } from './queryKeys';
@@ -19,6 +19,22 @@ export function useZones(search?: string) {
       : services.parking.listZones(search ? { search } : undefined),
     staleTime: 60_000,
   });
+}
+
+/** Preserve a successful code lookup even when the original map list predates the zone. */
+export function useCacheParkingZone() {
+  const queryClient = useQueryClient();
+  return async (zone: ParkingZone) => {
+    // Older list or detail requests must not erase the resolved result on arrival.
+    await Promise.all([
+      queryClient.cancelQueries({ queryKey: queryKeys.zones(), exact: true }),
+      queryClient.cancelQueries({ queryKey: queryKeys.zone(zone.id), exact: true }),
+    ]);
+    queryClient.setQueryData<ParkingZone[]>(queryKeys.zones(), (current = []) =>
+      [...current.filter((entry) => entry.id !== zone.id), zone],
+    );
+    queryClient.setQueryData(queryKeys.zone(zone.id), zone);
+  };
 }
 
 export function useZone(zoneId?: string) {

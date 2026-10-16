@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 
 import {
@@ -20,18 +20,26 @@ import {
 import { spacing } from '@parkflow/design/spacing';
 import { useLocale } from '@parkflow/client/hooks/useLocale';
 import { useCurrentUser } from '@parkflow/client/hooks/useSession';
+import { queryKeys } from '@parkflow/client/hooks/queryKeys';
 import { useAuthStore } from '@parkflow/client/store/authStore';
 import { services } from '@parkflow/client/services';
 import { formatDate } from '@parkflow/client/utils/time';
 import { errorMessage } from '@parkflow/client/utils/errors';
 import { haptics } from '@parkflow/client/utils/haptics';
 import { asciiDigits } from '@parkflow/client/utils/authFlow';
+import { captureLoginGuard } from '@parkflow/client/services/http/apiClient';
 
 export default function PersonalInfoScreen() {
   const router = useRouter();
   const { t, dateLocale } = useLocale();
   const { user } = useCurrentUser();
   const setUser = useAuthStore((s) => s.setUser);
+  const queryClient = useQueryClient();
+  const mounted = useRef(false);
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; };
+  }, []);
 
   const [fullName, setFullName] = useState(user?.fullName ?? '');
   const [email, setEmail] = useState(user?.email ?? '');
@@ -45,12 +53,26 @@ export default function PersonalInfoScreen() {
   const idValid = !nationalId || /^\d{9}$/.test(nationalId);
 
   const save = useMutation({
-    mutationFn: () => services.profile.update(user!.id, {
-      fullName: fullName.trim(),
-      ...(contactEmailEditable && normalizedEmail !== (user?.email ?? '') ? { email: normalizedEmail || null } : {}),
-      ...(profileVerified && nationalId ? { nationalId } : {}),
-    }),
-    onSuccess: (updated) => {
+    mutationFn: async () => {
+      const requireCurrent = captureLoginGuard();
+      const updated = await services.profile.update(user!.id, {
+        fullName: fullName.trim(),
+        ...(contactEmailEditable && normalizedEmail !== (user?.email ?? '') ? { email: normalizedEmail || null } : {}),
+        ...(profileVerified && nationalId ? { nationalId } : {}),
+      });
+      return { updated, requireCurrent };
+    },
+    onSuccess: async ({ updated, requireCurrent }) => {
+      const canApply = () => {
+        if (!mounted.current || useAuthStore.getState().user?.id !== updated.id) return false;
+        try { requireCurrent(); return true; } catch { return false; }
+      };
+      if (!canApply()) return;
+      // A read started before the save must not replace the returned profile.
+      const queryKey = queryKeys.profile(updated.id);
+      await queryClient.cancelQueries({ queryKey, exact: true });
+      if (!canApply()) return;
+      queryClient.setQueryData(queryKey, updated);
       haptics.success();
       setUser(updated);
       setNationalId('');

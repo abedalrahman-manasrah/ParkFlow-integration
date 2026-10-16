@@ -98,15 +98,33 @@ const clockMinutes = (value: string): number => {
   return Number(hours) * 60 + Number(minutes);
 };
 
-/** True only while the current weekday's configured opening window is active. */
+const parkingClock = new Intl.DateTimeFormat('en-US', {
+  timeZone: 'Asia/Hebron',
+  weekday: 'short',
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+});
+
+/** Zone-local weekly windows match the server, including the previous day's overnight tail. */
 export function isWithinOperatingHours(
   hours: { weekday: number; opensAt: string; closesAt: string; closed?: boolean }[],
   at = new Date(),
 ): boolean {
-  const today = hours.find((entry) => entry.weekday === at.getDay());
-  if (!today || today.closed) return false;
-  const now = at.getHours() * 60 + at.getMinutes();
-  const opens = clockMinutes(today.opensAt);
-  const closes = clockMinutes(today.closesAt);
-  return closes >= opens ? now >= opens && now <= closes : now >= opens || now <= closes;
+  const parts = parkingClock.formatToParts(at);
+  const part = (type: Intl.DateTimeFormatPartTypes) => parts.find((entry) => entry.type === type)!.value;
+  const weekday = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].indexOf(part('weekday'));
+  const now = Number(part('hour')) * 60 + Number(part('minute'));
+  const previousWeekday = (weekday + 6) % 7;
+
+  return hours.some((entry) => {
+    if (entry.closed) return false;
+    const opens = clockMinutes(entry.opensAt);
+    const closes = clockMinutes(entry.closesAt);
+    if (entry.weekday === weekday) {
+      // Equal times describe a 24-hour window starting at opensAt.
+      return closes > opens ? now >= opens && now <= closes : now >= opens;
+    }
+    return entry.weekday === previousWeekday && closes <= opens && now <= closes;
+  });
 }

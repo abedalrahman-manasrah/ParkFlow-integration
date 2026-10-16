@@ -42,13 +42,13 @@ import { useTheme } from '@parkflow/client/theme/ThemeProvider';
 import { spacing, screenPadding } from '@parkflow/design/spacing';
 import { useLocale } from '@parkflow/client/hooks/useLocale';
 import { useSelectedVehicle } from '@parkflow/client/hooks/useVehicles';
-import { useActiveSessions, useZones } from '@parkflow/client/hooks/useParking';
+import { useActiveSessions, useCacheParkingZone, useZones } from '@parkflow/client/hooks/useParking';
 import { useCheckpoints, useRoute } from '@parkflow/client/hooks/useCommunity';
 import { useUnreadNotificationCount } from '@parkflow/client/hooks/useNotifications';
 import { useUserLocation } from '@parkflow/client/hooks/useUserLocation';
 import { useCreateRoadReport, useRoadReports } from '@parkflow/client/hooks/useRoadReports';
 import { DEFAULT_REGION, services } from '@parkflow/client/services';
-import type { CreateRoadReportInput, GeoPoint, GeoRegion, ParkingZone, RamallahParkingLocation, RoadReport, RoadReportType, RouteResult } from '@parkflow/contracts';
+import type { CreateRoadReportInput, GeoPoint, GeoRegion, ParkingEntryMethod, ParkingZone, RamallahParkingLocation, RoadReport, RoadReportType, RouteResult } from '@parkflow/contracts';
 import { distanceMeters, distanceToPolyline } from '@parkflow/client/utils/geo';
 import { assessRouteAlternatives } from '@parkflow/client/utils/routeImpact';
 import { haptics } from '@parkflow/client/utils/haptics';
@@ -61,7 +61,7 @@ import { useMapLayersStore } from '@parkflow/client/store/mapLayersStore';
 import { useReservationRouteStore } from '@parkflow/client/store/reservationRouteStore';
 import { useAuthStore } from '@parkflow/client/store/authStore';
 import {
-  ramallahParkingLocations,
+  parkingLocationsForZones,
   ramallahParkingZoneIds,
   ramallahParkingZones,
 } from '@parkflow/client/data/ramallahParking';
@@ -151,7 +151,9 @@ function AccountMapScreen() {
   const [mapFocused, setMapFocused] = useState(false);
   const [region, setRegion] = useState<GeoRegion>(DEFAULT_REGION);
   const [selectedZoneId, setSelectedZoneId] = useState<string>();
+  const [selectedZoneEntryMethod, setSelectedZoneEntryMethod] = useState<ParkingEntryMethod>('gps');
   const [routeTarget, setRouteTarget] = useState<RouteDestination>();
+  const [routeEntryMethod, setRouteEntryMethod] = useState<ParkingEntryMethod>('gps');
   const routeZone = routeTarget?.type === 'parking' ? routeTarget.zone : undefined;
   const [evFiltersOpen, setEvFiltersOpen] = useState(false);
   const [routeOriginOverride, setRouteOriginOverride] = useState<GeoPoint>();
@@ -245,6 +247,7 @@ function AccountMapScreen() {
 
   const { vehicles, selected, select } = useSelectedVehicle();
   const { data: zones = [], isPending: zonesPending, isError: zonesError, refetch: refetchZones } = useZones();
+  const cacheResolvedZone = useCacheParkingZone();
   const { data: activeSessions = [] } = useActiveSessions();
   const { data: checkpoints = [] } = useCheckpoints();
   const { data: unreadCount = 0 } = useUnreadNotificationCount();
@@ -294,6 +297,7 @@ function AccountMapScreen() {
         .sort((a, b) => a.distanceMeters - b.distanceMeters),
     [zones, nearbyOrigin, accessibleParkingOnly],
   );
+  const collectedMapLocations = useMemo(() => parkingLocationsForZones(zones), [zones]);
   const mapZones = useMemo(
     () => nearbyZones.filter(({ zone }) => !ramallahParkingZoneIds.has(zone.id)),
     [nearbyZones],
@@ -682,7 +686,7 @@ function AccountMapScreen() {
     mapRef.current?.animateToRegion(next, 450);
   }, [testLocationMode, testLocation, location, requestLocation, setRouteOrigin, t]);
 
-  const openZone = useCallback((zone: ParkingZone) => {
+  const openZone = useCallback((zone: ParkingZone, entryMethod: ParkingEntryMethod = 'gps') => {
     haptics.select();
     setEntryMenuOpen(false);
     setNearbyExpanded(false);
@@ -692,6 +696,7 @@ function AccountMapScreen() {
     setSelectedDestination(undefined);
     setRouteDetailsExpanded(false);
     setSelectedZoneId(zone.id);
+    setSelectedZoneEntryMethod(entryMethod);
     setSelectedReport(undefined);
   }, []);
 
@@ -712,9 +717,9 @@ function AccountMapScreen() {
       setActiveRouteNeedsPlan(undefined);
       setRouteNeedsDisplayMode('needs');
       setRouteDetailsExpanded(false);
-      router.push({ pathname: '/parking/start', params: { zoneId: zone.id } });
+      router.push({ pathname: '/parking/start', params: { zoneId: zone.id, entryMethod: selectedZoneId === zone.id ? selectedZoneEntryMethod : routeZone?.id === zone.id ? routeEntryMethod : 'gps' } });
     },
-    [router],
+    [router, selectedZoneId, selectedZoneEntryMethod, routeZone?.id, routeEntryMethod],
   );
 
   const reserveParking = useCallback(
@@ -742,7 +747,7 @@ function AccountMapScreen() {
   );
 
   const startRoute = useCallback(
-    async (destination: RouteDestination) => {
+    async (destination: RouteDestination, entryMethod: ParkingEntryMethod = 'gps') => {
       if (useReservationRouteStore.getState().setOrigin !== setRouteOrigin) return false;
       if (routeStartInFlightRef.current) return false;
       routeStartInFlightRef.current = true;
@@ -780,6 +785,7 @@ function AccountMapScreen() {
         setAlternativeDismissed(false);
         setRouteNeedsDisplayMode('needs');
         setRouteTarget({ ...destination, location: normalizedDestination });
+        setRouteEntryMethod(destination.type === 'parking' ? entryMethod : 'gps');
         setActiveRouteNeedsPlan(undefined);
         consumeReservationRoute();
         ev.select(undefined);
@@ -1119,7 +1125,7 @@ function AccountMapScreen() {
         tourismPlaceAccessibilityLabel={tourismPlaceAccessibilityLabel}
         zones={!routeNeedsVisible && primaryMapCategory === 'parking' ? mapZones.map((item) => item.zone) : []}
         selectedZoneId={!routeNeedsVisible && primaryMapCategory === 'parking' ? selectedZoneId ?? routeZone?.id : undefined}
-        parkingLocations={!routeNeedsVisible && primaryMapCategory === 'parking' ? ramallahParkingLocations : []}
+        parkingLocations={!routeNeedsVisible && primaryMapCategory === 'parking' ? collectedMapLocations : []}
         selectedParkingLocationId={!routeNeedsVisible && primaryMapCategory === 'parking' ? selectedZoneId ?? routeZone?.id : undefined}
         onSelectParkingLocation={openParkingLocation}
         onSelectZone={openZone}
@@ -1417,7 +1423,7 @@ function AccountMapScreen() {
             ? distanceMeters((testLocation ?? location)!, selectedZone.location)
             : undefined
         }
-        onNavigate={(zone) => void startRoute(parkingDestination(zone))}
+        onNavigate={(zone) => void startRoute(parkingDestination(zone), selectedZoneId === zone.id ? selectedZoneEntryMethod : 'gps')}
         onStartParking={startParking}
         onReserve={reserveParking}
         onViewParkingMap={viewParkingMap}
@@ -1432,9 +1438,10 @@ function AccountMapScreen() {
       <ZoneCodeSheet
         visible={codeSheetOpen}
         onClose={() => setCodeSheetOpen(false)}
-        onResolved={(zone) => {
+        onResolved={async (zone) => {
+          await cacheResolvedZone(zone);
           setCodeSheetOpen(false);
-          openZone(zone);
+          openZone(zone, 'zone_code');
         }}
         onScanQr={() => {
           setCodeSheetOpen(false);

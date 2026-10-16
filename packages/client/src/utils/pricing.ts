@@ -79,10 +79,17 @@ export function computeSessionBreakdown(
 }
 
 /** Prepaid price for a chosen duration, using the live tariff. */
-export function estimatePrepaidCost(tariff: Tariff, minutes: number): number {
+export function estimatePrepaidCost(tariff: Pick<Tariff, 'hourlyRate' | 'minimumCharge' | 'dailyCap'>, minutes: number): number {
   const raw = Math.round((minutes / 60) * tariff.hourlyRate);
   const withMinimum = Math.max(raw, tariff.minimumCharge);
   return tariff.dailyCap != null ? Math.min(withMinimum, tariff.dailyCap) : withMinimum;
+}
+
+/** Quote only the added charge, using the same frozen rate and total cap as the server. */
+export function estimatePrepaidExtensionCost(session: ParkingSession, additionalMinutes: number): number {
+  if (!session.endsAt) return 0;
+  const purchasedMinutes = (new Date(session.endsAt).getTime() - new Date(session.startedAt).getTime()) / 60_000;
+  return Math.max(0, estimatePrepaidCost(session.rateSnapshot, purchasedMinutes + additionalMinutes) - session.currentCost);
 }
 
 /** The tariff with a loyalty discount applied to every money field. */

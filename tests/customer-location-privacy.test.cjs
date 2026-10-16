@@ -278,7 +278,7 @@ function mapFixture() {
     '@parkflow/client/hooks/useLocale': { useLocale: () => ({ locale: 'en', t: key => key }) },
     '@parkflow/client/hooks/useEvStations': { useEvStations: () => ev },
     '@parkflow/client/hooks/useVehicles': { useSelectedVehicle: () => ({ vehicles: empty, select() {} }) },
-    '@parkflow/client/hooks/useParking': { useZones: () => ({ data: [zone], isPending: false }), useActiveSessions: () => ({ data: empty }) },
+    '@parkflow/client/hooks/useParking': { useZones: () => ({ data: [zone], isPending: false }), useActiveSessions: () => ({ data: empty }), useCacheParkingZone: () => async () => {} },
     '@parkflow/client/hooks/useNotifications': { useUnreadNotificationCount: () => ({ data: 0 }) },
     '@parkflow/client/hooks/useRoadReports': { useCreateRoadReport: () => report, useRoadReports: () => ({ data: empty }) },
     '@parkflow/client/services': {
