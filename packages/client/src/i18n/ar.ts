@@ -503,6 +503,8 @@ export const ar: Partial<Translations> = {
   'wallet.topUpSuccessBody': 'تمت إضافة {amount} إلى محفظتك.',
   'wallet.topUpFailed': 'فشل الشحن',
   'wallet.noMethods': 'لا توجد طرق دفع',
+  'wallet.demoPayment': 'دفع تجريبي',
+  'wallet.demoPaymentBody': 'هذه نسخة تجريبية. لا يتم خصم أي مبلغ من بطاقة حقيقية، والرصيد للتجربة فقط.',
   'wallet.noMethodsBody': 'أضف بطاقة لشحن محفظتك.',
   'wallet.recent': 'النشاط الأخير',
   'wallet.securityNote': 'تُعالج بيانات البطاقة لدى مزوّد الدفع. نحتفظ بآخر ٤ أرقام فقط.',

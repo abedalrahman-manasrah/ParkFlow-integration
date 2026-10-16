@@ -22,6 +22,10 @@ export const env = z.object({
  SMTP_HOST:z.string().min(1), SMTP_PORT:z.coerce.number().int().positive().default(465),
  SMTP_SECURE:z.enum(['true','false']).default('true').transform(v=>v==='true'), SMTP_USER:z.string().min(1), SMTP_PASSWORD:optional,
  PAYMENT_PROVIDER:z.enum(['development','http']).default('development'), PAYMENT_API_URL:optional, PAYMENT_API_KEY:optional,
+ // Public demo hosting only: lets production run the built-in simulated provider, which never calls a gateway or charges a card.
+ ALLOW_SIMULATED_PAYMENTS:z.enum(['true','false']).default('false').transform(v=>v==='true'),
+ // Proxy hops in front of the API (1 on Render). Unset keeps Express's default, which ignores X-Forwarded-For.
+ TRUST_PROXY:z.preprocess(v=>v===''?undefined:v,z.string().regex(/^\d{1,2}$/).optional().transform(v=>v===undefined?undefined:Number(v)).refine(v=>v===undefined||v<=10,'Trusted proxy hop count must be between 0 and 10')),
  PAYMENT_WEBHOOK_SECRET:z.string().min(32),
  S3_ENDPOINT:z.string().url(), S3_PUBLIC_ENDPOINT:z.preprocess(v=>v===''?undefined:v,z.string().url().optional()), S3_REGION:z.string().default('us-east-1'), S3_BUCKET:z.string(), S3_ACCESS_KEY:z.string(), S3_SECRET_KEY:z.string(),
  // Leave empty to keep crash calling off. Digits with an optional leading +.
@@ -40,8 +44,12 @@ if(env.NODE_ENV==='production') {
  if(env.SMS_PROVIDER==='twilio-verify'&&(!env.TWILIO_ACCOUNT_SID||!env.TWILIO_AUTH_TOKEN||!env.TWILIO_VERIFY_SERVICE_SID)) throw new Error('Twilio Verify credentials and service SID are required');
  if(!env.PROFILE_ENCRYPTION_KEY) throw new Error('PROFILE_ENCRYPTION_KEY is required in production');
  if(!env.SMTP_PASSWORD) throw new Error('SMTP_PASSWORD is required');
- if(env.PAYMENT_PROVIDER==='development') throw new Error('Production requires configured payment provider');
- for(const name of ['PAYMENT_API_URL','PAYMENT_API_KEY'] as const) if(!env[name]) throw new Error(`${name} is required`);
+ if(env.PAYMENT_PROVIDER==='development') {
+  if(!env.ALLOW_SIMULATED_PAYMENTS) throw new Error('Production requires configured payment provider');
+ } else {
+  for(const name of ['PAYMENT_API_URL','PAYMENT_API_KEY'] as const) if(!env[name]) throw new Error(`${name} is required`);
+  if(!env.PAYMENT_API_URL?.startsWith('https://')) throw new Error('Provider URLs must use HTTPS');
+ }
  if([env.JWT_ACCESS_SECRET,env.JWT_REFRESH_SECRET,env.PAYMENT_WEBHOOK_SECRET].some(s=>s.startsWith('replace-'))) throw new Error('Replace example secrets');
  const signingKeys=[env.JWT_ACCESS_SECRET,env.JWT_REFRESH_SECRET,env.PAYMENT_WEBHOOK_SECRET];
  if(new Set(signingKeys).size!==signingKeys.length) throw new Error('Session and payment signing keys must be distinct');

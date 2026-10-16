@@ -1,0 +1,24 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "installCommand": "npm ci",
+  "buildCommand": "node -e \"const fs=require('node:fs'),cp=require('node:child_process'),app=process.env.PARKFLOW_WEB_APPLICATION;if(!['customer','management'].includes(app))throw new Error('Set PARKFLOW_WEB_APPLICATION to customer or management');const result=cp.spawnSync('npm',['run','export:'+app+':web'],{stdio:'inherit',shell:process.platform==='win32'});if(result.error)throw result.error;if(result.status!==0)process.exit(result.status??1);fs.rmSync('dist',{recursive:true,force:true});fs.cpSync('apps/'+app+'/dist','dist',{recursive:true});\"",
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/_expo/static/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
+}

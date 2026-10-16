@@ -21,6 +21,7 @@ import {
   SwitchRow,
   TabHeader,
 } from '@parkflow/client/components/ui';
+import { DemoPaymentNotice } from '../../src/components/domain/DemoPaymentNotice';
 import { TransactionRow } from '../../src/components/domain/TransactionRow';
 import { useTheme } from '@parkflow/client/theme/ThemeProvider';
 import { spacing } from '@parkflow/design/spacing';
@@ -69,6 +70,7 @@ export default function WalletScreen() {
         }}
       >
         <TabHeader title={t('wallet.title')} />
+        <DemoPaymentNotice />
 
         {/* ---- Balance card -------------------------------------------- */}
         <View style={[{ borderRadius: radius.xxl, overflow: 'hidden' }, shadow.sm]}>

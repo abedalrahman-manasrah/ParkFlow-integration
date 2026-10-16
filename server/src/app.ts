@@ -14,7 +14,7 @@ import { api,paths } from './api';
 import { errors } from './middleware/errors';
 import { ApiError } from './utils/errors';
 import { webhook } from './modules/wallet/service';
-export function createApp(){const app=express();app.disable('x-powered-by');
+export function createApp(){const app=express();app.disable('x-powered-by');if(env.TRUST_PROXY!==undefined)app.set('trust proxy',env.TRUST_PROXY);
  app.use(helmet());app.use(cors({origin:(origin,cb)=>{if(!origin||origins.includes(origin))cb(null,true);else cb(new ApiError(403,'CORS_FORBIDDEN','Origin is not allowed'));},credentials:true,allowedHeaders:['Content-Type','Authorization','Idempotency-Key','X-Request-Id','X-ParkFlow-App','X-ParkFlow-Session','X-ParkFlow-Login','X-ParkFlow-CSRF']}));
  app.use(pinoHttp({logger,genReqId:()=>randomUUID(),customProps:req=>({requestId:req.id}),autoLogging:env.NODE_ENV!=='test'}));
  app.use((req,res,next)=>{res.setHeader('X-Request-Id',String(req.id));res.setHeader('Cache-Control','no-store');next();});

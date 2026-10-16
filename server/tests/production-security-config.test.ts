@@ -14,7 +14,7 @@ const fixture = {
  S3_ACCESS_KEY:'isolated-access-fixture', S3_SECRET_KEY:'isolated-private-storage-fixture',
 };
 function load(changes:Record<string,string>) {
- return spawnSync(process.execPath,['--import','tsx','-e',"const {origins}=require('./src/config/env'); console.log('CONFIG_ACCEPTED'); console.log(JSON.stringify(origins))"],{
+ return spawnSync(process.execPath,['--import','tsx','-e',"const {origins,env}=require('./src/config/env'); console.log('CONFIG_ACCEPTED'); console.log(JSON.stringify(origins)); console.log('TRUST_PROXY='+env.TRUST_PROXY)"],{
   env:{...fixture,...changes},encoding:'utf8',timeout:10000,
  });
 }
@@ -53,5 +53,34 @@ describe('production settings fail closed without disclosing credentials',()=>{
    CORS_ORIGINS:'http://localhost:8081',WEB_CUSTOMER_ORIGINS:'http://localhost:8081',WEB_MANAGEMENT_ORIGINS:'http://localhost:8082',
    S3_ENDPOINT:'http://localhost:9002',S3_PUBLIC_ENDPOINT:'http://localhost:9002',S3_ACCESS_KEY:'parkflow-local',S3_SECRET_KEY:'parkflow-local-storage'});
   expect(result.status,result.stderr).toBe(0);
+ });
+});
+
+
+describe('cloud demo and explicit proxy configuration',()=>{
+ it('permits a deliberately opted-in simulated demo while retaining production services',()=>{
+  const result=load({PAYMENT_PROVIDER:'development',ALLOW_SIMULATED_PAYMENTS:'true',PAYMENT_API_URL:'',PAYMENT_API_KEY:''});
+  expect(result.status,result.stderr).toBe(0);expect(result.stdout).toContain('CONFIG_ACCEPTED');
+ });
+ it('refuses simulated production payments without an explicit opt-in',()=>{
+  const result=load({PAYMENT_PROVIDER:'development',ALLOW_SIMULATED_PAYMENTS:'false'});
+  expect(result.status).not.toBe(0);
+ });
+ it.each([
+  ['missing payment URL',{PAYMENT_PROVIDER:'http',PAYMENT_API_URL:''}],
+  ['missing payment credentials',{PAYMENT_PROVIDER:'http',PAYMENT_API_KEY:''}],
+  ['insecure provider URL',{PAYMENT_API_URL:'http://payments.example.test'}],
+  ['missing profile encryption',{PAYMENT_PROVIDER:'development',PROFILE_ENCRYPTION_KEY:''}],
+  ['authentication shortcut',{PAYMENT_PROVIDER:'development',DEV_SKIP_EMAIL_OTP:'true'}],
+  ['shared signing secrets',{PAYMENT_PROVIDER:'development',JWT_REFRESH_SECRET:fixture.JWT_ACCESS_SECRET}],
+ ])('does not let the demo opt-in bypass %s',(_label,changes)=>{
+  const result=load({ALLOW_SIMULATED_PAYMENTS:'true',...changes} as Record<string,string>);
+  expect(result.status).not.toBe(0);expect(result.stdout).not.toContain('CONFIG_ACCEPTED');
+ });
+ it.each([['','undefined'],['0','0'],['1','1'],['10','10']])('accepts explicit proxy hop count %s',(value,expected)=>{
+  const result=load({TRUST_PROXY:value});expect(result.status,result.stderr).toBe(0);expect(result.stdout).toContain('TRUST_PROXY='+expected);
+ });
+ it.each(['-1','11','100','Infinity','1.5','true','1e2'])('refuses unsafe proxy configuration %s',value=>{
+  const result=load({TRUST_PROXY:value});expect(result.status).not.toBe(0);expect(result.stdout).not.toContain('CONFIG_ACCEPTED');
  });
 });

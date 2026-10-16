@@ -328,6 +328,8 @@ export const en = {
   'wallet.topUpSuccessBody': '{amount} was added to your wallet.',
   'wallet.topUpFailed': 'Top-up failed',
   'wallet.noMethods': 'No payment methods',
+  'wallet.demoPayment': 'Demo payment',
+  'wallet.demoPaymentBody': 'This is a demo. No real card is charged and wallet balance is for testing only.',
   'wallet.noMethodsBody': 'Add a card to top up your wallet.',
   'wallet.recent': 'Recent activity',
   'wallet.securityNote': 'Card details are handled by our payment provider. We only store the last 4 digits.',

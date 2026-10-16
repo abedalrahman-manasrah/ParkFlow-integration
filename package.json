@@ -31,7 +31,11 @@
     "test": "node --test --test-concurrency=1 tests/*.test.cjs",
     "test:contracts": "node scripts/check-client-contracts.cjs",
     "export:customer": "npm run export --workspace @parkflow/customer",
-    "export:management": "npm run export --workspace @parkflow/management"
+    "export:management": "npm run export --workspace @parkflow/management",
+    "preexport:customer:web": "npm run security:verify",
+    "export:customer:web": "npm run export:web --workspace @parkflow/customer",
+    "preexport:management:web": "npm run security:verify",
+    "export:management:web": "npm run export:web --workspace @parkflow/management"
   },
   "devDependencies": {
     "@types/leaflet": "^1.9.22",

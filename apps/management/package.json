@@ -7,7 +7,8 @@
     "start": "expo start",
     "web": "expo start --web --localhost --port 8082 --max-workers 1",
     "typecheck": "tsc --noEmit",
-    "export": "expo export --platform web --max-workers 1 --output-dir dist"
+    "export": "expo export --platform web --max-workers 1 --output-dir dist",
+    "export:web": "expo export --platform web --max-workers 1 --output-dir dist"
   },
   "dependencies": {
     "@expo-google-fonts/plus-jakarta-sans": "^0.4.2",

@@ -13,6 +13,7 @@ import {
   SwitchRow,
   TextField,
 } from '@parkflow/client/components/ui';
+import { DemoPaymentNotice } from '../../src/components/domain/DemoPaymentNotice';
 
 import { useTheme } from '@parkflow/client/theme/ThemeProvider';
 import { spacing } from '@parkflow/design/spacing';
@@ -100,6 +101,7 @@ export default function AddCardScreen() {
       <AppHeader title={t('wallet.addCard')} leading="close" />
 
       <View style={{ gap: spacing.xl }}>
+        <DemoPaymentNotice />
         <View
           style={{
             flexDirection: row,

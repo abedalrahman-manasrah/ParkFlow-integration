@@ -1,0 +1,86 @@
+# Render Blueprint for the ParkFlow public demo backend. Setup steps and limits: DEPLOYMENT.md.
+# Values marked sync: false are entered in the Render dashboard and never committed.
+services:
+  # API + background worker in one free web service, built from the existing server/Dockerfile.
+  - type: web
+    name: parkflow-api
+    runtime: docker
+    plan: free
+    region: frankfurt
+    rootDir: server
+    branch: main
+    autoDeployTrigger: commit
+    # Overrides the image CMD only on Render: runs migrations, then the API and the worker.
+    dockerCommand: node dist/src/start.js
+    healthCheckPath: /health
+    envVars:
+      # PORT is provided by Render; the API reads it.
+      - key: NODE_ENV
+        value: production
+      - key: DEV_SKIP_EMAIL_OTP
+        value: "false"
+      - key: TRUST_PROXY
+        value: "1"
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        fromService:
+          type: keyvalue
+          name: parkflow-redis
+          property: connectionString
+      - key: JWT_ACCESS_SECRET
+        sync: false
+      - key: JWT_REFRESH_SECRET
+        sync: false
+      - key: PROFILE_ENCRYPTION_KEY
+        sync: false
+      # Exact, disjoint HTTPS origins on the same site as the API; see DEPLOYMENT.md.
+      - key: WEB_CUSTOMER_ORIGINS
+        sync: false
+      - key: WEB_MANAGEMENT_ORIGINS
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      # Demo only: simulated payments, no gateway is called and no card is charged.
+      - key: PAYMENT_PROVIDER
+        value: development
+      - key: ALLOW_SIMULATED_PAYMENTS
+        value: "true"
+      - key: PAYMENT_WEBHOOK_SECRET
+        sync: false
+      # Brevo SMTP. Render Free blocks outbound 25/465/587, so use 2525 with STARTTLS.
+      - key: EMAIL_PROVIDER
+        value: smtp
+      - key: SMTP_HOST
+        value: smtp-relay.brevo.com
+      - key: SMTP_PORT
+        value: "2525"
+      - key: SMTP_SECURE
+        value: "false"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      # Supabase Storage S3 connection.
+      - key: S3_ENDPOINT
+        sync: false
+      - key: S3_REGION
+        sync: false
+      - key: S3_BUCKET
+        sync: false
+      - key: S3_ACCESS_KEY
+        sync: false
+      - key: S3_SECRET_KEY
+        sync: false
+
+  # Render Key Value (Valkey/Redis). Free plan keeps data in memory only.
+  - type: keyvalue
+    name: parkflow-redis
+    plan: free
+    region: frankfurt
+    # BullMQ requires noeviction so queued jobs are never evicted.
+    maxmemoryPolicy: noeviction
+    # Empty list: reachable only from services in the same Render region over the private network.
+    ipAllowList: []

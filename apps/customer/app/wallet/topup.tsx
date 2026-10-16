@@ -20,6 +20,7 @@ import {
   SuccessCheck,
   TextField,
 } from '@parkflow/client/components/ui';
+import { DemoPaymentNotice } from '../../src/components/domain/DemoPaymentNotice';
 
 import { useTheme } from '@parkflow/client/theme/ThemeProvider';
 import { spacing } from '@parkflow/design/spacing';
@@ -86,6 +87,7 @@ export default function TopUpScreen() {
       <AppHeader title={t('wallet.topUp')} leading="close" />
 
       <View style={{ gap: spacing.xl }}>
+        <DemoPaymentNotice />
         {recovery.error ? <InlineNotice tone="danger" title={locale === 'ar' ? 'تعذر التحقق من الشحن السابق' : 'Could not check the previous payment'} body={errorMessage(recovery.error)} /> : null}
         {recovery.data ? <Card padding="lg" style={{ gap: spacing.md }}>
           <AppText variant="title">{locale === 'ar' ? 'يوجد شحن بانتظار تأكيد النتيجة' : 'A previous top-up needs confirmation'}</AppText>
