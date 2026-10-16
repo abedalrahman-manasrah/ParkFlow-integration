@@ -16,7 +16,7 @@ export function useManagementSync() {
   useEffect(() => {
     if (!session || !permitted || !API_BASE_URL) return;
     const socket = io(API_BASE_URL.replace(/\/api\/v1$/, ''), {
-      ...socketSessionOptions(session), transports: ['websocket'], reconnection: true,
+      ...socketSessionOptions(session), reconnection: true,
     });
     const refreshData = () => {
       for (const key of ['admin', 'operator', 'management', 'vehicle-verification']) {

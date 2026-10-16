@@ -1,6 +1,6 @@
 import type { AuthSession, User, WebAuthSession } from '@parkflow/contracts';
 import { appStorage, browserSessionsEnabled, STORAGE_KEYS } from '../storage';
-import { clientApplication } from '../../runtime/application';
+import { clientApplication, runtimeWebSocketPolling } from '../../runtime/application';
 import { AppError } from '../../utils/errors';
 
 export const webSessionsEnabled = browserSessionsEnabled === true;
@@ -93,7 +93,8 @@ export function webRequestHeaders(session?: WebAuthSession): Record<string, stri
   } : {}) };
 }
 export function socketSessionOptions(session: AuthSession) {
+  const transports: ('polling' | 'websocket')[] = webSessionsEnabled && isWebSession(session) && runtimeWebSocketPolling ? ['polling'] : ['websocket'];
   return isWebSession(session)
-    ? { auth: { application: clientApplication, sessionId: session.sessionId, loginId: session.loginId, csrfToken: session.csrfToken }, withCredentials: true }
-    : { auth: { token: session.accessToken } };
+    ? { auth: { application: clientApplication, sessionId: session.sessionId, loginId: session.loginId, csrfToken: session.csrfToken }, withCredentials: true, transports }
+    : { auth: { token: session.accessToken }, transports };
 }

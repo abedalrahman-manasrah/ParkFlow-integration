@@ -12,3 +12,6 @@ export const clientApplication: ClientApplication = configuredApplication === 'm
 
 const configuredApiBaseUrl: unknown = Constants.expoConfig?.extra?.apiBaseUrl;
 export const runtimeApiBaseUrl = typeof configuredApiBaseUrl === 'string' ? configuredApiBaseUrl : undefined;
+
+const configuredWebSocketPolling: unknown = Constants.expoConfig?.extra?.webSocketPolling;
+export const runtimeWebSocketPolling = configuredWebSocketPolling === true;

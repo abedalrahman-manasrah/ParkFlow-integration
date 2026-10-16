@@ -1,6 +1,6 @@
 # Deploying the ParkFlow public demo
 
-This guide describes a manual public demo setup. The service plans below can use free tiers; a domain you control is required for browser sign-in. These files prepare deployment and do not mean any cloud service has been deployed.
+This guide describes a manual public demo setup. The service plans below can use free tiers. Default Vercel domains can use the same-origin HTTP proxy described below; a custom domain is optional. These files prepare deployment and do not mean any cloud service has been deployed.
 
 | Part | Service | Config in repo |
 | --- | --- | --- |
@@ -16,8 +16,8 @@ This guide describes a manual public demo setup. The service plans below can use
 > and give no uptime guarantee. Payments are **simulated**: no gateway is called and no card is charged.
 > See [Free-tier limitations](#free-tier-limitations) and [Moving to real production](#moving-to-real-production).
 
-Provider accounts, custom domains, project creation, secrets and the initial deployments below are
-manual setup steps. After setup, the configured hosts run builds and migrations as described below. Never commit the values you create. They go only in the Render and Vercel dashboards
+Provider accounts, optional custom domains, project creation, secrets and the initial deployments below are
+setup steps that require access to the hosting accounts. After setup, the configured hosts run builds and migrations as described below. Never commit the values you create. They go only in the Render and Vercel dashboards
 (or in your shell for one-off commands).
 
 ---
@@ -25,18 +25,18 @@ manual setup steps. After setup, the configured hosts run builds and migrations 
 ## 0. Before you start
 
 - The repo is on GitHub and `main` holds the code to deploy.
-- Have a domain you control and reserve three HTTPS hostnames under the same registrable domain:
+- For direct browser-to-API requests, use a domain you control and reserve three HTTPS hostnames under the same registrable domain:
   customer `https://app.example.com`, management `https://management.example.com`, and
   API `https://api.example.com`. Attach the first two to their separate Vercel projects and the API
   hostname to Render; complete each provider's DNS and TLS verification before testing sign-in.
   The API uses host-only, `Secure`, `HttpOnly`, `SameSite=Strict` cookies with separate customer and
   management sessions. Sibling HTTPS subdomains keep these requests same-site. The default
   `*.vercel.app` frontend and `*.onrender.com` API addresses are cross-site and cannot support this
-  browser login flow merely by adding CORS origins. Keep the cookie and CSRF protections enabled.
+  browser login flow merely by adding CORS origins. Use the same-origin proxy below when you have no domain. Keep the cookie and CSRF protections enabled.
 - Pick **one region** for everything to keep latency low. This guide uses **Frankfurt / AWS eu-central-1**
   (`render.yaml` sets `region: frankfurt`). If you change it, change it for both Render services; the
   Key Value internal URL only works inside the same Render region.
-- Generate three random secrets (each ≥ 32 characters) and keep them in a password manager:
+- For a new installation only, generate three random secrets (each ≥ 32 characters) and keep them in a password manager. For the existing cloud database, preserve its current keys:
 
   ```bash
   node -e "console.log(require('crypto').randomBytes(48).toString('base64url'))"
@@ -44,7 +44,7 @@ manual setup steps. After setup, the configured hosts run builds and migrations 
 
   Use a different value for each of `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET` and
   `PAYMENT_WEBHOOK_SECRET`. The server rejects reused signing keys and `replace-` example values.
-- Generate a separate `PROFILE_ENCRYPTION_KEY` as exactly 64 hexadecimal characters:
+- For a new database only, generate a separate `PROFILE_ENCRYPTION_KEY` as exactly 64 hexadecimal characters. Never replace the key of an existing database:
 
   ```bash
   node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
@@ -52,6 +52,102 @@ manual setup steps. After setup, the configured hosts run builds and migrations 
 
   Store this key securely and retain it across redeployments so existing encrypted profile data remains readable.
   Keep all four keys in Render only; never add them to a Vercel public variable.
+
+## Default provider domains: existing team deployment
+
+The team customer project currently uses https://parkflow-web-gamma.vercel.app and the shared API
+uses https://parkflow-api-m19q.onrender.com. These are existing public endpoints, not evidence that
+this release has been deployed. Create a **separate** management Vercel project and use its actual
+production URL in the settings below; do not copy the customer project into it.
+
+Both projects use repository root, Node.js 22.x and the root vercel.json. Its API and Socket.IO HTTP
+rewrites target the existing team Render API before the SPA fallback, preserve the requested path
+and query, and mark private responses no-store. The frontend document sets
+Referrer-Policy: strict-origin-when-cross-origin. Do not add CDN caching for either proxy route.
+
+Set these Production build variables separately:
+
+| Variable | Customer project | Management project |
+| --- | --- | --- |
+| PARKFLOW_WEB_APPLICATION | customer | management |
+| EXPO_PUBLIC_API_BASE_URL | https://parkflow-web-gamma.vercel.app/api/v1 | The management project's own absolute HTTPS origin followed by /api/v1 |
+| EXPO_PUBLIC_WEB_SOCKET_POLLING | true | true |
+| EXPO_PUBLIC_SIMULATED_PAYMENTS | true for the simulated demo only | Same demo setting |
+
+The API base must use the **same production origin as that frontend**. Never use the Render URL
+as a browser API base in this mode. Use an absolute URL; a bare /api/v1 is not supported by the
+Socket.IO URL calculation. Vercel public variables are compiled during export, so rebuild after
+changing them. Configure Production explicitly; arbitrary preview origins are not trusted.
+
+In Render, set WEB_CUSTOMER_ORIGINS to https://parkflow-web-gamma.vercel.app,
+WEB_MANAGEMENT_ORIGINS to the newly created management project's exact production origin,
+and CORS_ORIGINS to those two comma-separated origins. No path or trailing slash is allowed.
+Set AUTH_LOGIN_METHOD=email and keep both DEV_SKIP_EMAIL_OTP and DEV_SKIP_PHONE_OTP=false.
+Keep the lists disjoint and retain TRUST_PROXY=1 until the actual forwarding chain is verified.
+Do not increase the trusted hop count to fix a shared rate limit: direct Render access must not
+be able to spoof the client IP. Verify rate-limit identity through both direct and proxied paths.
+
+The browser stores the unchanged Secure, HttpOnly, host-only, SameSite=Strict cookies on its own
+frontend host. Browser GET/HEAD requests without Origin require Sec-Fetch-Site: same-origin,
+Sec-Fetch-Mode: cors and a Referer whose parsed origin exactly matches the requested application.
+An explicitly supplied Origin always takes precedence, and writes still require a real trusted
+Origin plus existing session/login/CSRF proof. No forwarded host header establishes browser trust.
+Socket.IO uses the same guarded polling handshake and the same authenticated namespace proof.
+Polling delivers the existing realtime events over HTTP; default direct-domain browser builds
+and native applications retain WebSockets when this web-only opt-in is unset.
+
+Before calling this path deployed, verify multiple Set-Cookie headers reach the browser, Cookie,
+Referer and Fetch Metadata reach Render, private responses are uncached, authenticated polling
+receives events/reconnects, and customer/management login and logout remain isolated. An HTTP
+health200 alone does not verify any of these properties. Vercel external proxy requests have a
+120-second timeout; normal Socket.IO polling is shorter. Render cold starts can still delay access.
+
+References: [Vercel external rewrites](https://vercel.com/docs/routing/rewrites),
+[Vercel proxy limits](https://vercel.com/docs/limits),
+[Socket.IO transports](https://socket.io/docs/v4/how-it-works).
+
+## Updating the existing cloud database safely
+
+Keep the existing cloud DATABASE_URL, profile encryption key, both JWT keys, storage credentials,
+SMTP provider and account IDs unless a separate migration explicitly requires changing them.
+Deploying local source does not copy local accounts or wallet balances into the cloud database.
+Never replace an existing profile encryption key: encrypted identity fields bind to both that key
+and the existing user UUID. Do not run development seeds or replace team reference edits.
+
+1. Obtain a fresh private cloud PostgreSQL backup and validate that it can be restored; retain the
+   storage backup and encryption/signing keys separately. Do not commit or attach those artifacts.
+2. Compare the cloud migration history, checksums and unfinished migrations with all 25 repository
+   migrations. Check email normalization conflicts and rehearse pending migrations on an isolated
+   restored copy before updating the authoritative database.
+3. Preserve role memberships, email-verification state, account UUIDs, wallet/transaction records,
+   vehicles, reservations, parking sessions and storage objects. The latest session migrations add
+   metadata without deleting existing records; old push registrations wait for refresh/re-registration.
+4. Set every newly required production variable on the existing Render service before deployment.
+   Adding sync:false to the Blueprint does not populate existing service settings automatically.
+5. Coordinate frontend promotion before merging: Vercel and Render watch main independently, so a
+   fast frontend build must not become live against the old API. Hold frontend production promotion
+   until the new API is ready, or agree an explicit maintenance window with the project owner.
+   Deploy the API using node dist/src/start.js, which runs migrate deploy before API and worker.
+   Confirm both readiness messages and /ready. The worker resumes pending jobs immediately; verify
+   intended payment/email/push provider mode and pending work before starting it.
+6. Deploy both frontends from the verified integrated release, then verify the deployed revision,
+   browser session protections and data baseline. Keep the previous release available for rollback;
+   do not reset the database to undo an application deployment.
+
+The team added `.github/workflows/sync-vercel-repository.yml`: a push to the team main branch
+fast-forwards `halaawwad/parkflow-web:main` only when its history is already an ancestor. Preserve
+this workflow and any independent target history. The sync runs independently of CI, so prepare
+hosting variables and promotion controls before an approved merge; verify required checks on
+the exact release first. Confirm the actual Vercel Git connection in the owning account rather
+than assuming this mirror proves a deployment. A missing sync secret or divergent mirror must
+be resolved by its owner without force-pushing.
+
+The available GitHub identity can update integration PR4 but cannot merge the team repository.
+A repository owner must merge approved source, or hosting must explicitly deploy the reviewed
+integration branch using an account that has access. Do not silently switch the production source
+repository, bypass review rules, overwrite main, or create replacement databases/services.
+
+---
 
 ## 1. Neon PostgreSQL
 
@@ -185,7 +281,7 @@ and still runs the backend and worker as separate services.
    | `SMTP_USER`, `SMTP_PASSWORD`, `EMAIL_FROM` | from step 4 |
    | `S3_ENDPOINT`, `S3_REGION`, `S3_BUCKET`, `S3_ACCESS_KEY`, `S3_SECRET_KEY` | from step 3 |
 
-   Preset in `render.yaml`: `NODE_ENV=production`, `DEV_SKIP_EMAIL_OTP=false`, `TRUST_PROXY=1`,
+   Preset in `render.yaml`: `NODE_ENV=production`, `AUTH_LOGIN_METHOD=email`, both `DEV_SKIP_*_OTP=false`, `TRUST_PROXY=1`,
    `PAYMENT_PROVIDER=development`, `ALLOW_SIMULATED_PAYMENTS=true`, the Brevo host/port/secure values, and
    `REDIS_URL` (from `parkflow-redis`). Do not set `PORT`.
 3. **Apply**. Watch the deploy logs for `ParkFlow API ready` and `Worker ready`. The API also logs a
@@ -221,14 +317,16 @@ environment variables as above.
 - `TRUST_PROXY=1` makes Express use the client IP from Render's proxy. Without it, every user would share one
   IP and the OTP rate limit (10 per 10 minutes) would apply to everyone together.
 
-## 6. Migrations and reference data (Neon)
+## 6. Migrations and reference data (new empty installations only)
 
 **Migrations** run automatically each time the Render service starts (`prisma migrate deploy`). To apply them
 before the first Render deploy instead, use the shell setup below and run `npx prisma migrate deploy`.
 
-**Reference data** is loaded from the JSON datasets already in the repo. Only the commands below exist; nothing
+**Existing team cloud rollout: skip every seed/import command in this section.** Seeds and importers upsert existing zone, tariff and operating-hour rows and can overwrite the team's current edits. They are not a backup or an upgrade migration. Existing deployments use migrate deploy only after the backup/rehearsal checks above.
+
+**New empty installations only:** Reference data is loaded from the JSON datasets already in the repo. Only the commands below exist; nothing
 else is imported. User accounts, sessions, wallets, payments and road reports are **not** migrated, and
-`pg_dump` is not used. Every command is an idempotent upsert, so re-running it is safe.
+`pg_dump` is not used. These commands are idempotent upserts for initial catalogue loading; re-running them can overwrite existing reference edits.
 
 | Data | Command | Source file |
 | --- | --- | --- |
@@ -300,7 +398,7 @@ No API or worker is hosted by these Vercel projects.
 | `EXPO_PUBLIC_API_BASE_URL` | `https://api.example.com/api/v1` | `https://api.example.com/api/v1` |
 | `EXPO_PUBLIC_SIMULATED_PAYMENTS` for this demo | `true` | `true` |
 
-Set the three environment variables in **each project's Production environment before building**.
+Set the corresponding environment variables in **each project's Production environment before building**. For default provider domains, use the per-project proxy settings above instead of the direct-domain API base.
 An unset or unknown application selector fails the build instead of publishing the wrong application.
 The selector is a build setting, so it has no `EXPO_PUBLIC_` prefix. It selects the application bundle;
 server authorization still determines access to management features.
@@ -315,7 +413,7 @@ Leave `EXPO_PUBLIC_DEV_SKIP_EMAIL_OTP`, `EXPO_PUBLIC_START_FROM_BEGINNING` and
 and visible to visitors; put server credentials only in Render. Redeploy both affected Vercel projects
 after changing a public variable.
 
-The SPA rewrite keeps deep links within the selected frontend: customer `/wallet` and management
+API and Socket.IO proxy rewrites run first. The SPA fallback keeps deep links within the selected frontend: customer `/wallet` and management
 `/operator` or `/admin`. Hashed bundles retain the team's immutable cache header. The build and output
 configuration is defined in `vercel.json`, which overrides corresponding dashboard build settings
 ([Vercel configuration reference](https://vercel.com/docs/project-configuration/vercel-json)).
@@ -340,7 +438,7 @@ Set this API base in **both Vercel projects**, then rebuild them:
 EXPO_PUBLIC_API_BASE_URL=https://api.example.com/api/v1
 ```
 
-Every origin is an exact scheme and host with an optional port, **no path or trailing slash**.
+The direct-domain values above are an alternative to the provider-domain proxy setup, not an additional requirement. Every origin is an exact scheme and host with an optional port, **no path or trailing slash**.
 Comma-separated lists support multiple explicitly configured origins. Customer and management lists
 must never overlap: the server uses them to select separate cookie sessions and rejects overlap at startup.
 The web origin lists are also included in the effective HTTP and Socket.IO CORS allowlist. CORS alone
@@ -357,6 +455,13 @@ add new `sync: false` values in the dashboard as well; Render only prompts for t
 creating the Blueprint ([Render Blueprint reference](https://render.com/docs/blueprint-spec)).
 
 ## 9. Health checks and verification
+
+GitHub runs separate frontend dependency-security and backend release-validation workflows. The backend
+workflow creates empty loopback-only PostgreSQL, Redis and private S3 test stores, generates masked
+ephemeral test credentials, applies all migrations, builds/types the server, runs its complete tests
+and audits dependencies. It uses no production secrets or application data. Passing CI validates
+source; it does not deploy the hosts or verify real proxy forwarding, SMTP delivery or cloud backups.
+
 
 ```bash
 API=https://<service>.onrender.com

@@ -1,0 +1,105 @@
+name: Backend release validation
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      NODE_ENV: test
+      NODE_OPTIONS: --max-old-space-size=1536
+      DATABASE_URL: postgresql://parkflow:parkflow-test-ci-password@127.0.0.1:5432/parkflow_test?connection_limit=5
+      TEST_DATABASE_URL: postgresql://parkflow:parkflow-test-ci-password@127.0.0.1:5432/parkflow_test?connection_limit=5
+      REDIS_URL: redis://127.0.0.1:6379/15
+      S3_ENDPOINT: http://127.0.0.1:9000
+      S3_PUBLIC_ENDPOINT: http://127.0.0.1:9000
+      S3_REGION: us-east-1
+      S3_BUCKET: parkflow-ci-test
+      EMAIL_PROVIDER: smtp
+      EMAIL_FROM: ci@parkflow.example
+      SMTP_HOST: 127.0.0.1
+      SMTP_PORT: '2525'
+      SMTP_SECURE: 'false'
+      SMTP_USER: isolated-ci
+      AUTH_LOGIN_METHOD: email
+      DEV_SKIP_EMAIL_OTP: 'false'
+      DEV_SKIP_PHONE_OTP: 'false'
+      SMS_PROVIDER: disabled
+      PAYMENT_PROVIDER: development
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: parkflow
+          POSTGRES_PASSWORD: parkflow-test-ci-password
+          POSTGRES_DB: parkflow_test
+        ports:
+          - 127.0.0.1:5432:5432
+        options: >-
+          --health-cmd "pg_isready -U parkflow -d parkflow_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 15
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 127.0.0.1:6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 15
+    steps:
+      # Use the same pinned official actions as frontend dependency security.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '24.14.1'
+          package-manager-cache: false
+      - name: Generate isolated test credentials without production secrets
+        run: node scripts/ci-backend-stores.cjs keys
+      - name: Install immutable frontend dependencies for client contract tests
+        run: npm ci --ignore-scripts --no-fund --registry=https://registry.npmjs.org/
+      - name: Verify security distributions
+        run: npm run security:verify
+      - name: Install backend dependencies
+        run: npm ci --prefix server --no-fund --registry=https://registry.npmjs.org/
+      - name: Generate the current Prisma client on Linux
+        run: npm run db:generate --prefix server
+      - name: Start private S3-compatible test storage
+        # Same image and version as server/docker-compose.yml; no application API or worker starts.
+        run: |
+          docker run --detach --name parkflow-ci-s3 \
+            --publish 127.0.0.1:9000:9000 \
+            --env MINIO_ROOT_USER="$S3_ACCESS_KEY" \
+            --env MINIO_ROOT_PASSWORD="$S3_SECRET_KEY" \
+            docker.io/pgsty/silo:RELEASE.2026-09-16T00-00-00Z \
+            server /data --console-address ':9001'
+          for attempt in {1..30}; do
+            if docker exec parkflow-ci-s3 silo healthcheck ready; then exit 0; fi
+            sleep 1
+          done
+          docker logs parkflow-ci-s3
+          exit 1
+      - name: Prepare only the isolated private test bucket
+        run: node scripts/ci-backend-stores.cjs storage
+      - name: Apply the complete migration history to the empty test database
+        run: npm run db:migrate --prefix server
+      - name: Build the backend and check generated application and test types
+        run: npm run build --prefix server
+      - name: Run the complete backend suite serially
+        run: npm test --prefix server -- --maxWorkers 1 --reporter verbose
+      - name: Audit the complete backend dependency graph
+        run: npm audit --prefix server --audit-level=low --registry=https://registry.npmjs.org/
+      - name: Stop isolated test storage
+        if: always()
+        run: docker rm --force parkflow-ci-s3 || true

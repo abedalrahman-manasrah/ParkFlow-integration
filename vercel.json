@@ -6,11 +6,46 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/api/v1/:path*",
+      "destination": "https://parkflow-api-m19q.onrender.com/api/v1/:path*"
+    },
+    {
+      "source": "/socket.io/:path*",
+      "destination": "https://parkflow-api-m19q.onrender.com/socket.io/:path*"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
   ],
   "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        }
+      ]
+    },
+    {
+      "source": "/api/v1/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/socket.io/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
     {
       "source": "/_expo/static/(.*)",
       "headers": [

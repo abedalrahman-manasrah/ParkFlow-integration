@@ -20,7 +20,7 @@ export function useBackendSync() {
     const identity = sessionIdentity(session);
     const current = () => sessionIdentity(useAuthStore.getState().session) === identity;
     const socket = io(API_BASE_URL.replace(/\/api\/v1$/, ''), {
-      ...socketSessionOptions(session), transports: ['websocket'], reconnection: true,
+      ...socketSessionOptions(session), reconnection: true,
     });
     const invalidate = (keys: string[]) => {
       if (!current()) return;

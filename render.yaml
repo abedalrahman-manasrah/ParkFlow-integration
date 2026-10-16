@@ -17,7 +17,11 @@ services:
       # PORT is provided by Render; the API reads it.
       - key: NODE_ENV
         value: production
+      - key: AUTH_LOGIN_METHOD
+        value: email
       - key: DEV_SKIP_EMAIL_OTP
+        value: "false"
+      - key: DEV_SKIP_PHONE_OTP
         value: "false"
       - key: TRUST_PROXY
         value: "1"
@@ -34,7 +38,7 @@ services:
         sync: false
       - key: PROFILE_ENCRYPTION_KEY
         sync: false
-      # Exact, disjoint HTTPS origins on the same site as the API; see DEPLOYMENT.md.
+      # Exact, disjoint HTTPS frontend origins; use same-origin proxy or same-site API. See DEPLOYMENT.md.
       - key: WEB_CUSTOMER_ORIGINS
         sync: false
       - key: WEB_MANAGEMENT_ORIGINS

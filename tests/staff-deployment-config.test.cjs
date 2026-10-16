@@ -94,3 +94,19 @@ test('deployment example keeps customer, management, and API on one HTTPS site w
   assert.match(docs, /PARKFLOW_WEB_APPLICATION/);
   assert.match(read('.env.example'), /EXPO_PUBLIC_SIMULATED_PAYMENTS=false/);
 });
+
+
+test('free-domain routing sends API and realtime requests to the shared API before the SPA', () => {
+  const config = JSON.parse(read('vercel.json'));
+  const spa = config.rewrites.findIndex(route => route.destination === '/index.html');
+  assert.ok(spa > 0, 'API proxy routes must be considered before the SPA fallback');
+  for (const prefix of ['/api/v1', '/socket.io']) {
+    const position = config.rewrites.findIndex(route => route.source === prefix + '/:path*');
+    assert.ok(position >= 0 && position < spa, prefix + ' must not be swallowed by the SPA');
+    assert.equal(config.rewrites[position].destination, 'https://parkflow-api-m19q.onrender.com' + prefix + '/:path*');
+    const policy = config.headers.find(rule => rule.source === prefix + '/(.*)');
+    assert.ok(policy?.headers.some(header => header.key.toLowerCase() === 'cache-control' && header.value === 'no-store'), 'Private proxy responses must never be cached');
+  }
+  const document = config.headers.find(rule => rule.source === '/(.*)');
+  assert.ok(document?.headers.some(header => header.key.toLowerCase() === 'referrer-policy' && header.value === 'strict-origin-when-cross-origin'), 'Same-origin browser reads require a trusted referrer');
+});

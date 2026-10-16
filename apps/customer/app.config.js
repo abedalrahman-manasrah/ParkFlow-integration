@@ -25,6 +25,7 @@ module.exports = () => {
     extra: {
       ...base.expo.extra,
       apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL,
+      webSocketPolling: process.env.EXPO_PUBLIC_WEB_SOCKET_POLLING === 'true',
       ...(process.env.EXPO_PUBLIC_EAS_PROJECT_ID ? { eas: { projectId: process.env.EXPO_PUBLIC_EAS_PROJECT_ID } } : {}),
     },
     android: {

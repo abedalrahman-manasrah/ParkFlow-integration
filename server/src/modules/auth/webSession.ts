@@ -5,6 +5,7 @@ import { env, webOrigins } from '../../config/env';
 import { atomic, db } from '../../database/client';
 import { redis } from '../../database/redis';
 import { ApiError, assert } from '../../utils/errors';
+import { resolveBrowserOrigin } from '../../utils/browserOrigin';
 import { userView } from '../users/service';
 import {
   authenticate, authenticateWeb, digest, inspectWebRefresh, refresh, refreshWeb, verifyWebAccess, revokeSessionFamily, lockSessionFamily,
@@ -50,12 +51,12 @@ function cookies(req: Request) {
   return parsed;
 }
 
-// Presence of Origin selects browser transport. Validate it before an OTP is
-// consumed or a JWT is issued; a browser cannot opt into native JSON credentials.
+// Resolve trusted browser reads before selecting transport; unsafe requests
+// still require a real Origin before an OTP is consumed or credentials are issued.
 export function webContext(req: Request): WebContext | null {
-  const origin = req.get('Origin'), application = req.get('X-ParkFlow-App');
-  if (!origin) {
-    assert(!application, 'FORBIDDEN', 'A browser application requires its trusted Origin', 403);
+  const origin = resolveBrowserOrigin(req), application = req.get('X-ParkFlow-App');
+  if (origin === null) {
+    assert(application === undefined, 'FORBIDDEN', 'A browser application requires its trusted Origin', 403);
     return null;
   }
   assert(application === 'customer' || application === 'management', 'FORBIDDEN', 'A trusted browser application is required', 403);
