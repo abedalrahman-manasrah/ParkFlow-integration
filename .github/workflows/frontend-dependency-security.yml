@@ -1,0 +1,34 @@
+name: Frontend dependency security
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      # Official release: https://github.com/actions/checkout/releases/tag/v7.0.1
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # Official release: https://github.com/actions/setup-node/releases/tag/v7.1.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.14.1'
+          package-manager-cache: false
+      - name: Install already-corrected distributions without lifecycle scripts
+        run: npm ci --ignore-scripts --no-fund --registry=https://registry.npmjs.org/
+      - name: Verify source archives lockfile and every installed fork instance
+        run: npm run security:verify
+      - name: Exercise frontend contracts exploit regressions and drift rejection
+        run: npm test
+      - name: Check all frontend workspace types
+        run: npm run typecheck
+      - name: Audit the complete dependency graph
+        run: npm audit --audit-level=low --registry=https://registry.npmjs.org/

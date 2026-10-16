@@ -1,5 +1,9 @@
 # Frontend dependency security corrections — 2026-10-15
 
+The frontend dependency distribution status below is historical. See the
+[2026-10-16 distribution correction](2026-10-16-frontend-security-distributions.md)
+for the immutable private forks, source verification and audit interpretation.
+
 This follows the [2026-10-14 email/account isolation audit](2026-10-14-email-settings-audit.md).
 The user authorized correction of the remaining frontend library issues while
 preserving the existing application features.

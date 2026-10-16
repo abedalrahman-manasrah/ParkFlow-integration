@@ -373,3 +373,38 @@ describe('legacy session metadata proof', () => {
     } finally { Object.assign(env, previous); }
   });
 });
+
+
+describe('durable push recovery recipient age', () => {
+  it('does not replay a failed private notification to a new login family', async () => {
+    mockProvider();
+    const epoch = Date.now() - 60_000;
+    const owner = await account();
+    const token = await register(owner.session, 'old-device');
+    const queued = await notification(owner.user.id);
+    // Hand-set ordering avoids relying on clock resolution at session creation.
+    await db.notification.update({ where: { id: queued.id }, data: { createdAt: new Date(epoch + 10_000) } });
+    await db.refreshToken.update({ where: { id: owner.sid }, data: { createdAt: new Date(epoch) } });
+    await auth.logout(owner.user.id, owner.sid, true);
+    const newer = await atomic(tx => auth.issue(tx, owner.user, {}));
+    await db.refreshToken.update({ where: { id: auth.verifyAccess(newer.accessToken).sid }, data: { createdAt: new Date(epoch + 20_000) } });
+    await register(newer, 'new-login-device', token);
+    await deliverPush(queued.id);
+    expect(dispatched).toEqual([]);
+    expect(Boolean((await db.notification.findUniqueOrThrow({ where: { id: queued.id } })).pushedAt)).toBe(true);
+  });
+
+  it('keeps an existing family eligible when its current refresh successor is newer than the notification', async () => {
+    mockProvider();
+    const epoch = Date.now() - 60_000;
+    const owner = await account();
+    await register(owner.session, 'rotated-family-device');
+    const queued = await notification(owner.user.id);
+    await db.refreshToken.update({ where: { id: owner.sid }, data: { createdAt: new Date(epoch) } });
+    await db.notification.update({ where: { id: queued.id }, data: { createdAt: new Date(epoch + 10_000) } });
+    const successor = await auth.refresh(owner.session.refreshToken, {});
+    await db.refreshToken.update({ where: { id: auth.verifyAccess(successor.accessToken).sid }, data: { createdAt: new Date(epoch + 20_000) } });
+    await deliverPush(queued.id);
+    expect(dispatched).toEqual(['rotated-family-device']);
+  });
+});

@@ -1,10 +1,12 @@
 # Reviewed frontend dependency backports
 
-These temporary fixes preserve the installed Expo SDK and published dependency
-versions. They change the affected executable code, rather than ignoring audit
-results or pretending an upstream fixed release exists.
+These reviewed source corrections preserve the installed Expo SDK and CommonJS
+interfaces. They originally shipped as guarded postinstall backports; they are
+now embedded in the immutable private security distributions under
+[security/vendor](../vendor/README.md). The original manifest, payloads and
+licenses remain as auditable provenance and maintainer reconstruction tools.
 
-| Installed dependency | Advisory | Local correction and provenance |
+| Original upstream source | Advisory | Source correction and provenance |
 | --- | --- | --- |
 | `braces@3.0.3` | GHSA-vfj7-8cjw-p6xm | Bound actual parser nesting to 100; iterative preflight also bounds externally supplied ASTs and rejects node cycles before compile, expand and stringify. This is a local implementation of the guard suggested in the [upstream issue](https://github.com/micromatch/braces/issues/70), not an upstream released fix. |
 | `node-forge@1.4.0` | GHSA-86w9-cpqp-85rv | Exact `lib/rsa.js` security change from [upstream PR1159](https://github.com/digitalbazaar/forge/pull/1159), commit `db05494352dd3c9a5a07c5270333dcc78866cad2`. It requires canonical DigestInfo encoding, rejecting extra elements, content inside NULL parameters and non-minimal lengths while accepting optional empty NULL. The PR remains unmerged at verification time. |
@@ -20,32 +22,32 @@ Forge's original dual license includes the BSD license used for this backport.
 
 ## Installation and drift protection
 
-Normal root `npm ci` / `npm install` runs the dependency-free postinstall script.
-For an installation performed with `--ignore-scripts`, run:
+The root npm overrides install private scoped forks from checked-in local
+archives. The reviewed corrections are inside those archives, including for
+`npm ci --ignore-scripts`. Normal postinstall, root test/typecheck/start/export
+preflights and direct Metro entry verify the immutable distributions with
+`scripts/verify-frontend-security-vendors.cjs`. No dependency source is rewritten
+after installation. `npm run security:patch` remains a compatibility verification
+command; `npm run security:verify` performs the same non-mutating checks.
 
-```powershell
-npm run security:patch
-npm run security:verify
-```
+The distribution verifier checks every source and installed file, each archive's
+SHA-256 and SHA-512, root overrides, locked scoped identities/versions/local
+archive paths/integrity, and all nested instances. Unexpected/missing files,
+symlinks and source/archive/lock drift fail closed. See the
+[vendor maintenance guide](../vendor/README.md) for provenance and repacking.
 
-`scripts/apply-frontend-security-patches.cjs` checks every lockfile instance of the
-three libraries, both installed and locked versions, and normalized SHA-256
-hashes of the reviewed pre-image and post-image files. It validates all input and
-payload files before writing any dependency file. Reapplication is idempotent;
-verification never writes. Unexpected source, package versions, missing packages
-or missing patches fail closed. Root development, export and test commands verify
-the patches before starting; Metro initialization verifies them for direct Expo
-and workspace commands as well.
+For reconstruction from verified original npm archives in an isolated staging
+root, `scripts/apply-frontend-security-patches.cjs` exports
+`applyBackports({ root: stagingRoot })`. It validates every reviewed upstream
+version, source pre-image and payload hash before any source write, then verifies
+the post-images. Its default `run()` and CLI entry points now delegate to the
+immutable distribution verifier for compatibility with existing callers.
 
-If a library is upgraded, review the new upstream fix and remove or update its
-backport and regression tests together. Do not relax version/hash checks simply
-to make installation succeed. Run the full client tests, type checks and both
-application exports after any such change.
-
-The raw npm audit continues to flag the published versions. The application uses
-the reviewed patched source, but the audit result must be reported separately
-from the executable-code regression result. No advisory allowlist or severity
-filter is introduced.
+The original published upstream advisories remain open. npm audit does not
+review private fork source, so the raw result must be reported separately from
+the executable-code regression and distribution-integrity results. Removing the
+unpatched published distributions is a reproducible source correction, not an
+advisory suppression or a claim that an upstream fixed release exists.
 
 ## Verification
 

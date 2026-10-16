@@ -23,7 +23,7 @@ export const env = z.object({
  SMTP_SECURE:z.enum(['true','false']).default('true').transform(v=>v==='true'), SMTP_USER:z.string().min(1), SMTP_PASSWORD:optional,
  PAYMENT_PROVIDER:z.enum(['development','http']).default('development'), PAYMENT_API_URL:optional, PAYMENT_API_KEY:optional,
  PAYMENT_WEBHOOK_SECRET:z.string().min(32),
- S3_ENDPOINT:z.string().url(), S3_REGION:z.string().default('us-east-1'), S3_BUCKET:z.string(), S3_ACCESS_KEY:z.string(), S3_SECRET_KEY:z.string(),
+ S3_ENDPOINT:z.string().url(), S3_PUBLIC_ENDPOINT:z.preprocess(v=>v===''?undefined:v,z.string().url().optional()), S3_REGION:z.string().default('us-east-1'), S3_BUCKET:z.string(), S3_ACCESS_KEY:z.string(), S3_SECRET_KEY:z.string(),
  // Leave empty to keep crash calling off. Digits with an optional leading +.
  EMERGENCY_CALL_NUMBER:z.string().trim().regex(/^\+?[0-9]{2,15}$/).optional().or(z.literal('')), EMERGENCY_COUNTDOWN_SECONDS:z.coerce.number().int().min(5).max(60).default(15),
  FIREBASE_PROJECT_ID:optional,FIREBASE_CLIENT_EMAIL:optional,FIREBASE_PRIVATE_KEY:optional,EXPO_PUSH_ACCESS_TOKEN:optional,
@@ -43,7 +43,20 @@ if(env.NODE_ENV==='production') {
  if(env.PAYMENT_PROVIDER==='development') throw new Error('Production requires configured payment provider');
  for(const name of ['PAYMENT_API_URL','PAYMENT_API_KEY'] as const) if(!env[name]) throw new Error(`${name} is required`);
  if([env.JWT_ACCESS_SECRET,env.JWT_REFRESH_SECRET,env.PAYMENT_WEBHOOK_SECRET].some(s=>s.startsWith('replace-'))) throw new Error('Replace example secrets');
- if(!env.PAYMENT_API_URL?.startsWith('https://')) throw new Error('Provider URLs must use HTTPS');
+ const signingKeys=[env.JWT_ACCESS_SECRET,env.JWT_REFRESH_SECRET,env.PAYMENT_WEBHOOK_SECRET];
+ if(new Set(signingKeys).size!==signingKeys.length) throw new Error('Session and payment signing keys must be distinct');
+ const knownDefaults=new Set(['local-parkflow','parkflow','password','postgres','changeme','replace-me','minioadmin','parkflow-local','parkflow-local-storage']);
+ let databasePassword:string;
+ try { databasePassword=decodeURIComponent(new URL(env.DATABASE_URL).password); } catch { throw new Error('Invalid production database configuration'); }
+ if(!databasePassword||knownDefaults.has(databasePassword)||databasePassword.startsWith('replace-')) throw new Error('Production database credentials must replace local examples');
+ for(const name of ['S3_ACCESS_KEY','S3_SECRET_KEY'] as const) {
+  if(!env[name].trim()||knownDefaults.has(env[name])||env[name].startsWith('replace-')) throw new Error('Production storage credentials must replace local examples');
+ }
+ if(env.S3_SECRET_KEY.length<20) throw new Error('Production storage secret must contain at least 20 characters');
+ for(const value of [env.PAYMENT_API_URL,env.S3_ENDPOINT,env.S3_PUBLIC_ENDPOINT,env.OSRM_BASE_URL].filter((value):value is string=>Boolean(value))) {
+  let url:URL; try { url=new URL(value); } catch { throw new Error('Invalid production service URL'); }
+  if(url.protocol!=='https:'||url.username||url.password) throw new Error('Production payment, storage and routing URLs must use HTTPS without embedded credentials');
+ }
 }
 export type WebApplication = 'customer' | 'management';
 function browserOrigins(value:string):readonly string[]{
@@ -54,4 +67,4 @@ function browserOrigins(value:string):readonly string[]{
 }
 export const webOrigins:Record<WebApplication,readonly string[]>={customer:browserOrigins(env.WEB_CUSTOMER_ORIGINS),management:browserOrigins(env.WEB_MANAGEMENT_ORIGINS)};
 if(webOrigins.customer.some(origin=>webOrigins.management.includes(origin)))throw new Error('Customer and management web origins must be disjoint');
-export const origins = [...new Set([...env.CORS_ORIGINS.split(',').map(s=>s.trim()).filter(Boolean), ...webOrigins.customer, ...webOrigins.management])];
+export const origins = [...new Set([...(env.CORS_ORIGINS.trim()?browserOrigins(env.CORS_ORIGINS):[]), ...webOrigins.customer, ...webOrigins.management])];

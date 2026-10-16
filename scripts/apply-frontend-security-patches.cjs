@@ -33,7 +33,7 @@ function replacementSource(filePatch, before, label) {
   return after;
 }
 
-function run({ verifyOnly = false, root = workspaceRoot } = {}) {
+function applyBackports({ verifyOnly = false, root = workspaceRoot } = {}) {
   const manifest = JSON.parse(fs.readFileSync(path.join(patchRoot, 'manifest.json'), 'utf8'));
   const lock = JSON.parse(fs.readFileSync(path.join(root, 'package-lock.json'), 'utf8'));
   const writes = [];
@@ -71,11 +71,17 @@ function run({ verifyOnly = false, root = workspaceRoot } = {}) {
     fs.mkdirSync(path.dirname(target), { recursive: true });
     fs.writeFileSync(target, source, 'utf8');
   }
-  if (!verifyOnly && writes.length) return run({ verifyOnly: true, root });
+  if (!verifyOnly && writes.length) return applyBackports({ verifyOnly: true, root });
   return { verifiedPackages, changedFiles: writes.length };
 }
 
-module.exports = { run, hash, verifySource };
+// Compatibility entry point for existing Metro and maintenance callers.
+// Installed distributions are immutable: normal commands only verify them.
+function run(options) {
+  return require('./verify-frontend-security-vendors.cjs').run(options);
+}
+
+module.exports = { run, applyBackports, hash, verifySource };
 if (require.main === module) {
   const args = process.argv.slice(2);
   if (args.some(arg => arg !== '--verify')) {
@@ -84,7 +90,7 @@ if (require.main === module) {
   } else {
     try {
       const result = run({ verifyOnly: args.includes('--verify') });
-      console.log(`Verified local security backports for ${result.verifiedPackages} installed dependency packages`);
+      console.log(`Verified immutable security forks for ${result.verifiedPackages} installed dependency packages`);
     } catch (error) {
       console.error(error.message);
       process.exitCode = 1;

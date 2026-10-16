@@ -1,0 +1,18 @@
+# Production hardening specification
+
+Preserve the combined team history and all customer, staff, authentication, payment, parking and notification features. Update existing PR #4 only after verification. No live database reset, real provider messages or paid operations are part of verification.
+
+## Dependency integrity
+Replace the three vulnerable upstream frontend packages with genuine source-controlled security forks built from official npm archives with verified upstream integrity. Use scoped, honest prerelease names and local tarball overrides; never invent an upstream fixed release or suppress an advisory. Preserve CommonJS APIs. Fork packages contain reviewed corrected executable sources and licenses, with original upstream provenance and complete archive/file hashes. Omit obsolete uncorrected Forge browser/SWF distributions outside the supported source API. Verify every installed instance and archive fail-closed without modifying node_modules. Document that npm audit does not analyze private fork code; regression tests, source review and integrity checks remain required. Keep Expo SDK57 and platform behavior unless a necessary compatible security update is proven.
+
+## Routing safety
+Google traffic cannot replace the approved OSRM route or introduce a current checkpoint exposure. Match full geometry using endpoints, bidirectional sampled segment interiors within 50m and forward progress; recheck current checkpoint states even for cached traffic and fastest traffic enrichment. Project accepted colors onto exact approved OSRM sublines. Incomplete interval coverage falls back to the base line while retaining compatible delay summary. Google disabled preserves existing behavior.
+
+## Durable jobs and recipient privacy
+Separate outbox, core maintenance, financial dispatch/provider jobs and push recovery so an external provider cannot block local maintenance/delivery. Use stable per-item IDs and existing payment idempotency. Scan at most100 IDs per stream per tick with persisted cyclic cursors so later pending payments and low-balance wallets progress. Recheck automatic topup eligibility and reserve one payment under wallet locks before provider I/O outside SQL transactions. Keep existing public topup behavior and lock order. Redrive exhausted pushes after at least5minutes, preserve legacy outbox job IDs, and finish pushes older than7days without deleting inbox content. A recipient family must have existed when the notification was created; refresh in that family remains eligible, a new login must not receive earlier private queued content.
+
+## Production settings
+Reject known default storage/database/shared credentials and insecure production origins/provider transports while keeping local development functional. Rotate the local example object storage credentials consistently without changing or deleting stored objects. Never print or commit private settings. External SMTP/provider/domain readiness and credential rotation that requires the account owner must remain explicit limitations.
+
+## Verification and publication
+Run isolated regression failures before fixes and meaningful positive controls afterward. Serialize heavy tests/builds on this machine. Run full server, contracts, frontend, type checks, fork provenance/audits, all four Expo exports when dependencies change, Docker builds and live read-only smoke checks. Back up and fingerprint live data before deployment; preserve volumes, account roles, wallets and vehicles. Review independently, push non-force to existing integration branch, update PR #4 and verify its head and runtime afterward.

@@ -1,0 +1,132 @@
+{
+  "name": "@parkflow/security-node-forge",
+  "version": "1.4.0-parkflow.1",
+  "description": "ParkFlow private reviewed security fork of node-forge. JavaScript implementations of network transports, cryptography, ciphers, PKI, message digests, and various utilities.",
+  "homepage": "https://github.com/digitalbazaar/forge",
+  "author": {
+    "name": "Digital Bazaar, Inc.",
+    "email": "support@digitalbazaar.com",
+    "url": "http://digitalbazaar.com/"
+  },
+  "contributors": [
+    "Dave Longley <dlongley@digitalbazaar.com>",
+    "David I. Lehn <dlehn@digitalbazaar.com>",
+    "Stefan Siegl <stesie@brokenpipe.de>",
+    "Christoph Dorn <christoph@christophdorn.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/digitalbazaar/forge"
+  },
+  "bugs": {
+    "url": "https://github.com/digitalbazaar/forge/issues",
+    "email": "support@digitalbazaar.com"
+  },
+  "license": "(BSD-3-Clause OR GPL-2.0)",
+  "main": "lib/index.js",
+  "files": [
+    "LICENSE",
+    "README.md",
+    "lib/aes.js",
+    "lib/aesCipherSuites.js",
+    "lib/asn1-validator.js",
+    "lib/asn1.js",
+    "lib/baseN.js",
+    "lib/cipher.js",
+    "lib/cipherModes.js",
+    "lib/des.js",
+    "lib/ed25519.js",
+    "lib/forge.js",
+    "lib/form.js",
+    "lib/hmac.js",
+    "lib/http.js",
+    "lib/index.all.js",
+    "lib/index.js",
+    "lib/jsbn.js",
+    "lib/kem.js",
+    "lib/log.js",
+    "lib/md.all.js",
+    "lib/md.js",
+    "lib/md5.js",
+    "lib/mgf.js",
+    "lib/mgf1.js",
+    "lib/oids.js",
+    "lib/pbe.js",
+    "lib/pbkdf2.js",
+    "lib/pem.js",
+    "lib/pkcs1.js",
+    "lib/pkcs12.js",
+    "lib/pkcs7.js",
+    "lib/pkcs7asn1.js",
+    "lib/pki.js",
+    "lib/prime.js",
+    "lib/prime.worker.js",
+    "lib/prng.js",
+    "lib/pss.js",
+    "lib/random.js",
+    "lib/rc2.js",
+    "lib/rsa.js",
+    "lib/sha1.js",
+    "lib/sha256.js",
+    "lib/sha512.js",
+    "lib/socket.js",
+    "lib/ssh.js",
+    "lib/tls.js",
+    "lib/tlssocket.js",
+    "lib/util.js",
+    "lib/x509.js",
+    "lib/xhr.js",
+    "PROVENANCE.json"
+  ],
+  "engines": {
+    "node": ">= 6.13.0"
+  },
+  "keywords": [
+    "aes",
+    "asn",
+    "asn.1",
+    "cbc",
+    "crypto",
+    "cryptography",
+    "csr",
+    "des",
+    "gcm",
+    "hmac",
+    "http",
+    "https",
+    "md5",
+    "network",
+    "pkcs",
+    "pki",
+    "prng",
+    "rc2",
+    "rsa",
+    "sha1",
+    "sha256",
+    "sha384",
+    "sha512",
+    "ssh",
+    "tls",
+    "x.509",
+    "x509"
+  ],
+  "nyc": {
+    "exclude": [
+      "tests"
+    ]
+  },
+  "jspm": {
+    "format": "amd"
+  },
+  "browser": {
+    "buffer": false,
+    "crypto": false,
+    "process": false
+  },
+  "private": true,
+  "parkflowSecurityFork": {
+    "upstream": "node-forge@1.4.0",
+    "advisory": "GHSA-86w9-cpqp-85rv",
+    "provenance": "PROVENANCE.json"
+  }
+}

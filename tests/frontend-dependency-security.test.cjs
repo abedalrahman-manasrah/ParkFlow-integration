@@ -165,10 +165,10 @@ test('decoder CommonJS, Arabic UTF8, literal plus and query-string router contra
 });
 
 test('dependency patch verification fails closed for missing or modified installed source', () => {
-  const script = path.join(root, 'scripts/apply-frontend-security-patches.cjs');
-  const result = spawnSync(process.execPath, [script, '--verify'], { cwd: root, encoding: 'utf8' });
+  const script = path.join(root, 'scripts/verify-frontend-security-vendors.cjs');
+  const result = spawnSync(process.execPath, [script], { cwd: root, encoding: 'utf8' });
   assert.equal(result.status, 0, result.stderr);
-  const { verifySource } = require(script);
+  const { verifySource } = require('../scripts/apply-frontend-security-patches.cjs');
   assert.throws(() => verifySource('altered source', '0'.repeat(64), 'fixture'), /source.*mismatch/i);
 });
 
@@ -182,7 +182,10 @@ function installedFixture(runTest) {
       const instance = 'node_modules/' + item.name;
       const directory = path.join(fixture, instance);
       fs.mkdirSync(directory, { recursive: true });
-      fs.copyFileSync(path.join(root, instance, 'package.json'), path.join(directory, 'package.json'));
+      // Maintainer backport fixtures model the verified original npm package,
+      // while executable controls above load the actual installed scoped fork.
+      const installedMetadata = JSON.parse(fs.readFileSync(path.join(root, instance, 'package.json'), 'utf8'));
+      fs.writeFileSync(path.join(directory, 'package.json'), JSON.stringify({ ...installedMetadata, name: item.name, version: item.version }));
       packages[instance] = { version: item.version };
       for (const file of item.files) {
         const target = path.join(directory, file.path);
@@ -200,7 +203,7 @@ function installedFixture(runTest) {
 }
 
 test('patch installation is repeatable, restores reviewed pre-images and handles CRLF source', () => {
-  const { run, hash } = require('../scripts/apply-frontend-security-patches.cjs');
+  const { applyBackports: run, hash } = require('../scripts/apply-frontend-security-patches.cjs');
   installedFixture((fixture, manifest) => {
     for (const packagePatch of manifest.packages.filter(item => item.name !== 'decode-uri-component')) {
       for (const file of packagePatch.files) {
@@ -223,7 +226,7 @@ test('patch installation is repeatable, restores reviewed pre-images and handles
 });
 
 test('unexpected dependency versions, modified source and missing packages fail closed without partial writes', () => {
-  const { run } = require('../scripts/apply-frontend-security-patches.cjs');
+  const { applyBackports: run } = require('../scripts/apply-frontend-security-patches.cjs');
   installedFixture(fixture => {
     const guard = path.join(fixture, 'node_modules/braces/lib/security-depth.cjs');
     const rsa = path.join(fixture, 'node_modules/node-forge/lib/rsa.js');

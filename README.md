@@ -41,11 +41,12 @@ providers or operator processes before public use.
 
 Requirements: Node.js, npm, and Docker Desktop with its Linux engine running.
 
-1. Install the frontend dependencies with `npm ci`. Postinstall applies reviewed
-   security backports automatically; `npm run security:verify` checks their source
-   integrity. If installation disables scripts, run `npm run security:patch`
-   before verification or starting Expo. See the
-   [backport maintenance guide](security/dependency-patches/README.md).
+1. Install the frontend dependencies with `npm ci`. The checked-in private
+   security distributions already contain reviewed corrections. Postinstall and
+   `npm run security:verify` validate their source, immutable archives and every
+   installed instance. A scripts-disabled install contains the same corrections;
+   run verification before starting Expo. See the
+   [distribution and maintenance guide](security/vendor/README.md).
 2. Copy `apps/customer/.env.example` to `apps/customer/.env`,
    `apps/management/.env.example` to `apps/management/.env`, and
    `server/.env.example` to `server/.env`.
@@ -262,6 +263,9 @@ same-site HTTPS and disjoint `WEB_CUSTOMER_ORIGINS` / `WEB_MANAGEMENT_ORIGINS`.
 Use one consistent local hostname across the applications and API. The
 [web security audit](docs/security/2026-10-15-web-session-security-audit.md)
 records lifecycle details, verification results and remaining deployment limits.
+The [production hardening report](docs/operations/2026-10-16-production-hardening-verification.md)
+documents the corrected dependency distributions, durable jobs, route safety and
+current verification evidence.
 Arabic layout direction is driven by React state, so language changes do not
 require an application restart.
 

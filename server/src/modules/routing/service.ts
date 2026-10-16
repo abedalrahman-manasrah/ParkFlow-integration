@@ -6,6 +6,7 @@ type CheckpointState = Awaited<ReturnType<typeof checkpoints>>[number];
 interface RouteClosure {checkpointId:string;nameAr:string;nameEn:string;status:'closed'|'congested'}
 import { distanceMeters, distanceToPolyline } from '../../utils/geo';
 import { enrichTraffic } from './traffic';
+import { alignTrafficToRoute } from './trafficGeometry';
 
 
 /**
@@ -121,10 +122,14 @@ const worstOf = (closures: RouteClosure[]) =>
 export const routingService = {
   async getRoute(from: GeoPoint, to: GeoPoint, options: RouteOptions = {}) {
     const destination = options.snapDestination ? await snapToDrivableRoad(to) : to;
-    const [routes, states] = await Promise.all([
+    const [routes, currentStates] = await Promise.all([
       fetchRoutes(from, destination),
-      options.mode === 'fastest' ? Promise.resolve([] as CheckpointState[]) : checkpoints(),
+      // Fastest ranking ignores checkpoints, but Google attribution still needs live safety checks.
+      options.mode === 'fastest'
+        ? env.GOOGLE_ROUTES_API_KEY ? checkpoints().catch(() => undefined) : Promise.resolve([] as CheckpointState[])
+        : checkpoints(),
     ]);
+    const states = options.mode === 'fastest' ? [] : currentStates ?? [];
 
     if (!routes.length) {
       const line = [from, destination];
@@ -156,7 +161,13 @@ export const routingService = {
 
     const best = scored[0]!;
     const alternatives = scored.slice(1, 1 + (options.maxAlternatives ?? scored.length));
-    const traffic = await enrichTraffic(from, destination);
+    // Without current safety data, fastest routing still works but optional traffic is omitted.
+    const candidateTraffic = currentStates ? await enrichTraffic(from, destination) : undefined;
+    const selectedClosures = closuresNear(best.coordinates, currentStates ?? []);
+    // Recheck even cached Google geometry: reports or the selected OSRM alternative may have changed.
+    const addsClosure = candidateTraffic && closuresNear(candidateTraffic.routeCoordinates, currentStates ?? [])
+      .some((closure) => !selectedClosures.some((selected) => selected.checkpointId === closure.checkpointId));
+    const traffic = candidateTraffic && !addsClosure ? alignTrafficToRoute(candidateTraffic, best.coordinates) : undefined;
     return {
       coordinates: best.coordinates,
       distanceMeters: Math.round(best.distance),

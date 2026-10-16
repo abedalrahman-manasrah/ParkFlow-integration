@@ -1,5 +1,9 @@
 # Web session and frontend dependency security audit — 2026-10-15
 
+The frontend dependency distribution status below is historical. See the
+[2026-10-16 distribution correction](2026-10-16-frontend-security-distributions.md)
+for the immutable private forks, source verification and audit interpretation.
+
 The authorized work fixes the three identified frontend dependency code paths and
 strengthens web session credentials while retaining email OTP, customer/admin/
 operator features, native authentication, account isolation and location privacy.

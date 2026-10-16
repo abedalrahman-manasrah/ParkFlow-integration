@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "name": "@parkflow/security-braces",
+  "version": "3.0.3-parkflow.1",
+  "upstream": {
+    "name": "braces",
+    "version": "3.0.3",
+    "integrity": "sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==",
+    "tarball": "https://registry.npmjs.org/braces/-/braces-3.0.3.tgz",
+    "archiveSha256": "1cd18e862c8640b4568b1425a7df4ee030ff201d45b2da8f9f222d2987494ffc"
+  },
+  "advisory": "GHSA-vfj7-8cjw-p6xm",
+  "sourcePatchManifest": "security/dependency-patches/manifest.json",
+  "upstreamCommit": null,
+  "adoptedUpstreamScannerHash": null,
+  "patches": [
+    {
+      "path": "lib/parse.js",
+      "beforeHash": "e572166565f15fa6ad9865ae49d678218e32aabfd1b3720f6d0d43d39800d310",
+      "afterHash": "5a44cacf2701121dee4d4f8633205cc1f300df13a78749f4496a8e4e1c4cfea1"
+    },
+    {
+      "path": "lib/compile.js",
+      "beforeHash": "dc98f22eee3d511785d92a00758d5f0d48efed5f5813bdecc2de430c529b5c9f",
+      "afterHash": "ecb4d875c2c526de5e07eb3bf4ac0222710aa8e53e22e31b3610bef45100094b"
+    },
+    {
+      "path": "lib/expand.js",
+      "beforeHash": "41ccc196ebfa7b7781a634e721eb744e4e7bcb54cba427a7e3d6806a1b9e58f7",
+      "afterHash": "a230d8b923f14d3d7ea994b30cb00e2df0cd6f0642a49ee6557f9c36ef67bc4e"
+    },
+    {
+      "path": "lib/stringify.js",
+      "beforeHash": "379f22d77bfa1478341ccd49c5e4267464aabcbba03558bab332aac23fc6f23a",
+      "afterHash": "06dacf5da11bc452c006ed1bcee625fd7221a7dba547c730c566562386be07c5"
+    },
+    {
+      "path": "lib/security-depth.cjs",
+      "beforeHash": null,
+      "afterHash": "57b49f786ea0cdbd22330da84f4165d4d78e14ad136d81756b1bbcae074eadc6"
+    }
+  ],
+  "omittedFiles": [],
+  "metadataChanges": [
+    "Explicit private scoped fork name and honest ParkFlow prerelease version",
+    "Scoped fork description and provenance; explicit supported source files",
+    "Upstream development scripts and development-only dependencies omitted"
+  ],
+  "scope": "Original CommonJS API and all upstream source files, plus the exact reviewed security correction.",
+  "originalFileHashes": {
+    "LICENSE": "35bdd8a44339719441900fb50fbefc5e2dca1ca662cbaed7a687de842c8b70f2",
+    "README.md": "947b0fc3cc12eaaa070207126213fbdf9ab2bf8cd13dcc6e4007b36b79309866",
+    "index.js": "332ea07c7b006361aad12aa994ca75dc1db8e8382b884909e2f38f10b85c88a4",
+    "lib/compile.js": "dc98f22eee3d511785d92a00758d5f0d48efed5f5813bdecc2de430c529b5c9f",
+    "lib/constants.js": "c18ac5adb57308f1ce42a28552da3a31f5d83709743ebd9a636336813a744d4b",
+    "lib/expand.js": "41ccc196ebfa7b7781a634e721eb744e4e7bcb54cba427a7e3d6806a1b9e58f7",
+    "lib/parse.js": "e572166565f15fa6ad9865ae49d678218e32aabfd1b3720f6d0d43d39800d310",
+    "lib/stringify.js": "379f22d77bfa1478341ccd49c5e4267464aabcbba03558bab332aac23fc6f23a",
+    "lib/utils.js": "b5a7596aa67730412b3c029ef09e84e6b67b8e445cffd35d1d295549c89066c7",
+    "package.json": "56f08b888a4f30dc7cf8a7dbb36ffe92b737912ba36abe9d069d32167c957ac7"
+  }
+}

@@ -6,6 +6,8 @@ import { lockDeviceToken } from '../modules/notifications/service';
 import { requireValue } from '../utils/errors';
 import type { DeviceToken,Notification } from '@prisma/client';
 
+export const PUSH_LIFETIME_MS=7*24*60*60_000;
+
 type FcmAuthorization={projectId:string;accessToken:string};
 async function prepareFcm():Promise<FcmAuthorization>{
  let app=getApps()[0];
@@ -32,9 +34,15 @@ async function eligibleDevice(tx:Tx,selected:DeviceToken,notification:Notificati
  await lockSessionFamily(tx,device.userId,device.sessionFamilyId);
  const session=await liveSessionFamily(tx,device.userId,device.sessionFamilyId);
  if(!session)return null;
+ // Durable redrive must never replay an older private payload to a new login.
+ // Include revoked ancestors so normal refresh rotation keeps its eligibility.
+ const origin=await tx.refreshToken.findFirst({where:{userId:device.userId,familyId:device.sessionFamilyId},orderBy:{createdAt:'asc'},select:{createdAt:true}});
+ if(!origin||origin.createdAt>notification.createdAt)return null;
  const preferences=session.user.notificationPreferences as Record<string,boolean>;
  const preference=({parking_reminder:'parkingReminders',parking_expiring:'expiryWarnings',low_balance:'lowBalance',violation_issued:'violations'} as Record<string,string>)[notification.type];
  if(preference&&preferences[preference]===false)return null;
+ // Recheck after credential/lock waits as well as at entry.
+ if(notification.createdAt.getTime()<Date.now()-PUSH_LIFETIME_MS)return null;
  return {device,user:session.user};
 }
 async function sendToDevice(tx:Tx,device:DeviceToken,n:Notification,locale:string,deadline:number,fcm?:FcmAuthorization){
@@ -68,6 +76,10 @@ async function sendToDevice(tx:Tx,device:DeviceToken,n:Notification,locale:strin
 export async function deliverPush(notificationId:string){
  const notification=requireValue(await db.notification.findUnique({where:{id:notificationId}}));
  if(notification.pushedAt)return;
+ if(notification.createdAt.getTime()<Date.now()-PUSH_LIFETIME_MS){
+  await db.notification.updateMany({where:{id:notification.id,pushedAt:null},data:{pushedAt:new Date()}});
+  return;
+ }
  const devices=await db.deviceToken.findMany({where:{userId:notification.userId,sessionFamilyId:{not:null}}});
  for(const selected of devices){
   let fcm:FcmAuthorization|undefined;

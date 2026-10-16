@@ -28,10 +28,10 @@ test('new customer native features retain workspace dependencies and local modul
   assert.ok(fs.existsSync(path.join(root, 'modules/crash-detection/expo-module.config.json')));
 });
 
-test('both applications retain source patch verification and separate launch targets', () => {
+test('both applications retain immutable security verification and separate launch targets', () => {
   const workspace = json('package.json');
   assert.ok(workspace.workspaces.includes('apps/*')); assert.ok(workspace.workspaces.includes('packages/*'));
-  assert.equal(workspace.scripts.postinstall, 'node scripts/apply-frontend-security-patches.cjs');
+  assert.equal(workspace.scripts.postinstall, 'node scripts/verify-frontend-security-vendors.cjs');
   assert.match(workspace.scripts['dev:customer'], /@parkflow\/customer/);
   assert.match(workspace.scripts['dev:management'], /@parkflow\/management/);
 });

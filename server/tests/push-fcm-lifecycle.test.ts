@@ -153,3 +153,20 @@ describe('FCM notification preferences before credentials', () => {
     expect({ delivered, completed, preparations, dispatches }).toEqual({ delivered: true, completed: true, preparations: 0, dispatches: 0 });
   });
 });
+
+
+describe('durable push attempt expiry', () => {
+  it('completes an old queued notification before OAuth and keeps its in-app content', async () => {
+    const owner = await fixture();
+    await db.refreshToken.update({ where: { id: owner.sid }, data: { createdAt: new Date(Date.now() - 10 * 24 * 60 * 60_000) } });
+    await db.notification.update({ where: { id: owner.notification.id }, data: { createdAt: new Date(Date.now() - 8 * 24 * 60 * 60_000) } });
+    let preparations = 0, dispatches = 0;
+    credential.getAccessToken.mockImplementation(async () => { preparations++; throw new Error('Test-only OAuth must not start for expired content'); });
+    vi.stubGlobal('fetch', async () => { dispatches++; throw new Error('Test-only expired payload must not dispatch'); });
+    expect(await allowed(deliverPush(owner.notification.id))).toBe(true);
+    const saved = await db.notification.findUniqueOrThrow({ where: { id: owner.notification.id } });
+    expect({ completed: Boolean(saved.pushedAt), body: saved.body, preparations, dispatches }).toEqual({
+      completed: true, body: 'Private test-only location', preparations: 0, dispatches: 0,
+    });
+  });
+});

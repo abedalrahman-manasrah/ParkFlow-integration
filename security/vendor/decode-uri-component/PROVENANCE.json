@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "name": "@parkflow/security-decode-uri-component",
+  "version": "0.2.2-parkflow.1",
+  "upstream": {
+    "name": "decode-uri-component",
+    "version": "0.2.2",
+    "integrity": "sha512-FqUYQ+8o158GyGTrMFJms9qh3CqTKvAqgqsTnkLI8sKu0028orqBhxNMFkFen0zGyg6epACD32pjVk58ngIErQ==",
+    "tarball": "https://registry.npmjs.org/decode-uri-component/-/decode-uri-component-0.2.2.tgz",
+    "archiveSha256": "c123eb79b76a5474327e07341702892e6d0c16271dbd14917a0ecd9031cd1263"
+  },
+  "advisory": "GHSA-vcc3-ghjq-m6fr",
+  "sourcePatchManifest": "security/dependency-patches/manifest.json",
+  "upstreamCommit": null,
+  "adoptedUpstreamScannerHash": "9401353df38f8010ad7035fe8d666bce6a4902bc1cff809afc4ab23fa2e0bdaa",
+  "patches": [
+    {
+      "path": "index.js",
+      "beforeHash": "3b8ba0a765e1089d11bba9a919d0d8789ecd9a6833ea078d8d9114e1db093863",
+      "afterHash": "ea4b4250da5dc3f6fd8aa86ea99856526f1ea46ac4eb352decfe37cc7fd980b3"
+    }
+  ],
+  "omittedFiles": [],
+  "metadataChanges": [
+    "Explicit private scoped fork name and honest ParkFlow prerelease version",
+    "Scoped fork description and provenance; explicit supported source files",
+    "Upstream development scripts and development-only dependencies omitted",
+    "Explicit CommonJS main; Node >=18 for the modern adapted scanner"
+  ],
+  "scope": "Original CommonJS API and all upstream source files, plus the exact reviewed security correction.",
+  "originalFileHashes": {
+    "index.js": "3b8ba0a765e1089d11bba9a919d0d8789ecd9a6833ea078d8d9114e1db093863",
+    "license": "ed7a9a0f74e43951b2520efe1a4349cb9ed5f3dff0b0f268e2e51a4d38df7ea4",
+    "package.json": "8f2e9784337b3b4fa69359f88f75a2847e0aa17776f062cb518d008d8d408bca",
+    "readme.md": "9984ee5bb9265e78bdd45d0160d4e6c26072a0d7a7f411df6d4513b364ea660a"
+  }
+}

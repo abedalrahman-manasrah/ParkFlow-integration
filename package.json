@@ -7,9 +7,9 @@
     "packages/*"
   ],
   "scripts": {
-    "postinstall": "node scripts/apply-frontend-security-patches.cjs",
-    "security:patch": "node scripts/apply-frontend-security-patches.cjs",
-    "security:verify": "node scripts/apply-frontend-security-patches.cjs --verify",
+    "postinstall": "node scripts/verify-frontend-security-vendors.cjs",
+    "security:patch": "node scripts/verify-frontend-security-vendors.cjs",
+    "security:verify": "node scripts/verify-frontend-security-vendors.cjs",
     "prestart": "npm run security:verify",
     "preweb": "npm run security:verify",
     "preandroid": "npm run security:verify",
@@ -43,6 +43,9 @@
   "overrides": {
     "xcode": {
       "uuid": "11.1.1"
-    }
+    },
+    "braces": "file:security/vendor/archives/parkflow-security-braces-3.0.3-parkflow.1.tgz",
+    "node-forge": "file:security/vendor/archives/parkflow-security-node-forge-1.4.0-parkflow.1.tgz",
+    "decode-uri-component": "file:security/vendor/archives/parkflow-security-decode-uri-component-0.2.2-parkflow.1.tgz"
   }
 }
