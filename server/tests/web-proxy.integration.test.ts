@@ -213,12 +213,13 @@ describe('real Socket.IO polling through the same-origin read proxy', () => {
           expect(result.connected).toBe(false); expect(result.error).toBe('FORBIDDEN');
         } finally { await transport.close(); }
       }
-      for (const headers of [
+      const invalidHeaders: Headers[] = [
         { Referer: origin('customer') + '/', 'Sec-Fetch-Site': 'same-origin' },
         { ...readMetadata('customer'), Referer: 'https://untrusted.invalid/' },
         { ...readMetadata('customer'), 'Sec-Fetch-Site': 'cross-site' },
         { ...readMetadata('customer'), Origin: 'null' }, { ...readMetadata('customer'), Origin: '' },
-      ]) {
+      ];
+      for (const headers of invalidHeaders) {
         const transport = new Polling(server.port, { ...headers, Cookie: jar.cookie });
         try { expect(await transport.open()).toBe(403); } finally { await transport.close(); }
       }
