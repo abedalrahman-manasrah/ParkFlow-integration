@@ -1,3 +1,4 @@
+import { lockSessionFamily } from '../auth/service';
 import { z } from "zod";
 import { db, atomic, json, lock, type Tx } from "../../database/client";
 import { ApiError, assert, requireValue } from "../../utils/errors";
@@ -514,6 +515,7 @@ export async function updateOperator(
   });
 }
 async function adjustPlatformRole(tx: Tx, userId: string) {
+  await lockSessionFamily(tx, userId);
   const user = requireValue(
     await tx.user.findUnique({ where: { id: userId } }),
   );
@@ -539,6 +541,7 @@ export async function assignMember(
   return atomic(async (tx) => {
     await lock(tx, `operator:${operatorId}`);
     await operatorPermission(tx, actor, operatorId, "staff");
+    await lockSessionFamily(tx, data.userId);
     const target = requireValue(
       await tx.user.findUnique({ where: { id: data.userId } }),
     );
@@ -585,7 +588,7 @@ export async function assignMember(
       after,
     );
     return viewOperator(tx, actor, operatorId);
-  });
+  }, 'ReadCommitted');
 }
 export async function removeMember(
   actor: Actor,
@@ -595,6 +598,7 @@ export async function removeMember(
   return atomic(async (tx) => {
     await lock(tx, `operator:${operatorId}`);
     await operatorPermission(tx, actor, operatorId, "staff");
+    await lockSessionFamily(tx, userId);
     const before = requireValue(
       await tx.operatorUser.findUnique({
         where: { operatorId_userId: { operatorId, userId } },
@@ -630,7 +634,7 @@ export async function removeMember(
       null,
     );
     return viewOperator(tx, actor, operatorId);
-  });
+  }, 'ReadCommitted');
 }
 export async function removeOperator(actor: Actor, id: string) {
   assert(
@@ -653,13 +657,16 @@ export async function removeOperator(actor: Actor, id: string) {
       "Organizations with parking history cannot be removed",
       409,
     );
+    // Multi-account lifecycle locks use a stable order across organizations.
+    for (const userId of before.users.map(member => member.userId).sort())
+      await lockSessionFamily(tx, userId);
     await tx.operatorUser.deleteMany({ where: { operatorId: id } });
     for (const member of before.users)
       await adjustPlatformRole(tx, member.userId);
     await tx.parkingOperator.delete({ where: { id } });
     await audit(tx, actor, "remove", "operator", id, before, null);
     return { ok: true };
-  });
+  }, 'ReadCommitted');
 }
 export async function findPeople(
   actor: Actor,

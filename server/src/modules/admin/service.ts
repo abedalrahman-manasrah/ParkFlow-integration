@@ -2,7 +2,9 @@ import type { Role,Prisma } from '@prisma/client';
 import { db,atomic,json,lock,type Tx } from '../../database/client';
 import { assert,requireValue } from '../../utils/errors';
 import { notify } from '../notifications/service';
+import { lockSessionFamily } from '../auth/service';
 import { post } from '../wallet/ledger';
+import { findBookingRefund } from '../wallet/bookingEscrow';
 import { idempotent } from '../../utils/idempotency';
 import { event } from '../../realtime/outbox';
 import * as management from '../management/service';
@@ -58,14 +60,15 @@ export async function decideAppeal(a:Actor,id:string,input:{status:'under_review
  await audit(tx,a,'decide','appeal',id,before,result);
  return result;
  });}
-export async function permit(a:Actor,input:{userId:string;vehicleId:string;type:string;zoneIds:string[];validFrom:string;validTo:string;status:'active'|'pending';issuer:string}){return atomic(async tx=>{if(a.role!=='ADMIN'){assert(input.zoneIds.length,'FORBIDDEN','Operator permits must specify zones',403);for(const zoneId of input.zoneIds)await zonePermission(tx,a,zoneId);}assert(await tx.userVehicle.findFirst({where:{userId:input.userId,vehicleId:input.vehicleId,unlinkedAt:null}}),'VALIDATION','Vehicle must be linked to this user');const {zoneIds,...data}=input;const p=await tx.permit.create({data:{...data,zones:{create:zoneIds.map(zoneId=>({zoneId}))}}});await audit(tx,a,'create','permit',p.id,null,p);return p;});}
-export async function revokePermit(a:Actor,id:string){return atomic(async tx=>{const p=await tx.permit.findUniqueOrThrow({where:{id},include:{zones:true}});if(a.role!=='ADMIN'){assert(p.zones.length,'FORBIDDEN','Only admin can revoke a global permit',403);for(const z of p.zones)await zonePermission(tx,a,z.zoneId);}const result=await tx.permit.update({where:{id},data:{status:'revoked'}});await audit(tx,a,'revoke','permit',id,p,result);return result;});}
+export async function permit(a:Actor,input:{userId:string;vehicleId:string;type:string;zoneIds:string[];validFrom:string;validTo:string;status:'active'|'pending';issuer:string}){return atomic(async tx=>{if(a.role!=='ADMIN'){assert(input.zoneIds.length,'FORBIDDEN','Operator permits must specify zones',403);for(const zoneId of input.zoneIds)await zonePermission(tx,a,zoneId);}assert(await tx.userVehicle.findFirst({where:{userId:input.userId,vehicleId:input.vehicleId,unlinkedAt:null}}),'VALIDATION','Vehicle must be linked to this user');await lock(tx,`vehicle:${input.vehicleId}`);const {zoneIds,...data}=input;const p=await tx.permit.create({data:{...data,zones:{create:zoneIds.map(zoneId=>({zoneId}))}}});await audit(tx,a,'create','permit',p.id,null,p);return p;});}
+export async function revokePermit(a:Actor,id:string){return atomic(async tx=>{const p=await tx.permit.findUniqueOrThrow({where:{id},include:{zones:true}});await lock(tx,`vehicle:${p.vehicleId}`);if(a.role!=='ADMIN'){assert(p.zones.length,'FORBIDDEN','Only admin can revoke a global permit',403);for(const z of p.zones)await zonePermission(tx,a,z.zoneId);}const result=await tx.permit.update({where:{id},data:{status:'revoked'}});await audit(tx,a,'revoke','permit',id,p,result);return result;});}
 export async function role(a:Actor,id:string,input:{role?:Role;status?:'ACTIVE'|'SUSPENDED'}){return atomic(async tx=>{
  await lock(tx,'platform-admins');assert(a.role==='ADMIN','FORBIDDEN','Administrator access is required',403);assert(id!==a.userId,'VALIDATION','Cannot change your own permissions');
+ await lockSessionFamily(tx,id);
  const before=await tx.user.findUniqueOrThrow({where:{id}});
  if(before.role==='ADMIN'&&before.status==='ACTIVE'&&((input.role!==undefined&&input.role!=='ADMIN')||input.status==='SUSPENDED'))assert(await tx.user.count({where:{role:'ADMIN',status:'ACTIVE'}})>1,'LAST_ADMIN','At least one active platform administrator must remain',409);
  const after=await tx.user.update({where:{id},data:input});await tx.refreshToken.updateMany({where:{userId:id,revokedAt:null},data:{revokedAt:new Date()}});await audit(tx,a,'permissions','user',id,{role:before.role,status:before.status},{role:after.role,status:after.status});return {id,role:after.role,status:after.status};
- });}
+ },'ReadCommitted');}
 export async function adjustment(a:Actor,userId:string,amount:number,reason:string,key:string){return idempotent(a.userId,`adjust:${userId}`,key,{amount,reason},async tx=>{const t=await post(tx,userId,{amount,type:'adjustment',title:reason,titleAr:reason});await audit(tx,a,'adjust','wallet',t.walletId,null,t);return t;});}
 export async function auditLogs(){return db.auditLog.findMany({
  take:200,
@@ -90,7 +93,28 @@ export async function shareVehicle(a:Actor,vehicleId:string,input:{userId:string
 export async function refund(a:Actor,id:string,reason:string,key:string){return idempotent(a.userId,`refund:${id}`,key,{reason},async tx=>{
  const original=requireValue(await tx.walletTransaction.findUnique({where:{id},include:{wallet:true}}));
  assert(original.status==='completed'&&original.amount<0,'INVALID_REFUND','Only a completed debit can be refunded');
- const reference=`refund-${id}`;const existing=await tx.walletTransaction.findUnique({where:{reference}});if(existing)return existing;
+ let reference=`refund-${id}`;
+ if(original.type==='spot_payment'){
+  assert(original.reference.startsWith('spot-payment:'),'INVALID_REFUND','Booking payment reference is invalid');
+  const bookingId=original.reference.slice('spot-payment:'.length);
+  await lock(tx,`spot-booking:${bookingId}`);
+  const booking=requireValue(await tx.spotBooking.findUnique({where:{id:bookingId}}));
+  assert(booking.driverId===original.wallet.userId&&booking.amount===-original.amount,'INVALID_REFUND','Booking payment does not match its escrow');
+  const existing=await findBookingRefund(tx,'spot',bookingId);if(existing)return existing;
+  assert(booking.status!=='completed'&&!await tx.walletTransaction.findUnique({where:{reference:`spot-earning:${bookingId}`}}),'ESCROW_ALREADY_SETTLED','This booking has already paid its host',409);
+  reference=`spot-refund:${bookingId}`;
+ }else if(original.type==='ride_payment'){
+  assert(original.reference.startsWith('ride-payment:'),'INVALID_REFUND','Booking payment reference is invalid');
+  const bookingId=original.reference.slice('ride-payment:'.length);
+  const found=requireValue(await tx.rideBooking.findUnique({where:{id:bookingId},select:{rideId:true}}));
+  await lock(tx,`ride:${found.rideId}`);
+  const booking=requireValue(await tx.rideBooking.findUnique({where:{id:bookingId}}));
+  assert(booking.passengerId===original.wallet.userId&&booking.amount===-original.amount,'INVALID_REFUND','Booking payment does not match its escrow');
+  const existing=await findBookingRefund(tx,'ride',bookingId);if(existing)return existing;
+  assert(booking.status!=='completed'&&!await tx.walletTransaction.findUnique({where:{reference:`ride-earning:${booking.rideId}`}}),'ESCROW_ALREADY_SETTLED','This ride has already paid its driver',409);
+  reference=`ride-refund:${bookingId}`;
+ }
+ const existing=await tx.walletTransaction.findUnique({where:{reference}});if(existing)return existing;
  const entry=await post(tx,original.wallet.userId,{amount:-original.amount,type:'refund',title:reason,titleAr:reason,reference});await audit(tx,a,'refund','transaction',id,original,entry);return entry;
  });}
 export async function appeals(){return db.appeal.findMany({

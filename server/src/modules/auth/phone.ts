@@ -8,7 +8,7 @@ import { env } from '../../config/env';
 import { developmentPhoneLoginEnabled, requireAuthMethod, requireOtpEnabled } from '../../config/developmentAuth';
 import { ApiError, assert } from '../../utils/errors';
 import { userView } from '../users/service';
-import { digest, issue } from './service';
+import { digest, issue, lockSessionFamily } from './service';
 import { acquirePhoneOperation, releasePhoneOperation, consumeRemotePhoneChallenge } from './remotePhoneChallenge';
 
 const lifetime = 300;
@@ -46,7 +46,11 @@ export async function devPhoneLogin(input: z.input<typeof phoneRequestSchema>, m
     const national = phone.slice(4);
     const matches = await tx.user.findMany({where: {phone: {in: [phone, '+972' + national, '00970' + national, '00972' + national, '0' + national, national]}}});
     assert(matches.length <= 1 && matches.every(user => user.phone === phone), 'PHONE_MIGRATION_REQUIRED', 'Contact support to link your existing account to a verified phone', 409);
-    const existing = matches[0];
+    let existing = matches[0];
+    if (existing) {
+      await lockSessionFamily(tx, existing.id);
+      existing = await tx.user.findUniqueOrThrow({where: {id: existing.id}});
+    }
     assert(!existing || existing.phoneVerifiedAt || existing.phoneVerificationPending, 'PHONE_MIGRATION_REQUIRED', 'Contact support to link your existing account to a verified phone', 409);
     assert(!existing || existing.status === 'ACTIVE', 'ACCOUNT_SUSPENDED', 'This account is suspended', 403);
     assert(existing || parsed.purpose === 'register', 'PHONE_ACCOUNT_NOT_FOUND', 'Create an account with this phone number first', 404);
@@ -59,7 +63,7 @@ export async function devPhoneLogin(input: z.input<typeof phoneRequestSchema>, m
       }});
     await tx.auditLog.create({data: {actorUserId: user.id, action: 'auth.development_phone_login', resourceType: 'user', resourceId: user.id, ip: meta.ip, userAgent: meta.device}});
     return {session: await issue(tx, user, meta, undefined, true), user: userView(user), isNewUser: !user.profileCompletedAt};
-  });
+  }, 'ReadCommitted');
 }
 
 // The entire phone budget and challenge replacement is atomic across API processes.
@@ -173,7 +177,11 @@ export async function verifyPhoneOtp(input: z.input<typeof phoneVerifySchema>, m
     const matches = await tx.user.findMany({where: {phone: {in: [phone!, '+972' + national, '00970' + national, '00972' + national, '0' + national, national]}}});
     // Legacy aliases may belong to different historical accounts. Never guess which account to link.
     assert(matches.length <= 1 && matches.every(user => user.phone === phone), 'PHONE_MIGRATION_REQUIRED', 'Contact support to link your existing account to a verified phone', 409);
-    const existing = matches[0];
+    let existing = matches[0];
+    if (existing) {
+      await lockSessionFamily(tx, existing.id);
+      existing = await tx.user.findUniqueOrThrow({where: {id: existing.id}});
+    }
     assert(!existing || existing.phoneVerifiedAt || existing.phoneVerificationPending, 'PHONE_MIGRATION_REQUIRED', 'Contact support to link your existing account to a verified phone', 409);
     assert(!existing || existing.status === 'ACTIVE', 'ACCOUNT_SUSPENDED', 'This account is suspended', 403);
     assert(existing || purpose === 'register', 'PHONE_ACCOUNT_NOT_FOUND', 'Create an account with this phone number first', 404);
@@ -185,5 +193,5 @@ export async function verifyPhoneOtp(input: z.input<typeof phoneVerifySchema>, m
           lastLoginAt: new Date(), wallet: {create: {}},
         }});
     return {session: await issue(tx, user, meta), user: userView(user), isNewUser: !user.profileCompletedAt};
-  });
+  }, 'ReadCommitted');
 }

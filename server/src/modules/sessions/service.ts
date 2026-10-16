@@ -43,16 +43,18 @@ async function chargeStopped(tx:Tx,s:ParkingSession,cost:number){await lock(tx,`
  if(!paid)await tx.sessionDebt.upsert({where:{sessionId:s.id},create:{sessionId:s.id,amount:cost},update:{amount:cost}});
  return {status:paid?'COMPLETED' as const:'PAYMENT_FAILED' as const,paymentStatus:paid?'paid' as const:'failed' as const,paymentTransactionId:t.id};
 }
-export async function stop(userId:string,id:string,key:string){return idempotent(userId,`stop:${id}`,key,{},async tx=>{
+export async function stop(userId:string,id:string,key:string){return idempotent(userId,`stop:${id}`,key,{},tx=>stopInTransaction(tx,userId,id));}
+// Gate departures settle the session and physical visit in the caller's transaction.
+export async function stopInTransaction(tx:Tx,userId:string,id:string,stoppedAt?:Date){
  await lock(tx,`session:${id}`);const s=await owned(tx,userId,id);if(s.status!=='ACTIVE')return s;
- const now=new Date(),seconds=(now.getTime()-s.startedAt.getTime())/1000;
+ const clock=Date.now(),now=new Date(Math.max(s.startedAt.getTime(),Math.min(stoppedAt?.getTime()??clock,clock))),seconds=(now.getTime()-s.startedAt.getTime())/1000;
  const cost=s.parkingMode==='prepaid'?s.currentCost:computeCost(s.rateSnapshot as unknown as Rate,seconds);
  const subtotal=s.parkingMode==='prepaid'?s.subtotalMinor:computeCost(s.originalTariffSnapshot as unknown as Rate,seconds);
  const payment=s.parkingMode==='prepaid'?{status:'COMPLETED' as const,paymentStatus:'paid' as const}:await chargeStopped(tx,s,cost);
  const result=await tx.parkingSession.update({where:{id},data:{...payment,stoppedAt:now,endsAt:s.endsAt??now,finalCost:cost,currentCost:cost,subtotalMinor:subtotal,discountMinor:subtotal-cost}});
  const paid=payment.paymentStatus==='paid';await notify(tx,userId,paid?'parking_completed':'payment_failed',paid?'Parking completed':'Parking ended with an unpaid balance',paid?'اكتمل الوقوف':'انتهى الوقوف مع رصيد غير مدفوع','Your parking session has ended.','انتهت جلسة الوقوف.',`/parking/receipt/${id}`,`stop:${id}`);
  await event(tx,'parking.session.updated',{id},userId);return result;
- });}
+}
 export async function extend(userId:string,id:string,additionalMinutes:number,key:string){return idempotent(userId,`extend:${id}`,key,{additionalMinutes},async tx=>{
  // Resolve ownership first, then share management's zone-before-session lock order.
  const initial=await owned(tx,userId,id);await lock(tx,`zone:${initial.parkingZoneId}`);

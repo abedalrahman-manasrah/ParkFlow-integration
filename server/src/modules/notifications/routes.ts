@@ -16,5 +16,5 @@ route('get','/notifications',empty,r=>notifications.list(user(r)));
 route('get','/notifications/unread-count',empty,r=>notifications.unread(user(r)));
 route('patch','/notifications/read-all',empty,r=>notifications.read(user(r)));
 route('patch','/notifications/:id/read',empty,r=>notifications.read(user(r),param(r)));
-route('post','/notifications/device-tokens',z.object({token:z.string().min(10).max(4096),platform:z.enum(['ios','android','web']),provider:z.enum(['fcm','expo'])}).strict(),(r,b)=>notifications.register(user(r),b));
-route('delete','/notifications/device-tokens',z.object({token:z.string().min(10).max(4096)}).strict(),(r,b)=>notifications.unregister(user(r),b.token));
+route('post','/notifications/device-tokens',z.object({token:z.string().min(10).max(4096),platform:z.enum(['ios','android','web']),provider:z.enum(['fcm','expo'])}).strict(),(r,b)=>notifications.register(user(r),r.auth!.sid,b));
+route('delete','/notifications/device-tokens',z.object({token:z.string().min(10).max(4096)}).strict(),(r,b)=>notifications.unregister(user(r),r.auth!.sid,b.token));

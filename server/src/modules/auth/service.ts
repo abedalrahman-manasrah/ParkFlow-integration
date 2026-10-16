@@ -65,6 +65,29 @@ export type WebApplication='customer'|'management';
 export type WebBinding={webApplication:WebApplication;webBrowserId:string};
 export type AuthMeta={device?:string;ip?:string;webApplication?:WebApplication;webBrowserId?:string};
 export type NativeSession={userId:string;accessToken:string;refreshToken:string;expiresAt:string};
+// Always acquire the user lock before the family lock. In particular, logout-all
+// must exclude new issue/rotation until its revocation has committed.
+export async function lockSessionFamily(tx:Tx,userId:string,familyId?:string){
+ await lock(tx,`auth:user:${userId}`);
+ if(familyId)await lock(tx,`refresh:${familyId}`);
+}
+export async function revokeSessionFamily(userId:string,familyId:string){
+ await atomic(async tx=>{
+  await lockSessionFamily(tx,userId,familyId);
+  await tx.refreshToken.updateMany({where:{userId,familyId,revokedAt:null},data:{revokedAt:new Date()}});
+ },'ReadCommitted');
+}
+// Call only while holding this user's/family's lifecycle locks. The oldest
+// ancestor establishes the admin deadline even after refresh rotation.
+export async function liveSessionFamily(tx:Tx,userId:string,familyId:string){
+ const current=await tx.refreshToken.findFirst({where:{userId,familyId,revokedAt:null,expiresAt:{gt:new Date()}},orderBy:{createdAt:'desc'},include:{user:true}});
+ // Additive defaults on old rows cannot prove their original JWT mode.
+ // Access/refresh remain valid; a signed refresh issues authoritative metadata.
+ if(!current||current.metadataVersion!==1||current.user.status!=='ACTIVE')return null;
+ if((current.developmentPhoneLogin&&!developmentPhoneLoginEnabled())||(current.developmentEmailLogin&&!developmentEmailLoginEnabled()))return null;
+ if(await revokeExpiredAdminFamily(tx,current.user,familyId))return null;
+ return current;
+}
 async function revokeExpiredAdminFamily(tx:Tx,user:Pick<User,'id'|'role'>,familyId:string){
  if(user.role!=='ADMIN')return false;
  // Include revoked ancestors: refreshing must never move the absolute deadline.
@@ -104,12 +127,15 @@ export async function requestOtp(input:z.input<typeof emailRequestSchema>){
  return {challengeId,email,resendAfterSeconds:60,expiresAt};
 }
 export async function issue(tx:Tx,user:User,meta:AuthMeta,familyId:string=randomUUID(),developmentPhoneLogin=false,developmentEmailLogin=false):Promise<NativeSession>{
+ await lockSessionFamily(tx,user.id,familyId);
+ user=requireValue(await tx.user.findUnique({where:{id:user.id}}));
+ assert(user.status==='ACTIVE','ACCOUNT_SUSPENDED','This account is suspended',403);
  const id=randomUUID(),expiresAt=new Date(Date.now()+env.REFRESH_TOKEN_TTL*1000);
  assert(Boolean(meta.webApplication)===Boolean(meta.webBrowserId),'UNAUTHORIZED','Invalid session binding',401);
  const binding=meta.webApplication?{webApplication:meta.webApplication,webBrowserId:meta.webBrowserId,familyId}:{};
  const mode={...(developmentPhoneLogin?{developmentPhoneLogin:true}:{}),...(developmentEmailLogin?{developmentEmailLogin:true}:{})};
  const refreshToken=jwt.sign({sub:user.id,jti:id,familyId,kind:'refresh',...mode,...binding},env.JWT_REFRESH_SECRET,{algorithm:'HS256',expiresIn:env.REFRESH_TOKEN_TTL,issuer:'parkflow',audience:'parkflow-refresh'});
- await tx.refreshToken.create({data:{id,userId:user.id,tokenHash:digest(refreshToken),familyId,expiresAt,device:meta.device,ip:meta.ip}});
+ await tx.refreshToken.create({data:{id,userId:user.id,tokenHash:digest(refreshToken),familyId,expiresAt,device:meta.device,ip:meta.ip,transport:meta.webApplication?'web':'native',metadataVersion:1,developmentPhoneLogin,developmentEmailLogin}});
  return {userId:user.id,accessToken:jwt.sign({sub:user.id,sid:id,kind:'access',...mode,...binding},env.JWT_ACCESS_SECRET,{algorithm:'HS256',expiresIn:env.ACCESS_TOKEN_TTL,issuer:'parkflow',audience:'parkflow-api'}),refreshToken,expiresAt:new Date(Date.now()+env.ACCESS_TOKEN_TTL*1000).toISOString()};
 }
 export async function verifyOtp(input:{challengeId:string;code:string},meta:AuthMeta){
@@ -127,7 +153,8 @@ export async function verifyOtp(input:{challengeId:string;code:string},meta:Auth
  const [,email,purpose,fullName]=result;
  return atomic(async tx=>{
  await lock(tx,`email:${email!}`);
- const existing=await tx.user.findUnique({where:{email:email!}});
+ let existing=await tx.user.findUnique({where:{email:email!}});
+ if(existing){await lockSessionFamily(tx,existing.id);existing=await tx.user.findUniqueOrThrow({where:{id:existing.id}});}
  assert(!existing || existing.emailVerifiedAt || existing.emailVerificationPending,'EMAIL_MIGRATION_REQUIRED','Contact support to link your existing account to a verified email',409);
  assert(!existing||existing.status==='ACTIVE','ACCOUNT_SUSPENDED','This account is suspended',403);
  assert(existing||purpose!=='login','EMAIL_ACCOUNT_NOT_FOUND','Create an account with this email first',404);
@@ -135,7 +162,7 @@ export async function verifyOtp(input:{challengeId:string;code:string},meta:Auth
   ?await tx.user.update({where:{id:existing.id},data:{lastLoginAt:new Date(),...(existing.emailVerificationPending?{emailVerifiedAt:new Date(),emailVerificationPending:false}:{})}})
   :await tx.user.create({data:{email:email!,emailVerifiedAt:new Date(),fullName:fullName!,firstName:fullName!.split(/\s+/)[0]??'',lastName:fullName!.split(/\s+/).slice(1).join(' '),lastLoginAt:new Date(),wallet:{create:{}}}});
  return {session:await issue(tx,user,meta),user:userView(user),isNewUser:!user.profileCompletedAt};
- });
+ },'ReadCommitted');
 }
 export async function devLogin(input:z.input<typeof devEmailLoginSchema>,meta:AuthMeta){
  requireAuthMethod('email');
@@ -144,7 +171,8 @@ export async function devLogin(input:z.input<typeof devEmailLoginSchema>,meta:Au
  const email=normalizeEmail(parsed.email);
  return atomic(async tx=>{
   await lock(tx,`email:${email}`);
-  const existing=await tx.user.findUnique({where:{email}});
+  let existing=await tx.user.findUnique({where:{email}});
+  if(existing){await lockSessionFamily(tx,existing.id);existing=await tx.user.findUniqueOrThrow({where:{id:existing.id}});}
   assert(!existing||existing.status==='ACTIVE','ACCOUNT_SUSPENDED','This account is suspended',403);
   assert(existing||parsed.purpose!=='login','EMAIL_ACCOUNT_NOT_FOUND','Create an account with this email first',404);
   const fullName=parsed.fullName??'';
@@ -153,7 +181,7 @@ export async function devLogin(input:z.input<typeof devEmailLoginSchema>,meta:Au
    :await tx.user.create({data:{email,emailVerificationPending:true,fullName,firstName:fullName.split(/\s+/)[0]??'',lastName:fullName.split(/\s+/).slice(1).join(' '),lastLoginAt:new Date(),wallet:{create:{}}}});
   await tx.auditLog.create({data:{actorUserId:user.id,action:'auth.development_email_login',resourceType:'user',resourceId:user.id,ip:meta.ip,userAgent:meta.device}});
   return {session:await issue(tx,user,meta,undefined,false,true),user:userView(user),isNewUser:!user.profileCompletedAt};
- });
+ },'ReadCommitted');
 }
 function assertTransport(v:jwt.JwtPayload,binding?:WebBinding){
  if(binding)assert(v.webApplication===binding.webApplication&&v.webBrowserId===binding.webBrowserId&&typeof v.familyId==='string','UNAUTHORIZED','Invalid browser session binding',401);
@@ -172,12 +200,12 @@ async function authenticateClaims(claims:ReturnType<typeof accessClaims>){const 
  assert(record&&record.userId===claims.userId&&(!claims.familyId||record.familyId===claims.familyId)&&!record.revokedAt&&record.expiresAt>new Date()&&record.user.status==='ACTIVE','UNAUTHORIZED','Session has ended',401);
  if(record.user.role==='ADMIN'){
   const role=await atomic(async tx=>{
-   await lock(tx,`refresh:${record.familyId}`);
+   await lockSessionFamily(tx,record.userId,record.familyId);
    const current=await tx.refreshToken.findUnique({where:{id:record.id},include:{user:true}});
    if(!current||current.userId!==claims.userId||current.revokedAt||current.expiresAt<=new Date()||current.user.status!=='ACTIVE')return null;
    if(await revokeExpiredAdminFamily(tx,current.user,current.familyId))return null;
    return current.user.role;
-  });
+  },'ReadCommitted');
   // Throw only after the transaction commits, preserving family revocation.
   assert(role,'UNAUTHORIZED','Admin session has ended. Sign in again.',401);return {...claims,role};
  }
@@ -201,11 +229,11 @@ export async function inspectWebRefresh(token:string,binding:WebBinding,allowRev
   assert(!record.revokedAt&&record.user.status==='ACTIVE','UNAUTHORIZED','Session has ended',401);
   if(record.user.role==='ADMIN'){
    const alive=await atomic(async tx=>{
-    await lock(tx,`refresh:${record.familyId}`);
+    await lockSessionFamily(tx,record.userId,record.familyId);
     const current=await tx.refreshToken.findUnique({where:{id:record.id},include:{user:true}});
     if(!current||current.revokedAt||current.expiresAt<=new Date()||current.user.status!=='ACTIVE')return false;
     return !(await revokeExpiredAdminFamily(tx,current.user,current.familyId));
-   });
+   },'ReadCommitted');
    assert(alive,'UNAUTHORIZED','Admin session has ended. Sign in again.',401);
   }
  }
@@ -213,18 +241,29 @@ export async function inspectWebRefresh(token:string,binding:WebBinding,allowRev
 }
 async function rotateRefresh(token:string,meta:AuthMeta,binding?:WebBinding){
  const claims=refreshClaims(token,binding);
- const result=await atomic(async tx=>{const old=await tx.refreshToken.findUnique({where:{tokenHash:digest(token)},include:{user:true}});
- if(!old||old.id!==claims.jti||old.userId!==claims.sub||old.familyId!==claims.familyId)return null;
- await lock(tx,`refresh:${old.familyId}`);
- const current=requireValue(await tx.refreshToken.findUnique({where:{id:old.id},include:{user:true}}));
- if(current.revokedAt){if(!binding)await tx.refreshToken.updateMany({where:{familyId:old.familyId,revokedAt:null},data:{revokedAt:new Date()}});return null;}
+ const result=await atomic(async tx=>{
+ await lockSessionFamily(tx,claims.sub!,claims.familyId as string);
+ const current=await tx.refreshToken.findUnique({where:{tokenHash:digest(token)},include:{user:true}});
+ if(!current||current.id!==claims.jti||current.userId!==claims.sub||current.familyId!==claims.familyId)return null;
+ if(current.revokedAt){if(!binding)await tx.refreshToken.updateMany({where:{userId:current.userId,familyId:current.familyId,revokedAt:null},data:{revokedAt:new Date()}});return null;}
  if(await revokeExpiredAdminFamily(tx,current.user,current.familyId))return null;
  if(current.expiresAt<=new Date()||current.user.status!=='ACTIVE')return null;
- const next=await issue(tx,current.user,{device:meta.device,ip:meta.ip,...binding},old.familyId,claims.developmentPhoneLogin===true,claims.developmentEmailLogin===true);
+ const next=await issue(tx,current.user,{device:meta.device,ip:meta.ip,...binding},current.familyId,claims.developmentPhoneLogin===true,claims.developmentEmailLogin===true);
  const nextClaims=jwt.decode(next.refreshToken) as jwt.JwtPayload;
- await tx.refreshToken.update({where:{id:old.id},data:{revokedAt:new Date(),replacedBy:nextClaims.jti}});return next;});
+ await tx.refreshToken.update({where:{id:current.id},data:{revokedAt:new Date(),replacedBy:nextClaims.jti}});return next;
+ },'ReadCommitted');
  assert(result,binding?'SESSION_CHANGED':'UNAUTHORIZED','Refresh token was revoked or reused',401);return result;
 }
 export async function refresh(token:string,meta:AuthMeta){return rotateRefresh(token,meta);}
 export async function refreshWeb(token:string,meta:AuthMeta&WebBinding){return rotateRefresh(token,meta,meta);}
-export async function logout(userId:string,sid:string,all=false){await db.refreshToken.updateMany({where:{userId,...(all?{}:{id:sid}),revokedAt:null},data:{revokedAt:new Date()}});}
+export async function logout(userId:string,sid:string,all=false){
+ await atomic(async tx=>{
+  await lockSessionFamily(tx,userId);
+  const initiating=await tx.refreshToken.findUnique({where:{id:sid}});
+  if(!initiating||initiating.userId!==userId)return;
+  if(!all)await lockSessionFamily(tx,userId,initiating.familyId);
+  // The initiating sid can already be a revoked ancestor after a concurrent
+  // refresh. Revoke the current family, including its committed successor.
+  await tx.refreshToken.updateMany({where:{userId,...(all?{}:{familyId:initiating.familyId}),revokedAt:null},data:{revokedAt:new Date()}});
+ },'ReadCommitted');
+}

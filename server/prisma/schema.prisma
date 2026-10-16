@@ -243,6 +243,10 @@ model RefreshToken {
   userId     String
   user       User      @relation(fields: [userId], references: [id])
   tokenHash  String    @unique
+  transport  String    @default("native")
+  metadataVersion Int @default(0)
+  developmentPhoneLogin Boolean @default(false)
+  developmentEmailLogin Boolean @default(false)
   familyId   String
   expiresAt  DateTime
   revokedAt  DateTime?
@@ -978,8 +982,10 @@ model DeviceToken {
   token     String   @unique
   platform  String
   provider  String   @default("fcm")
+  sessionFamilyId String?
   createdAt DateTime @default(now())
 
+  @@index([userId, sessionFamilyId])
   @@map("device_tokens")
 }
 

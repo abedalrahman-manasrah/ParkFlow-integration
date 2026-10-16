@@ -123,38 +123,36 @@ export async function enter(event: GateEvent) {
 export async function exit(event: GateEvent) {
   const at = event.at ?? new Date();
   const pass = event.pass ? readGatePass(event.pass) : undefined;
-  if (pass) {
-    assert(await db.userVehicle.findFirst({ where: { userId: pass.userId, vehicleId: pass.vehicleId, unlinkedAt: null } }), 'INVALID_GATE_PASS', 'This driver is no longer linked to that vehicle', 400);
-    const active = await db.parkingSession.findFirst({ where: { vehicleId: pass.vehicleId, parkingZoneId: event.zoneId, status: 'ACTIVE' } });
-    assert(!active || active.userId === pass.userId, 'FORBIDDEN', 'This parking session belongs to another account', 403);
-  }
   const plateNumber = pass
     ? requireValue(await db.vehicle.findUnique({ where: { id: pass.vehicleId } }), 'Vehicle not found').plateNumber
     : normalizePlate(event.plate ?? '');
-  const zone = requireValue(await db.parkingZone.findUnique({ where: { id: event.zoneId } }), 'Parking location not found');
-  // Settle any overstay up to the moment of leaving before the visit closes.
-  await checkOverstays(at);
   const vehicle = await db.vehicle.findUnique({ where: { plateNumber_region: { plateNumber, region: 'PS' } }, select: { id: true } });
-  const visit = await atomic(async (tx) => {
-    await lock(tx, `zone:${zone.id}`);
-    if (vehicle) await lock(tx, `vehicle:${vehicle.id}`);
-    await lock(tx, `plate:${plateNumber}`);
-    const open = await tx.parkingVisit.findFirst({ where: { plateNumber, exitedAt: null, parkingZoneId: zone.id } });
+  const result = await atomic(async (tx) => {
+    await lock(tx, 'zone:' + event.zoneId);
+    if (vehicle) await lock(tx, 'vehicle:' + vehicle.id);
+    await lock(tx, 'plate:' + plateNumber);
+    const zone = requireValue(await tx.parkingZone.findUnique({ where: { id: event.zoneId }, include: { operator: true } }), 'Parking location not found');
+    const open = await tx.parkingVisit.findFirst({ where: { plateNumber, exitedAt: null, parkingZoneId: zone.id }, include: { zone: { include: { operator: true } } } });
     assert(open, 'NOT_INSIDE', 'This car has no recorded entry at this lot', 404);
-    await lock(tx, `visit:${open.id}`);
+    await lock(tx, 'visit:' + open.id);
+    if (open.vehicleId) await lockCoverageSessions(tx, open.vehicleId, zone.id);
     if (pass) {
       assert(await tx.userVehicle.findFirst({ where: { userId: pass.userId, vehicleId: pass.vehicleId, unlinkedAt: null } }), 'INVALID_GATE_PASS', 'This driver is no longer linked to that vehicle', 400);
       const active = await tx.parkingSession.findFirst({ where: { vehicleId: pass.vehicleId, parkingZoneId: zone.id, status: 'ACTIVE' } });
       assert(!active || active.userId === pass.userId, 'FORBIDDEN', 'This parking session belongs to another account', 403);
     }
-    return tx.parkingVisit.update({ where: { id: open.id }, data: { exitedAt: at, exitSource: event.source, exitDeviceId: event.deviceId } });
-  });
-  // Leaving ends pay-as-you-go parking, so nobody pays for time after they drove out.
-  if (visit.vehicleId) {
-    const active = await db.parkingSession.findFirst({ where: { vehicleId: visit.vehicleId, parkingZoneId: zone.id, status: 'ACTIVE', parkingMode: 'start_stop' } });
-    if (active) await sessions.stop(pass?.userId ?? active.userId, active.id, `gate-exit:${visit.id}`);
-  }
-  return visitView(visit, zone, at);
+    // Preserve tolerated camera history, but never use a future event to advance money.
+    const evaluatedAt = new Date(Math.min(at.getTime(), Date.now()));
+    await assessVisitOverstay(tx, open, evaluatedAt);
+    if (open.vehicleId) {
+      const active = await tx.parkingSession.findFirst({ where: { vehicleId: open.vehicleId, parkingZoneId: zone.id, status: 'ACTIVE', parkingMode: 'start_stop' } });
+      if (active) await sessions.stopInTransaction(tx, pass?.userId ?? active.userId, active.id, evaluatedAt);
+    }
+    // A billing failure rolls back the physical departure as well, allowing a safe retry.
+    const visit = await tx.parkingVisit.update({ where: { id: open.id }, data: { exitedAt: at, exitSource: event.source, exitDeviceId: event.deviceId } });
+    return { visit, zone, evaluatedAt };
+  }, 'ReadCommitted');
+  return visitView(result.visit, result.zone, result.evaluatedAt);
 }
 
 /* ── Coverage and the overstay checker ─────────────────────────────────── */
@@ -207,6 +205,65 @@ function wording(zone: ZoneWithOperator, hasSession: boolean) {
     : { reason: `Unpaid parking fee charged by ${zone.operator.name}`, reasonAr: `رسوم وقوف غير مدفوع من ${zone.operator.name}` };
 }
 
+async function lockCoverageSessions(tx: Tx, vehicleId: string, zoneId: string) {
+  // Start/extend share the zone lock; stop/expiry share the individual session lock.
+  const sessions = await tx.parkingSession.findMany({ where: { vehicleId, parkingZoneId: zoneId }, select: { id: true }, orderBy: { id: 'asc' } });
+  for (const session of sessions) await lock(tx, 'session:' + session.id);
+}
+
+async function assessVisitOverstay(tx: Tx, visit: ParkingVisit & { zone: ZoneWithOperator }, now: Date) {
+  if (visit.exitedAt || !visit.vehicleId) return;
+  const zone = visit.zone;
+  const cover = await coverage(visit, zone, now, tx);
+  if (cover.covered || !cover.until) return;
+  const graceEnds = new Date(cover.until.getTime() + zone.overstayGraceMinutes * 60_000);
+  const people = await owners(tx, visit.vehicleId);
+  if (now < graceEnds) {
+    // Only warn about paid time that ran out — an unpaid entry was already told at the gate.
+    if (cover.hasSession) {
+      for (const userId of people) {
+        await notify(tx, userId, 'overstay_warning', 'Your parking time ended', 'انتهى وقت الوقوف',
+          `Extend or leave ${zone.name} within ${zone.overstayGraceMinutes} minutes to avoid a violation.`,
+          `مدّد أو غادر ${zone.nameAr} خلال ${zone.overstayGraceMinutes} دقائق لتجنب المخالفة.`,
+          '/(tabs)/map', `overstay-warning:${visit.id}:${cover.until!.getTime()}:${userId}`);
+      }
+    }
+    return;
+  }
+  const due = 1 + Math.floor((now.getTime() - graceEnds.getTime()) / (zone.overstayRepeatMinutes * 60_000));
+  const issued = await tx.violation.findMany({ where: { parkingVisitId: visit.id }, select: { amount: true, issuedAt: true } });
+  const sinceCoverage = issued.filter((v) => v.issuedAt >= graceEnds).length;
+  let total = issued.reduce((sum, v) => sum + v.amount, 0);
+  const text = wording(zone, cover.hasSession);
+  for (let n = sinceCoverage; n < due; n++) {
+    const amount = Math.min(zone.overstayFee, zone.overstayMaxPerStay - total);
+    if (amount <= 0) break;
+    total += amount;
+    const violation = await tx.violation.create({
+      data: {
+        vehicleId: visit.vehicleId!, plateNumber: visit.plateNumber,
+        type: cover.hasSession ? 'expired_parking' : 'no_active_parking',
+        amount, parkingZoneId: zone.id, parkingVisitId: visit.id,
+        locationName: zone.name, locationNameAr: zone.nameAr, latitude: zone.latitude, longitude: zone.longitude,
+        issuedAt: now, dueAt: new Date(now.getTime() + VIOLATION_DUE_DAYS * 86_400_000),
+        ...text, issuingAuthority: zone.operator.name, issuingAuthorityAr: zone.operator.name,
+      },
+    });
+    await tx.violationEvidence.create({
+      data: {
+        violationId: violation.id, detectedPlate: visit.plateNumber,
+        detectionSource: visit.entrySource === 'camera' ? 'fixed_camera' : visit.entrySource === 'qr' ? 'gate_scan' : 'inspector',
+        firstDetectionAt: visit.enteredAt, secondDetectionAt: now,
+        latitude: zone.latitude, longitude: zone.longitude, deviceId: visit.entryDeviceId,
+      },
+    });
+    for (const userId of people) {
+      await notify(tx, userId, 'violation_issued', 'New parking violation', 'مخالفة وقوف جديدة',
+        `${text.reason} at ${zone.name}.`, `${text.reasonAr} في ${zone.nameAr}.`, `/violations/${violation.id}`, `violation:${violation.id}:${userId}`);
+    }
+  }
+}
+
 /**
  * For every car still inside: warn once when its paid time runs out, then after
  * the lot's grace period issue one charge per repeat period, up to the lot's cap
@@ -220,68 +277,16 @@ export async function checkOverstays(evaluatedAt?: Date) {
   });
   for (const candidate of open) {
     await atomic(async (tx) => {
-      await lock(tx, `zone:${candidate.parkingZoneId}`);
-      await lock(tx, `vehicle:${candidate.vehicleId!}`);
-      await lock(tx, `plate:${candidate.plateNumber}`);
-      await lock(tx, `visit:${candidate.id}`);
+      await lock(tx, 'zone:' + candidate.parkingZoneId);
+      await lock(tx, 'vehicle:' + candidate.vehicleId!);
+      await lock(tx, 'plate:' + candidate.plateNumber);
+      await lock(tx, 'visit:' + candidate.id);
       const visit = await tx.parkingVisit.findUnique({ where: { id: candidate.id }, include: { zone: { include: { operator: true } } } });
       if (!visit || visit.exitedAt || !visit.vehicleId) return;
-      const zone = visit.zone;
-      // Stops/expiry lock sessions directly; extensions also share our zone lock.
-      const sessionIds = await tx.parkingSession.findMany({ where: { vehicleId: visit.vehicleId, parkingZoneId: zone.id }, select: { id: true }, orderBy: { id: 'asc' } });
-      for (const session of sessionIds) await lock(tx, `session:${session.id}`);
-      // A worker scan may wait while a new session/extension commits. Use the
-      // locked check's current time unless a caller explicitly supplied an event time.
-      const now = evaluatedAt ?? new Date();
-      const cover = await coverage(visit, zone, now, tx);
-      if (cover.covered || !cover.until) return;
-      const graceEnds = new Date(cover.until.getTime() + zone.overstayGraceMinutes * 60_000);
-      const people = await owners(tx, visit.vehicleId);
-      if (now < graceEnds) {
-        // Only warn about paid time that ran out — an unpaid entry was already told at the gate.
-        if (cover.hasSession) {
-          for (const userId of people) {
-            await notify(tx, userId, 'overstay_warning', 'Your parking time ended', 'انتهى وقت الوقوف',
-              `Extend or leave ${zone.name} within ${zone.overstayGraceMinutes} minutes to avoid a violation.`,
-              `مدّد أو غادر ${zone.nameAr} خلال ${zone.overstayGraceMinutes} دقائق لتجنب المخالفة.`,
-              '/(tabs)/map', `overstay-warning:${visit.id}:${cover.until!.getTime()}:${userId}`);
-          }
-        }
-        return;
-      }
-      const due = 1 + Math.floor((now.getTime() - graceEnds.getTime()) / (zone.overstayRepeatMinutes * 60_000));
-      const issued = await tx.violation.findMany({ where: { parkingVisitId: visit.id }, select: { amount: true, issuedAt: true } });
-      const sinceCoverage = issued.filter((v) => v.issuedAt >= graceEnds).length;
-      let total = issued.reduce((sum, v) => sum + v.amount, 0);
-      const text = wording(zone, cover.hasSession);
-      for (let n = sinceCoverage; n < due; n++) {
-        const amount = Math.min(zone.overstayFee, zone.overstayMaxPerStay - total);
-        if (amount <= 0) break;
-        total += amount;
-        const violation = await tx.violation.create({
-          data: {
-            vehicleId: visit.vehicleId!, plateNumber: visit.plateNumber,
-            type: cover.hasSession ? 'expired_parking' : 'no_active_parking',
-            amount, parkingZoneId: zone.id, parkingVisitId: visit.id,
-            locationName: zone.name, locationNameAr: zone.nameAr, latitude: zone.latitude, longitude: zone.longitude,
-            issuedAt: now, dueAt: new Date(now.getTime() + VIOLATION_DUE_DAYS * 86_400_000),
-            ...text, issuingAuthority: zone.operator.name, issuingAuthorityAr: zone.operator.name,
-          },
-        });
-        await tx.violationEvidence.create({
-          data: {
-            violationId: violation.id, detectedPlate: visit.plateNumber,
-            detectionSource: visit.entrySource === 'camera' ? 'fixed_camera' : visit.entrySource === 'qr' ? 'gate_scan' : 'inspector',
-            firstDetectionAt: visit.enteredAt, secondDetectionAt: now,
-            latitude: zone.latitude, longitude: zone.longitude, deviceId: visit.entryDeviceId,
-          },
-        });
-        for (const userId of people) {
-          await notify(tx, userId, 'violation_issued', 'New parking violation', 'مخالفة وقوف جديدة',
-            `${text.reason} at ${zone.name}.`, `${text.reasonAr} في ${zone.nameAr}.`, `/violations/${violation.id}`, `violation:${violation.id}:${userId}`);
-        }
-      }
-    });
+      await lockCoverageSessions(tx, visit.vehicleId, visit.parkingZoneId);
+      await assessVisitOverstay(tx, visit, evaluatedAt ?? new Date());
+      // ReadCommitted sees coverage committed while an advisory lock was waiting.
+    }, 'ReadCommitted');
   }
 }
 
@@ -403,7 +408,6 @@ export async function patrolCheck(staff: Staff, zoneId: string, plate: string) {
 
 /** An officer's on-the-spot violation for a car with no valid parking. */
 export async function patrolIssue(staff: Staff, zoneId: string, plate: string) {
-  const zone = requireValue(await db.parkingZone.findUnique({ where: { id: zoneId }, include: { operator: true } }));
   const check = await patrolCheck(staff, zoneId, plate);
   assert(check.registered, 'UNREGISTERED_PLATE', 'This plate is not in ParkFlow — issue a paper ticket instead', 409);
   assert(!check.allowed, 'PARKING_VALID', 'This car has valid parking right now', 409);
@@ -412,14 +416,28 @@ export async function patrolIssue(staff: Staff, zoneId: string, plate: string) {
   const vehicle = requireValue(await db.vehicle.findUnique({ where: { plateNumber_region: { plateNumber: check.plateNumber, region: 'PS' } } }));
   // One officer ticket per car, lot and hour — tapping twice must not double-charge.
   return atomic(async (tx) => {
-    await lock(tx, `patrol:${zoneId}:${vehicle.id}`);
+    // Match gate entry and session start/extend before deciding if a fine is valid.
+    await lock(tx, 'zone:' + zoneId);
+    await lock(tx, 'vehicle:' + vehicle.id);
+    await lock(tx, 'plate:' + vehicle.plateNumber);
+    const zone = requireValue(await tx.parkingZone.findUnique({ where: { id: zoneId }, include: { operator: true } }));
+    const visit = await tx.parkingVisit.findFirst({ where: { plateNumber: vehicle.plateNumber, parkingZoneId: zoneId, exitedAt: null } });
+    if (visit) await lock(tx, 'visit:' + visit.id);
+    await lockCoverageSessions(tx, vehicle.id, zoneId);
+    const now = new Date();
+    const cover = await coverage(visit ?? { vehicleId: vehicle.id, enteredAt: now, parkingZoneId: zoneId }, zone, now, tx);
+    const inGrace = !cover.covered && (Boolean(visit) || cover.hasSession) && Boolean(cover.until)
+      && now.getTime() < cover.until!.getTime() + zone.overstayGraceMinutes * 60_000;
+    assert(!cover.covered, 'PARKING_VALID', 'This car has valid parking right now', 409);
+    assert(!inGrace, 'IN_GRACE_PERIOD', 'This car is still within the grace period', 409);
+    assert(!visit, 'GATE_TRACKED', 'This car is tracked by the gate and is charged automatically', 409);
+    await lock(tx, 'patrol:' + zoneId + ':' + vehicle.id);
     const duplicate = await tx.violation.findFirst({ where: { vehicleId: vehicle.id, parkingZoneId: zoneId, parkingVisitId: null, issuedAt: { gte: new Date(Date.now() - 3_600_000) } } });
     assert(!duplicate, 'ALREADY_ISSUED', 'A violation was already issued for this car in the last hour', 409);
-    const now = new Date();
-    const text = wording(zone, check.reason === 'expired');
+    const text = wording(zone, cover.hasSession);
     const violation = await tx.violation.create({
       data: {
-        vehicleId: vehicle.id, plateNumber: vehicle.plateNumber, type: check.reason === 'expired' ? 'expired_parking' : 'no_active_parking',
+        vehicleId: vehicle.id, plateNumber: vehicle.plateNumber, type: cover.hasSession ? 'expired_parking' : 'no_active_parking',
         amount: zone.overstayFee, parkingZoneId: zone.id, locationName: zone.name, locationNameAr: zone.nameAr,
         latitude: zone.latitude, longitude: zone.longitude, issuedAt: now, dueAt: new Date(now.getTime() + VIOLATION_DUE_DAYS * 86_400_000),
         ...text, issuingAuthority: zone.operator.name, issuingAuthorityAr: zone.operator.name,
@@ -434,5 +452,5 @@ export async function patrolIssue(staff: Staff, zoneId: string, plate: string) {
         `${text.reason} at ${zone.name}.`, `${text.reasonAr} في ${zone.nameAr}.`, `/violations/${violation.id}`, `violation:${violation.id}:${userId}`);
     }
     return { id: violation.id, amount: violation.amount, type: violation.type };
-  });
+  }, 'ReadCommitted');
 }

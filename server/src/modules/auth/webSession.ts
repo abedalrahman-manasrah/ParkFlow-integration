@@ -2,12 +2,12 @@ import { createHmac, randomBytes, randomUUID, timingSafeEqual } from 'node:crypt
 import type { Request } from 'express';
 import jwt from 'jsonwebtoken';
 import { env, webOrigins } from '../../config/env';
-import { atomic, db, lock } from '../../database/client';
+import { atomic, db } from '../../database/client';
 import { redis } from '../../database/redis';
 import { ApiError, assert } from '../../utils/errors';
 import { userView } from '../users/service';
 import {
-  authenticate, authenticateWeb, digest, inspectWebRefresh, refresh, refreshWeb, verifyWebAccess,
+  authenticate, authenticateWeb, digest, inspectWebRefresh, refresh, refreshWeb, verifyWebAccess, revokeSessionFamily, lockSessionFamily,
   type AuthMeta, type NativeSession, type WebApplication, type WebBinding,
 } from './service';
 
@@ -179,12 +179,6 @@ function clearCredentials(req: Request, context: BrowserContext, familyId: strin
   res.clearCookie(familyCookie(context.application, familyId, 'access'), cookieOptions);
   res.clearCookie(familyCookie(context.application, familyId, 'refresh'), cookieOptions);
 }
-async function revokeFamily(userId: string, familyId: string) {
-  await atomic(async tx => {
-    await lock(tx, `refresh:${familyId}`);
-    await tx.refreshToken.updateMany({ where: { userId, familyId, revokedAt: null }, data: { revokedAt: new Date() } });
-  });
-}
 async function refreshProof(context: BrowserContext, selected: ActiveSession) {
   const token = context.cookies.get(familyCookie(context.application, selected.familyId, 'refresh'));
   assert(token, 'UNAUTHORIZED', 'Browser refresh proof is missing', 401);
@@ -205,13 +199,13 @@ export async function webIssue(req: Request, operation: (meta: AuthMeta) => Prom
     const published = await publish(context, lease, previous, issued);
     // Only a successfully selected login can revoke its predecessor. If the
     // lease expired during the database operation, the current login is intact.
-    if (previous && previous.value.familyId !== issued.familyId) await revokeFamily(previous.value.userId, previous.value.familyId);
+    if (previous && previous.value.familyId !== issued.familyId) await revokeSessionFamily(previous.value.userId, previous.value.familyId);
     if (!await owns(context, lease, published)) throw changed();
     setCredentials(req, context, result.session, issued);
     if (previous && previous.value.familyId !== issued.familyId) clearCredentials(req, context, previous.value.familyId);
     return { ...result, session: sessionView(context, issued) };
   } catch (error) {
-    if (issued) await revokeFamily(issued.userId, issued.familyId);
+    if (issued) await revokeSessionFamily(issued.userId, issued.familyId);
     throw error;
   } finally { await release(lease); }
 }
@@ -276,7 +270,13 @@ export async function webRefresh(req: Request, body: { refreshToken?: string }):
     setCredentials(req, context, result, issued);
     return sessionView(context, issued);
   } catch (error) {
-    if (issued) await db.refreshToken.updateMany({ where: { id: issued.sessionId, userId: issued.userId, revokedAt: null }, data: { revokedAt: new Date() } });
+    if (issued) {
+      const abandoned = issued;
+      await atomic(async tx => {
+        await lockSessionFamily(tx, abandoned.userId, abandoned.familyId);
+        await tx.refreshToken.updateMany({ where: { id: abandoned.sessionId, userId: abandoned.userId, revokedAt: null }, data: { revokedAt: new Date() } });
+      }, 'ReadCommitted');
+    }
     throw error;
   } finally { await release(lease); }
 }
@@ -295,7 +295,7 @@ export async function webLogout(req: Request): Promise<{ ok: true }> {
       'UNAUTHORIZED', 'Invalid logout session proof', 401);
     const selected = await selection(context);
     if (!await owns(context, lease, selected)) throw changed();
-    await revokeFamily(record.userId, record.familyId);
+    await revokeSessionFamily(record.userId, record.familyId);
     if (!await owns(context, lease, selected)) throw changed();
     if (selected?.value.familyId === record.familyId) await publish(context, lease, selected, null);
     clearCredentials(req, context, record.familyId);

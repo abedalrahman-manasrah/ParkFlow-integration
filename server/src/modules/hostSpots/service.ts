@@ -3,6 +3,7 @@ import { db, atomic, lock, type Tx } from '../../database/client';
 import { assert, requireValue } from '../../utils/errors';
 import { idempotent } from '../../utils/idempotency';
 import { post } from '../wallet/ledger';
+import { findBookingRefund } from '../wallet/bookingEscrow';
 import { notify } from '../notifications/service';
 
 /** Ceilings keep a typo from listing a driveway at ₪5,000 an hour (minor units). */
@@ -122,6 +123,7 @@ async function bookingView(row: BookingRow, viewerId: string) {
 }
 
 async function refund(tx: Tx, booking: { id: string; driverId: string; amount: number }, title: string) {
+  if (await findBookingRefund(tx, 'spot', booking.id)) return;
   await post(tx, booking.driverId, {
     amount: booking.amount, type: 'refund', title: 'Parking spot refund', titleAr: 'استرداد موقف خاص',
     subtitle: title, subtitleAr: title, reference: `spot-refund:${booking.id}`,
@@ -129,10 +131,19 @@ async function refund(tx: Tx, booking: { id: string; driverId: string; amount: n
 }
 
 async function payHost(tx: Tx, booking: { id: string; amount: number; spot: { hostId: string; title: string } }) {
+  if (await findBookingRefund(tx, 'spot', booking.id)) return;
   await post(tx, booking.spot.hostId, {
     amount: booking.amount, type: 'earning', title: 'Parking spot earnings', titleAr: 'أرباح الموقف الخاص',
     subtitle: booking.spot.title, subtitleAr: booking.spot.title, reference: `spot-earning:${booking.id}`,
   });
+}
+
+/** The pending request must be answered before its start, whichever API sees it first. */
+async function expirePending(tx: Tx, booking: { id: string; driverId: string; amount: number; spotId: string; spot: { title: string } }) {
+  await tx.spotBooking.update({ where: { id: booking.id }, data: { status: 'declined' } });
+  await refund(tx, booking, booking.spot.title);
+  await notify(tx, booking.driverId, 'spot_expired', 'Booking not answered', 'لم يتم الرد على الحجز',
+    'The host did not answer in time. Your money is back in your wallet.', 'لم يرد المضيف في الوقت المحدد. أُعيد المبلغ إلى محفظتك.', `/spots/${booking.spotId}`, `spot-expired:${booking.id}`);
 }
 
 /** Ends bookings whose time has passed: pay out finished ones, refund unanswered ones. */
@@ -147,10 +158,7 @@ async function settleDue() {
       await lock(tx, `spot-booking:${id}`);
       const b = requireValue(await tx.spotBooking.findUnique({ where: { id }, include: { spot: true } }));
       if (b.status === 'pending' && b.startTime <= now) {
-        await tx.spotBooking.update({ where: { id }, data: { status: 'declined' } });
-        await refund(tx, b, b.spot.title);
-        await notify(tx, b.driverId, 'spot_expired', 'Booking not answered', 'لم يتم الرد على الحجز',
-          'The host did not answer in time. Your money is back in your wallet.', 'لم يرد المضيف في الوقت المحدد. أُعيد المبلغ إلى محفظتك.', `/spots/${b.spotId}`, `spot-expired:${id}`);
+        await expirePending(tx, b);
       } else if ((b.status === 'confirmed' || b.status === 'active') && b.endTime <= now) {
         await tx.spotBooking.update({ where: { id }, data: { status: 'completed' } });
         await payHost(tx, b);
@@ -285,6 +293,10 @@ export async function respond(userId: string, id: string, accept: boolean) {
     const b = await locked(tx, id);
     assert(b.spot.hostId === userId, 'NOT_FOUND', 'Booking not found', 404);
     assert(b.status === 'pending', 'BOOKING_NOT_PENDING', 'This request was already answered', 409);
+    if (b.startTime <= new Date()) {
+      await expirePending(tx, b);
+      return;
+    }
     await tx.spotBooking.update({ where: { id }, data: { status: accept ? 'confirmed' : 'declined' } });
     if (!accept) await refund(tx, b, b.spot.title);
     await notify(tx, b.driverId, accept ? 'spot_confirmed' : 'spot_declined',

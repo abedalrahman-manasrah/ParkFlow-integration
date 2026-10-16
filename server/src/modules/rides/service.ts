@@ -3,6 +3,7 @@ import { db, atomic, lock, type Tx } from '../../database/client';
 import { assert, requireValue } from '../../utils/errors';
 import { idempotent } from '../../utils/idempotency';
 import { post } from '../wallet/ledger';
+import { findBookingRefund } from '../wallet/bookingEscrow';
 import { notify } from '../notifications/service';
 
 /** A ride nobody closes is settled automatically this long after departure. */
@@ -82,7 +83,7 @@ function bookingDto(b: RideRow['bookings'][number]) {
 }
 
 async function refund(tx: Tx, booking: { id: string; passengerId: string; amount: number }, ride: { fromCity: string; toCity: string }) {
-  if (!booking.amount) return;
+  if (!booking.amount || await findBookingRefund(tx, 'ride', booking.id)) return;
   await post(tx, booking.passengerId, {
     amount: booking.amount, type: 'refund',
     title: 'Ride refund', titleAr: 'استرداد رحلة',
@@ -103,7 +104,10 @@ async function settle(tx: Tx, rideId: string) {
   }
   if (accepted.length) {
     await tx.rideBooking.updateMany({ where: { id: { in: accepted.map((b) => b.id) } }, data: { status: 'completed' } });
-    const total = accepted.reduce((sum, b) => sum + b.amount, 0);
+    let total = 0;
+    for (const b of accepted) {
+      if (b.amount && !await findBookingRefund(tx, 'ride', b.id)) total += b.amount;
+    }
     if (total) await post(tx, ride.driverId, {
       amount: total, type: 'earning',
       title: 'Ride earnings', titleAr: 'أرباح رحلة',
