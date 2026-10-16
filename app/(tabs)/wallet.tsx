@@ -22,6 +22,7 @@ import {
   TabHeader,
 } from '@/components/ui';
 import { TransactionRow } from '@/components/domain/TransactionRow';
+import { DemoPaymentNotice } from '@/components/domain/DemoPaymentNotice';
 import { useTheme } from '@/theme/ThemeProvider';
 import { spacing } from '@/theme/spacing';
 import { radius } from '@/theme/radius';
@@ -69,6 +70,7 @@ export default function WalletScreen() {
         }}
       >
         <TabHeader title={t('wallet.title')} />
+        <DemoPaymentNotice />
 
         {/* ---- Balance card -------------------------------------------- */}
         <View style={[{ borderRadius: radius.xxl, overflow: 'hidden' }, shadow.sm]}>

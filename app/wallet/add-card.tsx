@@ -13,6 +13,7 @@ import {
   SwitchRow,
   TextField,
 } from '@/components/ui';
+import { DemoPaymentNotice } from '@/components/domain/DemoPaymentNotice';
 
 import { useTheme } from '@/theme/ThemeProvider';
 import { spacing } from '@/theme/spacing';
@@ -100,6 +101,7 @@ export default function AddCardScreen() {
       <AppHeader title={t('wallet.addCard')} leading="close" />
 
       <View style={{ gap: spacing.xl }}>
+        <DemoPaymentNotice />
         <View
           style={{
             flexDirection: row,

@@ -19,6 +19,7 @@ import {
   SuccessCheck,
   TextField,
 } from '@/components/ui';
+import { DemoPaymentNotice } from '@/components/domain/DemoPaymentNotice';
 
 import { useTheme } from '@/theme/ThemeProvider';
 import { spacing } from '@/theme/spacing';
@@ -81,6 +82,7 @@ export default function TopUpScreen() {
       <AppHeader title={t('wallet.topUp')} leading="close" />
 
       <View style={{ gap: spacing.xl }}>
+        <DemoPaymentNotice />
         <Card padding="lg" style={{ gap: spacing.sm }}>
           <AppText variant="label" color="textSecondary">
             {t('wallet.balance')}
