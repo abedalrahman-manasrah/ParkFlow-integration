@@ -1,0 +1,65 @@
+{
+  "name": "parkflow-server",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "node dist/src/server.js",
+    "start:all": "node dist/src/start.js",
+    "worker": "tsx src/jobs/worker.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "traffic:ramallah": "tsx scripts/trafficRamallah.ts",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:seed": "tsx prisma/seed.ts",
+    "format": "prettier --write src prisma tests"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "6.19.2",
+    "express": "^5.1.0",
+    "zod": "^4.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "ioredis": "^5.8.0",
+    "bullmq": "^5.58.0",
+    "socket.io": "^4.8.1",
+    "@socket.io/redis-adapter": "^8.3.0",
+    "firebase-admin": "^14.4.0",
+    "@aws-sdk/client-s3": "^3.900.0",
+    "@aws-sdk/s3-request-presigner": "^3.900.0",
+    "pino": "^9.12.0",
+    "pino-http": "^10.5.0",
+    "helmet": "^8.1.0",
+    "cors": "^2.8.5",
+    "express-rate-limit": "^8.1.0",
+    "rate-limit-redis": "^4.2.3",
+    "dotenv": "^17.2.0",
+    "swagger-ui-express": "^5.0.1",
+    "multer": "^2.0.2",
+    "nodemailer": "^10.0.10"
+  },
+  "devDependencies": {
+    "prisma": "6.19.2",
+    "typescript": "~5.9.3",
+    "tsx": "^4.20.0",
+    "vitest": "^4.1.11",
+    "supertest": "^7.1.0",
+    "prettier": "^3.6.0",
+    "@types/node": "^24.0.0",
+    "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/cors": "^2.8.19",
+    "@types/supertest": "^6.0.3",
+    "@types/swagger-ui-express": "^4.1.8",
+    "@types/multer": "^2.0.0",
+    "@types/nodemailer": "^8.0.2"
+  },
+  "overrides": {
+    "effect": "^3.22.2",
+    "deepmerge-ts": "^8.0.2"
+  }
+}

@@ -1,0 +1,27 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+  <!-- Keeps crash detection running after the app is closed. -->
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+  <!-- Shows the crash countdown over the lock screen. -->
+  <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
+  <uses-permission android:name="android.permission.VIBRATE" />
+  <uses-permission android:name="android.permission.CALL_PHONE" />
+
+  <application>
+    <service
+      android:name=".CrashDetectionService"
+      android:exported="false"
+      android:foregroundServiceType="location" />
+
+    <activity
+      android:name=".CrashAlertActivity"
+      android:exported="false"
+      android:excludeFromRecents="true"
+      android:launchMode="singleTask"
+      android:showWhenLocked="true"
+      android:turnScreenOn="true"
+      android:taskAffinity="ps.parkflow.crashalert"
+      android:theme="@android:style/Theme.DeviceDefault.NoActionBar" />
+  </application>
+</manifest>

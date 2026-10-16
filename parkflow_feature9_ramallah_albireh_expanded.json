@@ -1,0 +1,1137 @@
+{
+  "schemaVersion": "1.0.0",
+  "datasetId": "parkflow-ramallah-albireh-family-rest-prayer",
+  "titleAr": "Feature 9 — أماكن استراحة العائلات والصلاة — رام الله والبيرة",
+  "preparedOn": "2026-10-12",
+  "coverageAr": "مجموعة موسعة من الأماكن ذات الإحداثيات المصدرية في منطقة رام الله والبيرة؛ لا تمثل حصرًا شاملًا لكل المساجد/الحدائق ولا تحققًا من الحدود الإدارية أو المداخل. احتُفظ بالسجلات العشرة الأصلية.",
+  "categories": [
+    {
+      "id": "family_rest",
+      "labelAr": "استراحة العائلات",
+      "labelEn": "Family Rest"
+    },
+    {
+      "id": "prayer_place",
+      "labelAr": "مصليات ومساجد",
+      "labelEn": "Prayer Places"
+    }
+  ],
+  "statistics": {
+    "totalPlaces": 18,
+    "placesWithCoordinates": 18,
+    "placesAwaitingCoordinates": 0
+  },
+  "dataPolicyAr": [
+    "لا تخمّن الإحداثيات ولا ساعات العمل أو الرسوم؛ استخدم null للمجهول.",
+    "mapReady يعبر عن وجود إحداثية مصدرية لا عن التحقق الميداني أو إمكانية الوصول.",
+    "بيانات المساجد لا تعني تأكيد وجود مصليات نسائية أو وضوء أو دورات مياه.",
+    "تحقق من الإتاحة ومداخل الأماكن قبل اعتماد التوجيه الملاحي.",
+    "احرص على عدم تكرار سجلات الحدائق الموجودة أصلًا في طبقة Tourism؛ يمكن ربط نفس المكان بتصنيف إضافي."
+  ],
+  "integrationNotesAr": [
+    "ملف JSON مستقل لا يغيّر الكود؛ يحتاج Importer وAPI وMap Layer عند الدمج.",
+    "استخدم id ثابتًا للإدخال أو التحديث وتجنب التكرار في قاعدة البيانات.",
+    "اعرض Marker فقط إذا mapReady=true.",
+    "اعرض التصنيفات منفصلة عند التصفية، واحتفظ بالبيانات القديمة دون حذف.",
+    "للأماكن غير الجاهزة: لا تُنشئ Marker ولا تفعّل توجيه الملاحة؛ يمكن إظهارها في قائمة بحث مع حالة غير محدد على الخريطة.",
+    "الإضافات الثمانية الجديدة مصدرها صفحات خرائط منشورة، وبعض إسنادها الإداري للمدينة يحتاج مراجعة مع حدود البلدية؛ لا تعلن اكتمال التغطية."
+  ],
+  "places": [
+    {
+      "id": "rest-family-park",
+      "nameAr": "حديقة العائلة",
+      "nameEn": "Family Park",
+      "primaryCategory": "family_rest",
+      "categories": [
+        "family_rest"
+      ],
+      "descriptionAr": "حديقة عائلية مع ألعاب للأطفال وأماكن جلوس.",
+      "descriptionEn": "Family park with playground and seating.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": "27 شارع باطن الهواء، بجانب منتدى الخبرات (18 شارع الرملة)",
+      "latitude": 31.9014289,
+      "longitude": 35.193924,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://service.ramallah-gis.ps/arcgis/rest/services/Basemap/LandMarkFinalEnglish/MapServer/2/query?where=OBJECTID%3D16323&outFields=*&outSR=4326&f=json",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "poi_point_not_verified_entrance",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "website": null,
+      "imageUrl": null,
+      "imageLicense": null,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "seatingAvailable": true,
+      "shadeAvailable": null,
+      "childrenPlayArea": true,
+      "prayerAreaAvailable": null,
+      "womenPrayerAreaAvailable": null,
+      "ablutionAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "sources": [
+        {
+          "url": "https://ramallah.ps/en/Article/9300/Family-Park",
+          "publisher": "Ramallah Municipality / Map source",
+          "type": "official",
+          "accessedOn": "2026-10-12"
+        },
+        {
+          "url": "https://service.ramallah-gis.ps/arcgis/rest/services/Basemap/LandMarkFinalEnglish/MapServer/2/query?where=OBJECTID%3D16323&outFields=*&outSR=4326&f=json",
+          "publisher": "Ramallah Municipality GIS (LandMarkFinalEnglish / Municipal facilities)",
+          "type": "official_gis",
+          "accessedOn": "2026-10-12"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-12",
+      "geocodingReview": {
+        "reviewedOn": "2026-10-12",
+        "result": "official_gis_point_found",
+        "noteAr": "نقطة من طبقة «مرافق البلدية» في GIS بلدية رام الله (OBJECTID 16323، آخر تعديل 2022-11). سجل GIS باسم «حديقة العائلة». سجل «منتدى الخبرات» المجاور (OBJECTID 606، 18 شارع الرملة، بريد familypark@ramallah.ps) يبعد نحو 90 م، وهذا يفسر عنوان الكتيّب القديم. النقطة لمعلم POI وليست مدخل ملاحة مؤكدًا.",
+        "researchUrls": [
+          "https://ramallah.ps/en/Article/9300/Family-Park",
+          "https://www.ramallah.ps/public/files/archive/file/publications/municipal_facilities_brochure2014.pdf",
+          "https://service.ramallah-gis.ps/arcgis/rest/services/Basemap/LandMarkFinalEnglish/MapServer/2/query?where=OBJECTID%3D16323&outFields=*&outSR=4326&f=json"
+        ]
+      }
+    },
+    {
+      "id": "rest-yousef-qaddoura",
+      "nameAr": "حديقة يوسف قدورة",
+      "nameEn": "Yousef Qaddoura Park",
+      "primaryCategory": "family_rest",
+      "categories": [
+        "family_rest"
+      ],
+      "descriptionAr": "حديقة عامة مع ملاعب وأنشطة ومرافق صحية وكافتيريا.",
+      "descriptionEn": "Public park with sports facilities, restrooms and a cafeteria.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": "22 شارع المعاهد، حي قدورة، مقابل نادي رام الله الأرثوذكسي",
+      "latitude": 31.9005194,
+      "longitude": 35.2043042,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://service.ramallah-gis.ps/arcgis/rest/services/Basemap/LandMarkFinalEnglish/MapServer/2/query?where=OBJECTID%3D608&outFields=*&outSR=4326&f=json",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "poi_point_not_verified_entrance",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "website": null,
+      "imageUrl": null,
+      "imageLicense": null,
+      "accessibility": null,
+      "toiletsAvailable": true,
+      "seatingAvailable": null,
+      "shadeAvailable": null,
+      "childrenPlayArea": true,
+      "prayerAreaAvailable": null,
+      "womenPrayerAreaAvailable": null,
+      "ablutionAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "sources": [
+        {
+          "url": "https://ramallah.ps/en/Article/9311/Yousef-Qaddoura-Park",
+          "publisher": "Ramallah Municipality / Map source",
+          "type": "official",
+          "accessedOn": "2026-10-12"
+        },
+        {
+          "url": "https://service.ramallah-gis.ps/arcgis/rest/services/Basemap/LandMarkFinalEnglish/MapServer/2/query?where=OBJECTID%3D608&outFields=*&outSR=4326&f=json",
+          "publisher": "Ramallah Municipality GIS (LandMarkFinalEnglish / Municipal facilities)",
+          "type": "official_gis",
+          "accessedOn": "2026-10-12"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-12",
+      "geocodingReview": {
+        "reviewedOn": "2026-10-12",
+        "result": "official_gis_point_found",
+        "noteAr": "نقطة من طبقة «مرافق البلدية» في GIS بلدية رام الله (OBJECTID 608، آخر تعديل 2022-11). يتطابق مع OSM way/363142530 (Youssef Qadura Playground) ضمن نحو 10 م، ونادي الأرثوذكسي على بعد نحو 150 م. النقطة لمعلم POI وليست مدخل ملاحة مؤكدًا.",
+        "researchUrls": [
+          "https://ramallah.ps/en/Article/9311/Yousef-Qaddoura-Park",
+          "https://service.ramallah-gis.ps/arcgis/rest/services/Basemap/LandMarkFinalEnglish/MapServer/2/query?where=OBJECTID%3D608&outFields=*&outSR=4326&f=json"
+        ]
+      }
+    },
+    {
+      "id": "rest-al-qaser",
+      "nameAr": "حديقة القصر",
+      "nameEn": "Al-Qaser Garden",
+      "primaryCategory": "family_rest",
+      "categories": [
+        "family_rest"
+      ],
+      "descriptionAr": "حديقة للأطفال بمناطق لعب لفئات عمرية مختلفة ومقاعد وظلال.",
+      "descriptionEn": "Garden with age-specific play areas, seating and shade.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": "18 شارع النبي صالح، الطيرة – حي النرجس",
+      "latitude": 31.9215021,
+      "longitude": 35.1715173,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://service.ramallah-gis.ps/arcgis/rest/services/Basemap/LandMarkFinalEnglish/MapServer/2/query?where=OBJECTID%3D600&outFields=*&outSR=4326&f=json",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "poi_point_not_verified_entrance",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "website": null,
+      "imageUrl": null,
+      "imageLicense": null,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "seatingAvailable": true,
+      "shadeAvailable": true,
+      "childrenPlayArea": true,
+      "prayerAreaAvailable": null,
+      "womenPrayerAreaAvailable": null,
+      "ablutionAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "sources": [
+        {
+          "url": "https://ramallah.ps/en/Article/9305/Al-Qaser-Garden",
+          "publisher": "Ramallah Municipality / Map source",
+          "type": "official",
+          "accessedOn": "2026-10-12"
+        },
+        {
+          "url": "https://service.ramallah-gis.ps/arcgis/rest/services/Basemap/LandMarkFinalEnglish/MapServer/2/query?where=OBJECTID%3D600&outFields=*&outSR=4326&f=json",
+          "publisher": "Ramallah Municipality GIS (LandMarkFinalEnglish / Municipal facilities)",
+          "type": "official_gis",
+          "accessedOn": "2026-10-12"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-12",
+      "geocodingReview": {
+        "reviewedOn": "2026-10-12",
+        "result": "official_gis_point_found",
+        "noteAr": "نقطة من طبقة «مرافق البلدية» في GIS بلدية رام الله (OBJECTID 600، آخر تعديل 2022-11). صفحة البلدية العربية تحدد الموقع «الطيرة – حي النرجس»، والنقطة تقع في الطيرة. غير موجودة في OSM. النقطة لمعلم POI وليست مدخل ملاحة مؤكدًا.",
+        "researchUrls": [
+          "https://ramallah.ps/en/Article/9305/Al-Qaser-Garden",
+          "https://service.ramallah-gis.ps/arcgis/rest/services/Basemap/LandMarkFinalEnglish/MapServer/2/query?where=OBJECTID%3D600&outFields=*&outSR=4326&f=json"
+        ]
+      }
+    },
+    {
+      "id": "rest-al-bayara",
+      "nameAr": "حديقة البيارة",
+      "nameEn": "Al-Bayara Garden",
+      "primaryCategory": "family_rest",
+      "categories": [
+        "family_rest"
+      ],
+      "descriptionAr": "حديقة مجتمعية بها مقاعد عائلية وألعاب للأطفال وتهيئة لإمكانية الوصول.",
+      "descriptionEn": "Community garden with family seating, play area and accessibility provisions.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": "67 شارع أسعد سمعان جغب، عين منجد",
+      "latitude": 31.8905349,
+      "longitude": 35.1939814,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://service.ramallah-gis.ps/arcgis/rest/services/Basemap/LandMarkFinalEnglish/MapServer/2/query?where=OBJECTID%3D931&outFields=*&outSR=4326&f=json",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "poi_point_not_verified_entrance",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "website": null,
+      "imageUrl": null,
+      "imageLicense": null,
+      "accessibility": true,
+      "toiletsAvailable": null,
+      "seatingAvailable": true,
+      "shadeAvailable": null,
+      "childrenPlayArea": true,
+      "prayerAreaAvailable": null,
+      "womenPrayerAreaAvailable": null,
+      "ablutionAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "sources": [
+        {
+          "url": "https://ramallah.ps/en/Article/9303/Al-Bayara-Garden",
+          "publisher": "Ramallah Municipality / Map source",
+          "type": "official",
+          "accessedOn": "2026-10-12"
+        },
+        {
+          "url": "https://service.ramallah-gis.ps/arcgis/rest/services/Basemap/LandMarkFinalEnglish/MapServer/2/query?where=OBJECTID%3D931&outFields=*&outSR=4326&f=json",
+          "publisher": "Ramallah Municipality GIS (LandMarkFinalEnglish / Municipal facilities)",
+          "type": "official_gis",
+          "accessedOn": "2026-10-12"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-12",
+      "geocodingReview": {
+        "reviewedOn": "2026-10-12",
+        "result": "official_gis_point_found",
+        "noteAr": "نقطة من طبقة «مرافق البلدية» في GIS بلدية رام الله (OBJECTID 931، آخر تعديل 2022-11). يوجد أكثر من «بيارة» (عين منجد، الطيرة، الماصيون، الجدول). صفحة «حديقة البيارة» العامة تخص حديقة عين منجد، وهي الأولى ضمن مشروع حدائق البيارة (2012)، لذلك اعتُمد سجل «حديقة البيارة عين منجد». غير موجودة في OSM. النقطة لمعلم POI وليست مدخل ملاحة مؤكدًا.",
+        "researchUrls": [
+          "https://www.ramallah.ps/en/Article/9303/Al-Bayara-Garden",
+          "https://service.ramallah-gis.ps/arcgis/rest/services/Basemap/LandMarkFinalEnglish/MapServer/2/query?where=OBJECTID%3D931&outFields=*&outSR=4326&f=json"
+        ]
+      }
+    },
+    {
+      "id": "rest-ramallah-municipality-park",
+      "nameAr": "منتزه بلدية رام الله",
+      "nameEn": "Ramallah Municipality Park",
+      "primaryCategory": "family_rest",
+      "categories": [
+        "family_rest"
+      ],
+      "descriptionAr": "منتزه بلدي تاريخي للجلوس والاستراحة والفعاليات.",
+      "descriptionEn": "Historic municipal park for leisure and events.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": "4 شارع عيسى زيادة، بجانب مبنى البلدية، وسط رام الله",
+      "latitude": 31.9017121,
+      "longitude": 35.1998193,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://service.ramallah-gis.ps/arcgis/rest/services/Basemap/LandMarkFinalEnglish/MapServer/2/query?where=OBJECTID%3D611&outFields=*&outSR=4326&f=json",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "poi_point_not_verified_entrance",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "website": null,
+      "imageUrl": null,
+      "imageLicense": null,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "seatingAvailable": null,
+      "shadeAvailable": null,
+      "childrenPlayArea": null,
+      "prayerAreaAvailable": null,
+      "womenPrayerAreaAvailable": null,
+      "ablutionAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "sources": [
+        {
+          "url": "https://ramallah.ps/en/Article/9299/The-Ramallah-Municipality-Park",
+          "publisher": "Ramallah Municipality / Map source",
+          "type": "official",
+          "accessedOn": "2026-10-12"
+        },
+        {
+          "url": "https://service.ramallah-gis.ps/arcgis/rest/services/Basemap/LandMarkFinalEnglish/MapServer/2/query?where=OBJECTID%3D611&outFields=*&outSR=4326&f=json",
+          "publisher": "Ramallah Municipality GIS (LandMarkFinalEnglish / Municipal facilities)",
+          "type": "official_gis",
+          "accessedOn": "2026-10-12"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-12",
+      "geocodingReview": {
+        "reviewedOn": "2026-10-12",
+        "result": "official_gis_point_found",
+        "noteAr": "نقطة من طبقة «مرافق البلدية» في GIS بلدية رام الله (OBJECTID 611، آخر تعديل 2022-11). يتطابق مع خريطة Visit Ramallah الرسمية (31.9016791, 35.1997988) ومع OSM way/546141565 ضمن نحو 10 م. النقطة لمعلم POI وليست مدخل ملاحة مؤكدًا.",
+        "researchUrls": [
+          "https://ramallah.ps/en/Article/9299/The-Ramallah-Municipality-Park",
+          "https://yellowpages.com.ps/en/companies/17435-ramallah-municipality-park",
+          "https://www.openstreetmap.org/way/546141565",
+          "https://service.ramallah-gis.ps/arcgis/rest/services/Basemap/LandMarkFinalEnglish/MapServer/2/query?where=OBJECTID%3D611&outFields=*&outSR=4326&f=json"
+        ]
+      }
+    },
+    {
+      "id": "rest-ramallah-recreation",
+      "nameAr": "مجمع رام الله الترويحي",
+      "nameEn": "Ramallah Recreation Complex",
+      "primaryCategory": "family_rest",
+      "categories": [
+        "family_rest"
+      ],
+      "descriptionAr": "مجمع بملاعب وحدائق خارجية وجلسات للعائلات والأطفال؛ الدخول للخدمات قد يخضع لشروط.",
+      "descriptionEn": "Recreation complex with outdoor gardens and family seating; access may be restricted.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": "2 شارع جاك شيراك، عين كرزم، رام الله",
+      "latitude": 31.9160419,
+      "longitude": 35.203189,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://service.ramallah-gis.ps/arcgis/rest/services/Basemap/LandMarkFinalEnglish/MapServer/2/query?where=OBJECTID%3D604&outFields=*&outSR=4326&f=json",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "poi_point_not_verified_entrance",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "website": null,
+      "imageUrl": null,
+      "imageLicense": null,
+      "accessibility": true,
+      "toiletsAvailable": null,
+      "seatingAvailable": true,
+      "shadeAvailable": null,
+      "childrenPlayArea": null,
+      "prayerAreaAvailable": null,
+      "womenPrayerAreaAvailable": null,
+      "ablutionAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "sources": [
+        {
+          "url": "https://ramallah.ps/en/Article/9288/The-Ramallah-Recreation-Complex",
+          "publisher": "Ramallah Municipality / Map source",
+          "type": "official",
+          "accessedOn": "2026-10-12"
+        },
+        {
+          "url": "https://service.ramallah-gis.ps/arcgis/rest/services/Basemap/LandMarkFinalEnglish/MapServer/2/query?where=OBJECTID%3D604&outFields=*&outSR=4326&f=json",
+          "publisher": "Ramallah Municipality GIS (LandMarkFinalEnglish / Municipal facilities)",
+          "type": "official_gis",
+          "accessedOn": "2026-10-12"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-12",
+      "geocodingReview": {
+        "reviewedOn": "2026-10-12",
+        "result": "official_gis_point_found",
+        "noteAr": "نقطة من طبقة «مرافق البلدية» في GIS بلدية رام الله (OBJECTID 604، آخر تعديل 2022-11). يتطابق مع OSM node/4382893093 (مجمع رام الله الترويحي) ضمن نحو 5 م. النقطة لمعلم POI وليست مدخل ملاحة مؤكدًا.",
+        "researchUrls": [
+          "https://ramallah.ps/en/Article/9288/The-Ramallah-Recreation-Complex",
+          "https://service.ramallah-gis.ps/arcgis/rest/services/Basemap/LandMarkFinalEnglish/MapServer/2/query?where=OBJECTID%3D604&outFields=*&outSR=4326&f=json"
+        ]
+      }
+    },
+    {
+      "id": "rest-al-zaytouna",
+      "nameAr": "حديقة الزيتونة",
+      "nameEn": "Al-Zaytouna Garden",
+      "primaryCategory": "family_rest",
+      "categories": [
+        "family_rest"
+      ],
+      "descriptionAr": "حديقة في رام الله، والتفاصيل التشغيلية الحالية غير مؤكدة.",
+      "descriptionEn": "Garden in Ramallah; current facilities and hours are unverified.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.91663,
+      "longitude": 35.18504,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://mapcarta.com/28450542",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "poi_point_not_verified_entrance",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "website": null,
+      "imageUrl": null,
+      "imageLicense": null,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "seatingAvailable": null,
+      "shadeAvailable": null,
+      "childrenPlayArea": null,
+      "prayerAreaAvailable": null,
+      "womenPrayerAreaAvailable": null,
+      "ablutionAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "sources": [
+        {
+          "url": "https://mapcarta.com/28450542",
+          "publisher": "Mapcarta (OSM-derived)",
+          "type": "secondary_map",
+          "accessedOn": "2026-10-12"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-12",
+      "geocodingReview": {
+        "reviewedOn": "2026-10-12",
+        "result": "existing_source_coordinates_retained",
+        "noteAr": "نقطة POI مصدرية، وليست مدخل ملاحة مؤكدًا.",
+        "researchUrls": [
+          "https://mapcarta.com/28450542"
+        ]
+      }
+    },
+    {
+      "id": "rest-old-omari-mosque",
+      "nameAr": "المسجد العمري القديم (رام الله)",
+      "nameEn": "Old Al-Omari Mosque (Ramallah)",
+      "primaryCategory": "prayer_place",
+      "categories": [
+        "prayer_place"
+      ],
+      "descriptionAr": "مسجد تاريخي في رام الله التحتا. دخول المصلين ومرافق الصلاة يحتاج تحققًا.",
+      "descriptionEn": "Historic mosque in old Ramallah; prayer facilities should be checked.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": "رام الله التحتا",
+      "latitude": 31.9041239,
+      "longitude": 35.1961383,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://visitramallah.ramallah.ps/api/v1/map",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "poi_point_not_verified_entrance",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "website": null,
+      "imageUrl": null,
+      "imageLicense": null,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "seatingAvailable": null,
+      "shadeAvailable": null,
+      "childrenPlayArea": null,
+      "prayerAreaAvailable": true,
+      "womenPrayerAreaAvailable": null,
+      "ablutionAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "sources": [
+        {
+          "url": "https://visitramallah.ramallah.ps/api/v1/map",
+          "publisher": "Ramallah Municipality / Map source",
+          "type": "official",
+          "accessedOn": "2026-10-12"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-12",
+      "geocodingReview": {
+        "reviewedOn": "2026-10-12",
+        "result": "existing_source_coordinates_retained",
+        "noteAr": "نقطة POI مصدرية، وليست مدخل ملاحة مؤكدًا.",
+        "researchUrls": [
+          "https://visitramallah.ramallah.ps/api/v1/map"
+        ]
+      }
+    },
+    {
+      "id": "rest-jamal-abdel-nasser-mosque",
+      "nameAr": "مسجد جمال عبد الناصر (البيرة)",
+      "nameEn": "Jamal Abdel Nasser Mosque",
+      "primaryCategory": "prayer_place",
+      "categories": [
+        "prayer_place"
+      ],
+      "descriptionAr": "مسجد قائم في مركز البيرة، وإحداثيته من خريطة OpenStreetMap.",
+      "descriptionEn": "Mosque in central Al-Bireh; coordinates from OSM-derived map.",
+      "cityAr": "البيرة",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.90408,
+      "longitude": 35.20741,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://mapcarta.com/fr/N432271331",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "poi_point_not_verified_entrance",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "website": null,
+      "imageUrl": null,
+      "imageLicense": null,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "seatingAvailable": null,
+      "shadeAvailable": null,
+      "childrenPlayArea": null,
+      "prayerAreaAvailable": true,
+      "womenPrayerAreaAvailable": null,
+      "ablutionAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "sources": [
+        {
+          "url": "https://mapcarta.com/fr/N432271331",
+          "publisher": "Mapcarta (OSM-derived)",
+          "type": "secondary_map",
+          "accessedOn": "2026-10-12"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-12",
+      "geocodingReview": {
+        "reviewedOn": "2026-10-12",
+        "result": "existing_source_coordinates_retained",
+        "noteAr": "نقطة POI مصدرية، وليست مدخل ملاحة مؤكدًا.",
+        "researchUrls": [
+          "https://mapcarta.com/fr/N432271331"
+        ]
+      }
+    },
+    {
+      "id": "rest-bayarat-al-jadwal",
+      "nameAr": "حديقة بيارة الجدول",
+      "nameEn": "Bayarat Al-Jadwal Garden",
+      "primaryCategory": "family_rest",
+      "categories": [
+        "family_rest"
+      ],
+      "descriptionAr": "حديقة مع أماكن جلوس مظللة وألعاب للأطفال وفق وصف مشروع البلدية؛ الحالة الحالية تحتاج تحققًا.",
+      "descriptionEn": "Garden planned with shaded seating and play equipment; current status unverified.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": "11 شارع عبد القادر الجزائري، منطقة الجدول",
+      "latitude": 31.9089615,
+      "longitude": 35.196666,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://service.ramallah-gis.ps/arcgis/rest/services/Basemap/LandMarkFinalEnglish/MapServer/2/query?where=OBJECTID%3D5161&outFields=*&outSR=4326&f=json",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "poi_point_not_verified_entrance",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "website": null,
+      "imageUrl": null,
+      "imageLicense": null,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "seatingAvailable": true,
+      "shadeAvailable": true,
+      "childrenPlayArea": true,
+      "prayerAreaAvailable": null,
+      "womenPrayerAreaAvailable": null,
+      "ablutionAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "sources": [
+        {
+          "url": "https://ramallahcity.ramallah.ps/ar_page.aspx?id=D80cR3a2547842781aD80cR3",
+          "publisher": "Ramallah Municipality / Map source",
+          "type": "official",
+          "accessedOn": "2026-10-12"
+        },
+        {
+          "url": "https://service.ramallah-gis.ps/arcgis/rest/services/Basemap/LandMarkFinalEnglish/MapServer/2/query?where=OBJECTID%3D5161&outFields=*&outSR=4326&f=json",
+          "publisher": "Ramallah Municipality GIS (LandMarkFinalEnglish / Municipal facilities)",
+          "type": "official_gis",
+          "accessedOn": "2026-10-12"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-12",
+      "geocodingReview": {
+        "reviewedOn": "2026-10-12",
+        "result": "official_gis_point_found",
+        "noteAr": "نقطة من طبقة «مرافق البلدية» في GIS بلدية رام الله (OBJECTID 5161، آخر تعديل 2022-11). النقطة تقع ضمن حي الجدول. غير موجودة في OSM. النقطة لمعلم POI وليست مدخل ملاحة مؤكدًا.",
+        "researchUrls": [
+          "https://ramallah.ps/en/Category/71/Public-Parks",
+          "https://service.ramallah-gis.ps/arcgis/rest/services/Basemap/LandMarkFinalEnglish/MapServer/2/query?where=OBJECTID%3D5161&outFields=*&outSR=4326&f=json"
+        ]
+      }
+    },
+    {
+      "id": "rest-ayn-misbah-mosque",
+      "nameAr": "مسجد عين مصباح",
+      "nameEn": "Ein Misbah Mosque",
+      "primaryCategory": "prayer_place",
+      "categories": [
+        "prayer_place"
+      ],
+      "descriptionAr": "مسجد محدد على خريطة مصدرية؛ تفاصيل الخدمات وساعات الفتح غير مؤكدة.",
+      "descriptionEn": "Mapped mosque; facilities and opening hours are unverified.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.90907,
+      "longitude": 35.20141,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://mapcarta.com/28460140",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "poi_point_not_verified_entrance",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "website": null,
+      "imageUrl": null,
+      "imageLicense": null,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "seatingAvailable": null,
+      "shadeAvailable": null,
+      "childrenPlayArea": null,
+      "prayerAreaAvailable": null,
+      "womenPrayerAreaAvailable": null,
+      "ablutionAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "sources": [
+        {
+          "url": "https://mapcarta.com/28460140",
+          "publisher": "Mapcarta (OpenStreetMap/GeoNames-derived map page)",
+          "type": "secondary_map",
+          "accessedOn": "2026-10-12"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-12",
+      "geocodingReview": {
+        "reviewedOn": "2026-10-12",
+        "result": "published_poi_coordinates",
+        "noteAr": "إحداثيات منشورة لاسم المعلم في مصدر خرائط، ليست مدخلًا للملاحة ولم تُتحقق ميدانيًا. تأكد من المدينة وحدودها الرسمية عند التوسع.",
+        "researchUrls": [
+          "https://mapcarta.com/28460140"
+        ]
+      }
+    },
+    {
+      "id": "rest-ali-bin-abi-talib-mosque",
+      "nameAr": "مسجد علي بن أبي طالب",
+      "nameEn": "Ali Bin Abi Talib Mosque",
+      "primaryCategory": "prayer_place",
+      "categories": [
+        "prayer_place"
+      ],
+      "descriptionAr": "مسجد محدد على خريطة مصدرية؛ تفاصيل الخدمات وساعات الفتح غير مؤكدة.",
+      "descriptionEn": "Mapped mosque; facilities and opening hours are unverified.",
+      "cityAr": "البيرة",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.90404,
+      "longitude": 35.2155,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://mapcarta.com/28453780",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "poi_point_not_verified_entrance",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "website": null,
+      "imageUrl": null,
+      "imageLicense": null,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "seatingAvailable": null,
+      "shadeAvailable": null,
+      "childrenPlayArea": null,
+      "prayerAreaAvailable": null,
+      "womenPrayerAreaAvailable": null,
+      "ablutionAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "sources": [
+        {
+          "url": "https://mapcarta.com/28453780",
+          "publisher": "Mapcarta (OpenStreetMap/GeoNames-derived map page)",
+          "type": "secondary_map",
+          "accessedOn": "2026-10-12"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-12",
+      "geocodingReview": {
+        "reviewedOn": "2026-10-12",
+        "result": "published_poi_coordinates",
+        "noteAr": "إحداثيات منشورة لاسم المعلم في مصدر خرائط، ليست مدخلًا للملاحة ولم تُتحقق ميدانيًا. تأكد من المدينة وحدودها الرسمية عند التوسع.",
+        "researchUrls": [
+          "https://mapcarta.com/28453780"
+        ]
+      }
+    },
+    {
+      "id": "rest-abu-ubayda-mosque",
+      "nameAr": "مسجد أبو عبيدة",
+      "nameEn": "Abu Ubayda Mosque",
+      "primaryCategory": "prayer_place",
+      "categories": [
+        "prayer_place"
+      ],
+      "descriptionAr": "مسجد محدد على خريطة مصدرية؛ تفاصيل الخدمات وساعات الفتح غير مؤكدة.",
+      "descriptionEn": "Mapped mosque; facilities and opening hours are unverified.",
+      "cityAr": "البيرة",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.91308,
+      "longitude": 35.21816,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://mapcarta.com/28453608",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "poi_point_not_verified_entrance",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "website": null,
+      "imageUrl": null,
+      "imageLicense": null,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "seatingAvailable": null,
+      "shadeAvailable": null,
+      "childrenPlayArea": null,
+      "prayerAreaAvailable": null,
+      "womenPrayerAreaAvailable": null,
+      "ablutionAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "sources": [
+        {
+          "url": "https://mapcarta.com/28453608",
+          "publisher": "Mapcarta (OpenStreetMap/GeoNames-derived map page)",
+          "type": "secondary_map",
+          "accessedOn": "2026-10-12"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-12",
+      "geocodingReview": {
+        "reviewedOn": "2026-10-12",
+        "result": "published_poi_coordinates",
+        "noteAr": "إحداثيات منشورة لاسم المعلم في مصدر خرائط، ليست مدخلًا للملاحة ولم تُتحقق ميدانيًا. تأكد من المدينة وحدودها الرسمية عند التوسع.",
+        "researchUrls": [
+          "https://mapcarta.com/28453608"
+        ]
+      }
+    },
+    {
+      "id": "rest-kawthar-mosque",
+      "nameAr": "مسجد الكوثر",
+      "nameEn": "Al Kawthar Mosque",
+      "primaryCategory": "prayer_place",
+      "categories": [
+        "prayer_place"
+      ],
+      "descriptionAr": "مسجد محدد على خريطة مصدرية؛ تفاصيل الخدمات وساعات الفتح غير مؤكدة.",
+      "descriptionEn": "Mapped mosque; facilities and opening hours are unverified.",
+      "cityAr": "البيرة",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.91835,
+      "longitude": 35.21081,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://mapcarta.com/28460110",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "poi_point_not_verified_entrance",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "website": null,
+      "imageUrl": null,
+      "imageLicense": null,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "seatingAvailable": null,
+      "shadeAvailable": null,
+      "childrenPlayArea": null,
+      "prayerAreaAvailable": null,
+      "womenPrayerAreaAvailable": null,
+      "ablutionAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "sources": [
+        {
+          "url": "https://mapcarta.com/28460110",
+          "publisher": "Mapcarta (OpenStreetMap/GeoNames-derived map page)",
+          "type": "secondary_map",
+          "accessedOn": "2026-10-12"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-12",
+      "geocodingReview": {
+        "reviewedOn": "2026-10-12",
+        "result": "published_poi_coordinates",
+        "noteAr": "إحداثيات منشورة لاسم المعلم في مصدر خرائط، ليست مدخلًا للملاحة ولم تُتحقق ميدانيًا. تأكد من المدينة وحدودها الرسمية عند التوسع.",
+        "researchUrls": [
+          "https://mapcarta.com/28460110"
+        ]
+      }
+    },
+    {
+      "id": "rest-al-ayn-mosque",
+      "nameAr": "مسجد العين",
+      "nameEn": "Al Ain Mosque",
+      "primaryCategory": "prayer_place",
+      "categories": [
+        "prayer_place"
+      ],
+      "descriptionAr": "مسجد محدد على خريطة مصدرية؛ تفاصيل الخدمات وساعات الفتح غير مؤكدة.",
+      "descriptionEn": "Mapped mosque; facilities and opening hours are unverified.",
+      "cityAr": "البيرة",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.90394,
+      "longitude": 35.21167,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://mapcarta.com/28460084",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "poi_point_not_verified_entrance",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "website": null,
+      "imageUrl": null,
+      "imageLicense": null,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "seatingAvailable": null,
+      "shadeAvailable": null,
+      "childrenPlayArea": null,
+      "prayerAreaAvailable": null,
+      "womenPrayerAreaAvailable": null,
+      "ablutionAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "sources": [
+        {
+          "url": "https://mapcarta.com/28460084",
+          "publisher": "Mapcarta (OpenStreetMap/GeoNames-derived map page)",
+          "type": "secondary_map",
+          "accessedOn": "2026-10-12"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-12",
+      "geocodingReview": {
+        "reviewedOn": "2026-10-12",
+        "result": "published_poi_coordinates",
+        "noteAr": "إحداثيات منشورة لاسم المعلم في مصدر خرائط، ليست مدخلًا للملاحة ولم تُتحقق ميدانيًا. تأكد من المدينة وحدودها الرسمية عند التوسع.",
+        "researchUrls": [
+          "https://mapcarta.com/28460084"
+        ]
+      }
+    },
+    {
+      "id": "rest-omari-mosque-albireh",
+      "nameAr": "المسجد العمري (البيرة)",
+      "nameEn": "Al Omari Mosque (Al-Bireh)",
+      "primaryCategory": "prayer_place",
+      "categories": [
+        "prayer_place"
+      ],
+      "descriptionAr": "مسجد محدد على خريطة مصدرية؛ تفاصيل الخدمات وساعات الفتح غير مؤكدة.",
+      "descriptionEn": "Mapped mosque; facilities and opening hours are unverified.",
+      "cityAr": "البيرة",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.90569,
+      "longitude": 35.21558,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://mapcarta.com/28460088",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "poi_point_not_verified_entrance",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "website": null,
+      "imageUrl": null,
+      "imageLicense": null,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "seatingAvailable": null,
+      "shadeAvailable": null,
+      "childrenPlayArea": null,
+      "prayerAreaAvailable": null,
+      "womenPrayerAreaAvailable": null,
+      "ablutionAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "sources": [
+        {
+          "url": "https://mapcarta.com/28460088",
+          "publisher": "Mapcarta (OpenStreetMap/GeoNames-derived map page)",
+          "type": "secondary_map",
+          "accessedOn": "2026-10-12"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-12",
+      "geocodingReview": {
+        "reviewedOn": "2026-10-12",
+        "result": "published_poi_coordinates",
+        "noteAr": "إحداثيات منشورة لاسم المعلم في مصدر خرائط، ليست مدخلًا للملاحة ولم تُتحقق ميدانيًا. تأكد من المدينة وحدودها الرسمية عند التوسع.",
+        "researchUrls": [
+          "https://mapcarta.com/28460088"
+        ]
+      }
+    },
+    {
+      "id": "rest-khulafa-rashideen-mosque",
+      "nameAr": "مسجد الخلفاء الراشدين",
+      "nameEn": "Al Khulafa Al Rashideen Mosque",
+      "primaryCategory": "prayer_place",
+      "categories": [
+        "prayer_place"
+      ],
+      "descriptionAr": "مسجد محدد على خريطة مصدرية؛ تفاصيل الخدمات وساعات الفتح غير مؤكدة.",
+      "descriptionEn": "Mapped mosque; facilities and opening hours are unverified.",
+      "cityAr": "البيرة",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.88918,
+      "longitude": 35.22078,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://mapcarta.com/28454890",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "poi_point_not_verified_entrance",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "website": null,
+      "imageUrl": null,
+      "imageLicense": null,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "seatingAvailable": null,
+      "shadeAvailable": null,
+      "childrenPlayArea": null,
+      "prayerAreaAvailable": null,
+      "womenPrayerAreaAvailable": null,
+      "ablutionAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "sources": [
+        {
+          "url": "https://mapcarta.com/28454890",
+          "publisher": "Mapcarta (OpenStreetMap/GeoNames-derived map page)",
+          "type": "secondary_map",
+          "accessedOn": "2026-10-12"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-12",
+      "geocodingReview": {
+        "reviewedOn": "2026-10-12",
+        "result": "published_poi_coordinates",
+        "noteAr": "إحداثيات منشورة لاسم المعلم في مصدر خرائط، ليست مدخلًا للملاحة ولم تُتحقق ميدانيًا. تأكد من المدينة وحدودها الرسمية عند التوسع.",
+        "researchUrls": [
+          "https://mapcarta.com/28454890"
+        ]
+      }
+    },
+    {
+      "id": "rest-ramallah-municipality-garden",
+      "nameAr": "حديقة بلدية رام الله",
+      "nameEn": "Ramallah Municipality Garden",
+      "primaryCategory": "family_rest",
+      "categories": [
+        "family_rest"
+      ],
+      "descriptionAr": "حديقة محددة على خريطة مصدرية؛ الإتاحة والمرافق غير مؤكدة.",
+      "descriptionEn": "Mapped garden; access and facilities are unverified.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.90194,
+      "longitude": 35.19519,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://mapcarta.com/N432276232",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "poi_point_not_verified_entrance",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "website": null,
+      "imageUrl": null,
+      "imageLicense": null,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "seatingAvailable": null,
+      "shadeAvailable": null,
+      "childrenPlayArea": null,
+      "prayerAreaAvailable": null,
+      "womenPrayerAreaAvailable": null,
+      "ablutionAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "sources": [
+        {
+          "url": "https://mapcarta.com/N432276232",
+          "publisher": "Mapcarta (OpenStreetMap/GeoNames-derived map page)",
+          "type": "secondary_map",
+          "accessedOn": "2026-10-12"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-12",
+      "geocodingReview": {
+        "reviewedOn": "2026-10-12",
+        "result": "published_poi_coordinates",
+        "noteAr": "إحداثيات منشورة لاسم المعلم في مصدر خرائط، ليست مدخلًا للملاحة ولم تُتحقق ميدانيًا. تأكد من المدينة وحدودها الرسمية عند التوسع.",
+        "researchUrls": [
+          "https://mapcarta.com/N432276232"
+        ]
+      }
+    }
+  ]
+}

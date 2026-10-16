@@ -1,0 +1,7 @@
+# Run current source and read server/.env when the development container is recreated.
+# Uses the existing backend image; no build or data import is required.
+services:
+  backend:
+    command: node node_modules/tsx/dist/cli.mjs watch src/server.ts
+    volumes:
+      - ./src:/app/src:ro

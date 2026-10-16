@@ -1,0 +1,244 @@
+[
+  {
+    "id": "palev-evb-p2020237",
+    "name": "Al Masyoun - Ayyash Street",
+    "operatorName": "PalEV",
+    "latitude": 31.891473,
+    "longitude": 35.203776,
+    "city": "Ramallah",
+    "connectors": [
+      {
+        "type": "type_2",
+        "powerKw": 22,
+        "quantity": 1
+      }
+    ],
+    "status": "operational",
+    "accessType": "public",
+    "pricingText": "1.80 NIS per minute",
+    "phone": "+970592922880",
+    "sourceName": "PalEV official charging network",
+    "sourceUrl": "https://palev.ps/",
+    "lastVerifiedAt": "2026-09-28T18:56:24+03:00"
+  },
+  {
+    "id": "palev-ies20220209182216",
+    "name": "Al Masyoun - Rets Hotel",
+    "operatorName": "PalEV",
+    "latitude": 31.890298,
+    "longitude": 35.200112,
+    "city": "Ramallah",
+    "connectors": [
+      {
+        "type": "ccs_2",
+        "powerKw": 24,
+        "quantity": 1
+      }
+    ],
+    "status": "operational",
+    "accessType": "public",
+    "pricingText": "1.80 NIS per minute",
+    "phone": "+970592922880",
+    "sourceName": "PalEV official charging network",
+    "sourceUrl": "https://palev.ps/",
+    "lastVerifiedAt": "2026-09-28T18:56:25+03:00"
+  },
+  {
+    "id": "palev-evb-p2011479",
+    "name": "La Casa Mall #01 – Al Reehan",
+    "operatorName": "PalEV",
+    "latitude": 31.939657,
+    "longitude": 35.16942,
+    "city": "Ramallah",
+    "connectors": [
+      {
+        "type": "type_2",
+        "powerKw": 22,
+        "quantity": 1
+      }
+    ],
+    "status": "operational",
+    "accessType": "public",
+    "pricingText": "1.80 NIS per minute",
+    "phone": "+970592922880",
+    "sourceName": "PalEV official charging network",
+    "sourceUrl": "https://palev.ps/",
+    "lastVerifiedAt": "2026-09-28T18:56:23+03:00"
+  },
+  {
+    "id": "palev-evb-p2020244",
+    "name": "La Casa Mall #02 – Al Reehan",
+    "operatorName": "PalEV",
+    "latitude": 31.939709,
+    "longitude": 35.169519,
+    "city": "Ramallah",
+    "connectors": [
+      {
+        "type": "type_2",
+        "powerKw": 22,
+        "quantity": 1
+      }
+    ],
+    "status": "operational",
+    "accessType": "public",
+    "pricingText": "1.80 NIS per minute",
+    "phone": "+970592922880",
+    "sourceName": "PalEV official charging network",
+    "sourceUrl": "https://palev.ps/",
+    "lastVerifiedAt": "2026-09-28T18:56:24+03:00"
+  },
+  {
+    "id": "palev-evb-p2020254",
+    "name": "La Casa Mall #03 – Al Reehan",
+    "operatorName": "PalEV",
+    "latitude": 31.939593,
+    "longitude": 35.169342,
+    "city": "Ramallah",
+    "connectors": [
+      {
+        "type": "type_2",
+        "powerKw": 22,
+        "quantity": 1
+      }
+    ],
+    "status": "operational",
+    "accessType": "public",
+    "pricingText": "1.80 NIS per minute",
+    "phone": "+970592922880",
+    "sourceName": "PalEV official charging network",
+    "sourceUrl": "https://palev.ps/",
+    "lastVerifiedAt": "2026-09-28T18:56:24+03:00"
+  },
+  {
+    "id": "palev-evb-p23209919",
+    "name": "Ooredoo -  HQ - #01",
+    "operatorName": "PalEV",
+    "latitude": 31.886239,
+    "longitude": 35.223152,
+    "city": "Ramallah",
+    "connectors": [
+      {
+        "type": "type_2",
+        "powerKw": 11,
+        "quantity": 1
+      }
+    ],
+    "status": "operational",
+    "accessType": "public",
+    "pricingText": "1.80 NIS per minute",
+    "phone": "+970592922880",
+    "sourceName": "PalEV official charging network",
+    "sourceUrl": "https://palev.ps/",
+    "lastVerifiedAt": "2026-09-28T18:56:24+03:00"
+  },
+  {
+    "id": "palev-evb-p23220798",
+    "name": "Ooredoo -  HQ - #02",
+    "operatorName": "PalEV",
+    "latitude": 31.886179,
+    "longitude": 35.223216,
+    "city": "Ramallah",
+    "connectors": [
+      {
+        "type": "type_2",
+        "powerKw": 11,
+        "quantity": 1
+      }
+    ],
+    "status": "operational",
+    "accessType": "public",
+    "pricingText": "1.80 NIS per minute",
+    "phone": "+970592922880",
+    "sourceName": "PalEV official charging network",
+    "sourceUrl": "https://palev.ps/",
+    "lastVerifiedAt": "2026-09-28T18:56:24+03:00"
+  },
+  {
+    "id": "palev-evb-p23220315",
+    "name": "Ooredoo -  HQ - #03",
+    "operatorName": "PalEV",
+    "latitude": 31.886128,
+    "longitude": 35.223264,
+    "city": "Ramallah",
+    "connectors": [
+      {
+        "type": "type_2",
+        "powerKw": 11,
+        "quantity": 1
+      }
+    ],
+    "status": "operational",
+    "accessType": "public",
+    "pricingText": "1.80 NIS per minute",
+    "phone": "+970592922880",
+    "sourceName": "PalEV official charging network",
+    "sourceUrl": "https://palev.ps/",
+    "lastVerifiedAt": "2026-09-28T18:56:24+03:00"
+  },
+  {
+    "id": "palev-evb-dc1019400001",
+    "name": "Ramallah – Municipality street",
+    "operatorName": "PalEV",
+    "latitude": 31.90255,
+    "longitude": 35.199696,
+    "city": "Ramallah",
+    "connectors": [
+      {
+        "type": "ccs_2",
+        "powerKw": 90,
+        "quantity": 2
+      }
+    ],
+    "status": "operational",
+    "accessType": "public",
+    "pricingText": "1.80 NIS per minute",
+    "phone": "+970592922880",
+    "sourceName": "PalEV official charging network",
+    "sourceUrl": "https://palev.ps/",
+    "lastVerifiedAt": "2026-09-28T18:56:24+03:00"
+  },
+  {
+    "id": "palev-evb-p21110639",
+    "name": "Ramallah Mall – City Center 01",
+    "operatorName": "PalEV",
+    "latitude": 31.90862,
+    "longitude": 35.206809,
+    "city": "Ramallah",
+    "connectors": [
+      {
+        "type": "type_2",
+        "powerKw": 11,
+        "quantity": 1
+      }
+    ],
+    "status": "operational",
+    "accessType": "public",
+    "pricingText": "1.80 NIS per minute",
+    "phone": "+970592922880",
+    "sourceName": "PalEV official charging network",
+    "sourceUrl": "https://palev.ps/",
+    "lastVerifiedAt": "2026-09-28T18:56:24+03:00"
+  },
+  {
+    "id": "palev-evb-p22214957",
+    "name": "Ramallah Mall – City Center 02",
+    "operatorName": "PalEV",
+    "latitude": 31.908721,
+    "longitude": 35.206707,
+    "city": "Ramallah",
+    "connectors": [
+      {
+        "type": "type_2",
+        "powerKw": 11,
+        "quantity": 1
+      }
+    ],
+    "status": "operational",
+    "accessType": "public",
+    "pricingText": "1.80 NIS per minute",
+    "phone": "+970592922880",
+    "sourceName": "PalEV official charging network",
+    "sourceUrl": "https://palev.ps/",
+    "lastVerifiedAt": "2026-09-28T18:56:24+03:00"
+  }
+]

@@ -1,0 +1,89 @@
+{
+  "expo": {
+    "name": "ParkFlow",
+    "slug": "parkflow",
+    "scheme": "parkflow",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#04352A"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "ps.parkflow.driver",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "ParkFlow uses your location to show nearby parking zones and confirm where you are parking.",
+        "UIBackgroundModes": [
+          "fetch"
+        ]
+      }
+    },
+    "android": {
+      "package": "ps.parkflow.driver",
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "adaptiveIcon": {
+        "backgroundColor": "#04352A",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "CALL_PHONE",
+        "VIBRATE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "ParkFlow uses the microphone so you can search for a destination by voice.",
+          "speechRecognitionPermission": "ParkFlow uses speech recognition to turn your voice into a search."
+        }
+      ],
+      "expo-font",
+      "expo-localization",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "ParkFlow uses your location to show nearby parking zones and confirm where you are parking."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "ParkFlow uses the camera to scan parking QR codes and photograph dashboard warning symbols."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "ParkFlow lets you choose photos for violation appeals and dashboard warning checks.",
+          "cameraPermission": "ParkFlow uses the camera to scan parking QR codes and photograph dashboard warning symbols."
+        }
+      ],
+      [
+        "expo-sensors",
+        {
+          "motionPermission": "ParkFlow uses motion sensors while you drive to detect a crash and call for help."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}

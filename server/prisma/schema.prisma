@@ -1,0 +1,1256 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+  PARKING_OPERATOR
+  ENFORCEMENT_OFFICER
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum SessionStatus {
+  ACTIVE
+  COMPLETED
+  EXPIRED
+  CANCELLED
+  PAYMENT_PENDING
+  PAYMENT_FAILED
+}
+
+enum ParkingMode {
+  start_stop
+  prepaid
+}
+
+enum PaymentStatus {
+  unpaid
+  authorized
+  paid
+  failed
+  refunded
+}
+
+enum TransactionType {
+  topup
+  parking_payment
+  violation_payment
+  refund
+  adjustment
+  reward
+  ride_payment
+  spot_payment
+  earning
+}
+
+enum TransactionStatus {
+  pending
+  completed
+  failed
+  reversed
+}
+
+enum CheckpointStatus {
+  open
+  congested
+  closed
+}
+
+enum RoadReportType {
+  accident
+  traffic_congestion
+  closed_road
+  checkpoint
+  road_hazard
+  construction
+  police
+  other
+}
+
+enum RoadDirection {
+  northbound
+  southbound
+  eastbound
+  westbound
+  both
+}
+
+enum RoadReportSeverity {
+  low
+  moderate
+  high
+  critical
+}
+
+enum RoadReportStatus {
+  unverified
+  confirmed
+  disputed
+  resolved
+  expired
+}
+
+enum RoadReportVoteType {
+  still_there
+  not_there
+}
+
+enum Availability {
+  available
+  limited
+  full
+  unknown
+}
+
+enum PointsState {
+  pending
+  verified
+  revoked
+}
+
+enum ViolationStatus {
+  unpaid
+  paid
+  appealed
+  cancelled
+  overdue
+}
+
+enum AppealStatus {
+  submitted
+  under_review
+  approved
+  rejected
+  more_info
+}
+
+enum PermitStatus {
+  active
+  expired
+  revoked
+  pending
+}
+
+enum ParkingReservationStatus {
+  confirmed
+  cancelled
+  expired
+  checked_in
+  completed
+}
+
+model User {
+  id                      String               @id @default(uuid())
+  phone                   String?              @unique
+  countryCode             String?
+  phoneVerifiedAt         DateTime?
+  fullName                String               @default("")
+  firstName               String               @default("")
+  lastName                String               @default("")
+  email                   String?              @unique
+  emailVerifiedAt         DateTime?
+  avatarUrl               String?
+  locale                  String               @default("en")
+  role                    Role                 @default(USER)
+  status                  UserStatus           @default(ACTIVE)
+  notificationPreferences Json                 @default("{\"parkingReminders\":true,\"expiryWarnings\":true,\"lowBalance\":true,\"violations\":true,\"promotions\":false}")
+  createdAt               DateTime             @default(now())
+  updatedAt               DateTime             @updatedAt
+  lastLoginAt             DateTime?
+  refreshTokens           RefreshToken[]
+  vehicles                UserVehicle[]
+  operators               OperatorUser[]
+  sessions                ParkingSession[]
+  wallet                  Wallet?
+  paymentMethods          PaymentMethod[]
+  checkpointReports       CheckpointReport[]
+  roadReports             RoadReport[]
+  roadReportVotes         RoadReportVote[]
+  parkingReports          ParkingReport[]
+  points                  PointsEntry[]
+  crashEvents             CrashEvent[]
+  trust                   TrustProfile?
+  notifications           Notification[]
+  deviceTokens            DeviceToken[]
+  appeals                 Appeal[]
+  uploads                 Upload[]
+  permits                 Permit[]
+  audits                  AuditLog[]
+  idempotencies           IdempotencyRecord[]
+  parkingReservations     ParkingReservation[]
+  gender                  String?
+  ridesOffered            Ride[]
+  rideBookings            RideBooking[]
+  hostedSpots             HostSpot[]
+  spotBookings            SpotBooking[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id         String    @id @default(uuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id])
+  tokenHash  String    @unique
+  familyId   String
+  expiresAt  DateTime
+  revokedAt  DateTime?
+  replacedBy String?
+  device     String?
+  ip         String?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId, familyId])
+  @@map("refresh_tokens")
+}
+
+model Vehicle {
+  id          String           @id @default(uuid())
+  plateNumber String
+  region      String           @default("PS")
+  type        String           @default("private")
+  make        String?
+  model       String?
+  year        Int?
+  color       String?
+  colorHex    String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  users       UserVehicle[]
+  sessions    ParkingSession[]
+  violations  Violation[]
+  permits     Permit[]
+
+  @@unique([plateNumber, region])
+  @@map("vehicles")
+}
+
+model UserVehicle {
+  id         String    @id @default(uuid())
+  userId     String
+  vehicleId  String
+  user       User      @relation(fields: [userId], references: [id])
+  vehicle    Vehicle   @relation(fields: [vehicleId], references: [id])
+  role       String    @default("owner")
+  nickname   String?
+  isDefault  Boolean   @default(false)
+  linkedAt   DateTime  @default(now())
+  unlinkedAt DateTime?
+
+  @@unique([userId, vehicleId])
+  @@index([vehicleId, unlinkedAt])
+  @@map("user_vehicles")
+}
+
+model ParkingOperator {
+  id        String         @id @default(uuid())
+  name      String
+  type      String         @default("municipality")
+  createdAt DateTime       @default(now())
+  users     OperatorUser[]
+  zones     ParkingZone[]
+
+  @@map("parking_operators")
+}
+
+model OperatorUser {
+  operatorId String
+  userId     String
+  operator   ParkingOperator @relation(fields: [operatorId], references: [id])
+  user       User            @relation(fields: [userId], references: [id])
+
+  @@id([operatorId, userId])
+  @@map("operator_users")
+}
+
+model ParkingFacility {
+  id           String        @id @default(uuid())
+  name         String
+  nameAr       String
+  operatorName String
+  latitude     Float
+  longitude    Float
+  levels       Int
+  hasAnpr      Boolean       @default(false)
+  hasBarrier   Boolean       @default(false)
+  zones        ParkingZone[]
+
+  @@map("parking_facilities")
+}
+
+model ParkingZone {
+  id                    String                 @id @default(uuid())
+  operatorId            String
+  operator              ParkingOperator        @relation(fields: [operatorId], references: [id])
+  facilityId            String?
+  facility              ParkingFacility?       @relation(fields: [facilityId], references: [id])
+  code                  String                 @unique
+  name                  String
+  nameAr                String
+  description           String                 @default("")
+  city                  String
+  cityAr                String
+  address               String                 @default("")
+  latitude              Float
+  longitude             Float
+  kind                  String
+  ownership             String?
+  accessRestriction     String?
+  accessRestrictionAr   String?
+  parkingAllowed        Boolean                @default(true)
+  prototypeData         Boolean                @default(false)
+  /**
+   * Reserved spaces for drivers with a disability permit — 0 when none are marked.
+   */
+  accessibleSpots       Int                    @default(0)
+  capacity              Int?
+  active                Boolean                @default(true)
+  defaultMode           ParkingMode
+  supportedModes        ParkingMode[]
+  supportedEntryMethods String[]
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  tariffs               ParkingTariff[]
+  operatingHours        OperatingHour[]
+  sessions              ParkingSession[]
+  reports               ParkingReport[]
+  snapshots             AvailabilitySnapshot[]
+  violations            Violation[]
+  permits               PermitZone[]
+  reservations          ParkingReservation[]
+  /// Overstay rules, set per lot by its operator (minutes / minor units).
+  overstayGraceMinutes  Int                    @default(10)
+  overstayFee           Int                    @default(5000)
+  overstayRepeatMinutes Int                    @default(60)
+  overstayMaxPerStay    Int                    @default(20000)
+  visits                ParkingVisit[]
+  gateDevices           GateDevice[]
+
+  @@index([latitude, longitude])
+  @@map("parking_zones")
+}
+
+model ParkingTariff {
+  id               String      @id @default(uuid())
+  zoneId           String
+  zone             ParkingZone @relation(fields: [zoneId], references: [id])
+  name             String
+  hourlyRate       Int
+  currency         String      @default("ILS")
+  incrementMinutes Int
+  freeMinutes      Int
+  minimumCharge    Int
+  dailyCap         Int?
+  maxStayMinutes   Int?
+  validFrom        DateTime
+  validTo          DateTime?
+  createdAt        DateTime    @default(now())
+
+  @@index([zoneId, validFrom])
+  @@map("parking_tariffs")
+}
+
+model OperatingHour {
+  id       String      @id @default(uuid())
+  zoneId   String
+  zone     ParkingZone @relation(fields: [zoneId], references: [id])
+  weekday  Int
+  opensAt  String
+  closesAt String
+  closed   Boolean     @default(false)
+
+  @@unique([zoneId, weekday])
+  @@map("parking_operating_hours")
+}
+
+model ParkingSession {
+  id                     String              @id @default(uuid())
+  userId                 String
+  user                   User                @relation(fields: [userId], references: [id])
+  vehicleId              String
+  vehicle                Vehicle             @relation(fields: [vehicleId], references: [id])
+  parkingZoneId          String
+  zone                   ParkingZone         @relation(fields: [parkingZoneId], references: [id])
+  parkingMode            ParkingMode
+  status                 SessionStatus       @default(ACTIVE)
+  startedAt              DateTime            @default(now())
+  endsAt                 DateTime?
+  stoppedAt              DateTime?
+  rateSnapshot           Json
+  originalTariffSnapshot Json
+  trustDiscountSnapshot  Json
+  pricingRulesSnapshot   Json
+  currentCost            Int                 @default(0)
+  finalCost              Int?
+  subtotalMinor          Int                 @default(0)
+  discountMinor          Int                 @default(0)
+  paymentStatus          PaymentStatus       @default(unpaid)
+  paymentTransactionId   String?
+  createdAt              DateTime            @default(now())
+  updatedAt              DateTime            @updatedAt
+  transactions           WalletTransaction[]
+  debt                   SessionDebt?
+
+  @@index([vehicleId, status])
+  @@index([userId, startedAt])
+  @@index([status, endsAt])
+  @@map("parking_sessions")
+}
+
+model ParkingReservation {
+  id                          String                   @id @default(uuid())
+  parkingZoneId               String
+  zone                        ParkingZone              @relation(fields: [parkingZoneId], references: [id])
+  userId                      String
+  user                        User                     @relation(fields: [userId], references: [id])
+  spotId                      String?
+  startTime                   DateTime
+  endTime                     DateTime
+  durationMinutes             Int
+  hourlyRateSnapshot          Int
+  estimatedTotalPriceSnapshot Int
+  currency                    String                   @default("ILS") @db.VarChar(3)
+  priceIsDemo                 Boolean                  @default(false)
+  isDemoReservation           Boolean                  @default(true)
+  status                      ParkingReservationStatus @default(confirmed)
+  publicCode                  String                   @unique @db.VarChar(32)
+  qrToken                     String                   @unique @db.VarChar(128)
+  createdAt                   DateTime                 @default(now())
+  updatedAt                   DateTime                 @updatedAt
+
+  @@index([userId, startTime])
+  @@index([status, endTime])
+  @@index([parkingZoneId, startTime])
+  @@index([spotId, startTime, endTime])
+  @@map("parking_reservations")
+}
+
+model SessionDebt {
+  id        String         @id @default(uuid())
+  sessionId String         @unique
+  session   ParkingSession @relation(fields: [sessionId], references: [id])
+  amount    Int
+  settledAt DateTime?
+  createdAt DateTime       @default(now())
+
+  @@map("session_debts")
+}
+
+model Wallet {
+  id                     String              @id @default(uuid())
+  userId                 String              @unique
+  user                   User                @relation(fields: [userId], references: [id])
+  balance                Int                 @default(0)
+  currency               String              @default("ILS")
+  autoTopUpEnabled       Boolean             @default(false)
+  autoTopUpThreshold     Int                 @default(500)
+  autoTopUpAmount        Int                 @default(5000)
+  defaultPaymentMethodId String?
+  defaultMethod          PaymentMethod?      @relation("DefaultMethod", fields: [defaultPaymentMethodId], references: [id])
+  updatedAt              DateTime            @updatedAt
+  transactions           WalletTransaction[]
+
+  @@map("wallets")
+}
+
+model PaymentMethod {
+  id               String              @id @default(uuid())
+  userId           String
+  user             User                @relation(fields: [userId], references: [id])
+  provider         String
+  providerMethodId String
+  brand            String
+  last4            String
+  expiryMonth      Int
+  expiryYear       Int
+  holderName       String?
+  isDefault        Boolean             @default(false)
+  deletedAt        DateTime?
+  createdAt        DateTime            @default(now())
+  wallets          Wallet[]            @relation("DefaultMethod")
+  payments         Payment[]
+  transactions     WalletTransaction[]
+
+  @@index([userId, deletedAt])
+  @@map("payment_methods")
+}
+
+model WalletTransaction {
+  id               String            @id @default(uuid())
+  walletId         String
+  wallet           Wallet            @relation(fields: [walletId], references: [id])
+  type             TransactionType
+  status           TransactionStatus
+  amount           Int
+  balanceAfter     Int
+  title            String
+  titleAr          String
+  subtitle         String?
+  subtitleAr       String?
+  paymentMethodId  String?
+  paymentMethod    PaymentMethod?    @relation(fields: [paymentMethodId], references: [id])
+  parkingSessionId String?
+  session          ParkingSession?   @relation(fields: [parkingSessionId], references: [id])
+  violationId      String?
+  violation        Violation?        @relation(fields: [violationId], references: [id])
+  reference        String            @unique @default(uuid())
+  failureReason    String?
+  createdAt        DateTime          @default(now())
+
+  @@index([walletId, createdAt])
+  @@map("wallet_transactions")
+}
+
+model Payment {
+  id              String            @id @default(uuid())
+  paymentMethodId String
+  method          PaymentMethod     @relation(fields: [paymentMethodId], references: [id])
+  amount          Int
+  currency        String            @default("ILS")
+  provider        String
+  providerId      String?           @unique
+  idempotencyKey  String            @unique
+  status          TransactionStatus @default(pending)
+  ledgerId        String?           @unique
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@map("payments")
+}
+
+model PaymentWebhook {
+  id          String    @id
+  provider    String
+  payload     Json
+  processedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@map("payment_webhooks")
+}
+
+model Violation {
+  id                   String              @id @default(uuid())
+  reference            String              @unique @default(uuid())
+  vehicleId            String
+  vehicle              Vehicle             @relation(fields: [vehicleId], references: [id])
+  plateNumber          String
+  type                 String
+  status               ViolationStatus     @default(unpaid)
+  amount               Int
+  parkingZoneId        String?
+  zone                 ParkingZone?        @relation(fields: [parkingZoneId], references: [id])
+  locationName         String
+  locationNameAr       String
+  latitude             Float
+  longitude            Float
+  issuedAt             DateTime            @default(now())
+  dueAt                DateTime
+  reason               String
+  reasonAr             String
+  issuingAuthority     String
+  issuingAuthorityAr   String
+  paidAt               DateTime?
+  paymentTransactionId String?
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  evidence             ViolationEvidence?
+  appeals              Appeal[]
+  transactions         WalletTransaction[]
+  /// Set when the overstay checker issued this from a gate entry/exit record.
+  parkingVisitId       String?
+  visit                ParkingVisit?       @relation(fields: [parkingVisitId], references: [id])
+
+  @@index([vehicleId, status])
+  @@index([parkingVisitId])
+  @@map("violations")
+}
+
+model ViolationEvidence {
+  id                String          @id @default(uuid())
+  violationId       String          @unique
+  violation         Violation       @relation(fields: [violationId], references: [id])
+  detectedPlate     String
+  detectionSource   String
+  firstDetectionAt  DateTime
+  secondDetectionAt DateTime?
+  latitude          Float
+  longitude         Float
+  deviceId          String?
+  officerId         String?
+  photos            EvidencePhoto[]
+
+  @@map("violation_evidence")
+}
+
+model EvidencePhoto {
+  evidenceId String
+  uploadId   String
+  kind       String            @default("vehicle")
+  evidence   ViolationEvidence @relation(fields: [evidenceId], references: [id])
+  upload     Upload            @relation(fields: [uploadId], references: [id])
+
+  @@id([evidenceId, uploadId])
+}
+
+model Appeal {
+  id           String             @id @default(uuid())
+  reference    String             @unique @default(uuid())
+  violationId  String
+  violation    Violation          @relation(fields: [violationId], references: [id])
+  userId       String
+  user         User               @relation(fields: [userId], references: [id])
+  reason       String
+  notes        String
+  status       AppealStatus       @default(submitted)
+  decisionNote String?
+  submittedAt  DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  attachments  AppealAttachment[]
+
+  @@index([violationId, status])
+  @@map("violation_appeals")
+}
+
+model Upload {
+  id        String             @id @default(uuid())
+  userId    String
+  user      User               @relation(fields: [userId], references: [id])
+  objectKey String             @unique
+  name      String
+  mimeType  String
+  sizeBytes Int
+  createdAt DateTime           @default(now())
+  appeals   AppealAttachment[]
+  evidence  EvidencePhoto[]
+
+  @@map("uploads")
+}
+
+model AppealAttachment {
+  appealId String
+  uploadId String
+  appeal   Appeal @relation(fields: [appealId], references: [id])
+  upload   Upload @relation(fields: [uploadId], references: [id])
+
+  @@id([appealId, uploadId])
+  @@map("appeal_attachments")
+}
+
+model Permit {
+  id        String       @id @default(uuid())
+  userId    String
+  user      User         @relation(fields: [userId], references: [id])
+  vehicleId String
+  vehicle   Vehicle      @relation(fields: [vehicleId], references: [id])
+  type      String
+  reference String       @unique @default(uuid())
+  validFrom DateTime
+  validTo   DateTime
+  status    PermitStatus @default(pending)
+  issuer    String
+  createdAt DateTime     @default(now())
+  zones     PermitZone[]
+
+  @@index([vehicleId, status])
+  @@map("permits")
+}
+
+model PermitZone {
+  permitId String
+  zoneId   String
+  permit   Permit      @relation(fields: [permitId], references: [id])
+  zone     ParkingZone @relation(fields: [zoneId], references: [id])
+
+  @@id([permitId, zoneId])
+}
+
+model RoadCheckpoint {
+  id        String             @id @default(uuid())
+  nameAr    String
+  nameEn    String
+  latitude  Float
+  longitude Float
+  active    Boolean            @default(true)
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  reports   CheckpointReport[]
+
+  @@map("road_checkpoints")
+}
+
+model CheckpointReport {
+  id           String           @id @default(uuid())
+  userId       String
+  user         User             @relation(fields: [userId], references: [id])
+  checkpointId String
+  checkpoint   RoadCheckpoint   @relation(fields: [checkpointId], references: [id])
+  status       CheckpointStatus
+  hidden       Boolean          @default(false)
+  reportedAt   DateTime         @default(now())
+  points       PointsEntry[]
+
+  @@index([checkpointId, reportedAt])
+  @@index([userId, reportedAt])
+  @@map("road_reports")
+}
+
+model RoadReport {
+  id                String              @id @default(uuid())
+  reporterUserId    String
+  reporter          User                @relation(fields: [reporterUserId], references: [id])
+  type              RoadReportType
+  latitude          Float
+  longitude         Float
+  direction         RoadDirection?
+  severity          RoadReportSeverity?
+  description       String?
+  status            RoadReportStatus    @default(unverified)
+  confidenceScore   Float               @default(0.35)
+  confirmationCount Int                 @default(0)
+  rejectionCount    Int                 @default(0)
+  isDemo            Boolean             @default(false)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  expiresAt         DateTime
+  votes             RoadReportVote[]
+  points            PointsEntry[]
+
+  @@index([status, expiresAt])
+  @@index([latitude, longitude])
+  @@index([reporterUserId, createdAt])
+  @@map("road_event_reports")
+}
+
+model RoadReportVote {
+  id           String             @id @default(uuid())
+  roadReportId String
+  roadReport   RoadReport         @relation(fields: [roadReportId], references: [id])
+  userId       String
+  user         User               @relation(fields: [userId], references: [id])
+  vote         RoadReportVoteType
+  createdAt    DateTime           @default(now())
+
+  @@unique([roadReportId, userId])
+  @@index([userId, createdAt])
+  @@map("road_report_votes")
+}
+
+model ParkingReport {
+  id           String        @id @default(uuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id])
+  zoneId       String
+  zone         ParkingZone   @relation(fields: [zoneId], references: [id])
+  availability Availability
+  reportedAt   DateTime      @default(now())
+  points       PointsEntry[]
+
+  @@index([zoneId, reportedAt])
+  @@map("parking_reports")
+}
+
+model AvailabilitySnapshot {
+  id              String       @id @default(uuid())
+  zoneId          String
+  zone            ParkingZone  @relation(fields: [zoneId], references: [id])
+  availability    Availability
+  availableSpaces Int?
+  occupiedSpaces  Int?
+  source          String
+  confidence      Float
+  recordedAt      DateTime     @default(now())
+
+  @@index([zoneId, recordedAt])
+  @@map("parking_availability_snapshots")
+}
+
+model PointsEntry {
+  id               String            @id @default(uuid())
+  userId           String
+  user             User              @relation(fields: [userId], references: [id])
+  points           Int
+  reason           String
+  state            PointsState       @default(pending)
+  placeId          String
+  roadReportId     String?
+  roadReport       CheckpointReport? @relation(fields: [roadReportId], references: [id])
+  parkingReportId  String?
+  parkingReport    ParkingReport?    @relation(fields: [parkingReportId], references: [id])
+  /// A map incident (accident, closure, hazard…), separate from checkpoint reports above.
+  incidentReportId String?
+  incidentReport   RoadReport?       @relation(fields: [incidentReportId], references: [id])
+  createdAt        DateTime          @default(now())
+  verifiedAt       DateTime?
+
+  @@index([userId, placeId, createdAt])
+  @@index([state, createdAt])
+  @@index([incidentReportId])
+  @@map("points_ledger")
+}
+
+model TrustProfile {
+  userId          String   @id
+  user            User     @relation(fields: [userId], references: [id])
+  score           Int
+  tier            String
+  discountPercent Int
+  calculatedAt    DateTime @updatedAt
+
+  @@map("trust_profiles")
+}
+
+model Notification {
+  id               String    @id @default(uuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id])
+  type             String
+  title            String
+  titleAr          String
+  body             String
+  bodyAr           String
+  href             String?
+  parkingSessionId String?
+  violationId      String?
+  vehicleId        String?
+  dedupKey         String?   @unique
+  readAt           DateTime?
+  pushedAt         DateTime?
+  createdAt        DateTime  @default(now())
+
+  @@index([userId, readAt, createdAt])
+  @@map("notifications")
+}
+
+model DeviceToken {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  token     String   @unique
+  platform  String
+  provider  String   @default("fcm")
+  createdAt DateTime @default(now())
+
+  @@map("device_tokens")
+}
+
+model IdempotencyRecord {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  key         String
+  scope       String
+  requestHash String
+  response    Json
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, scope, key])
+  @@map("idempotency_records")
+}
+
+model AuditLog {
+  id           String   @id @default(uuid())
+  actorUserId  String
+  actor        User     @relation(fields: [actorUserId], references: [id])
+  action       String
+  resourceType String
+  resourceId   String
+  before       Json?
+  after        Json?
+  ip           String?
+  userAgent    String?
+  createdAt    DateTime @default(now())
+
+  @@index([actorUserId, createdAt])
+  @@map("audit_logs")
+}
+
+enum EvStationStatus {
+  operational
+  temporarily_unavailable
+  planned
+  unknown
+}
+
+enum EvConnectorType {
+  type_2
+  ccs_2
+  chademo
+  gb_t
+  type_1
+  other
+}
+
+enum EvAccessType {
+  public
+  customers_only
+  private
+  unknown
+}
+
+enum CarServiceCategory {
+  car_wash
+  oil_change
+  maintenance
+  tire_service
+}
+
+enum TourismPlaceCategory {
+  historic_landmark
+  museum
+  park_garden
+  visitor_attraction
+  family_rest
+  prayer_place
+}
+
+model EvChargingStation {
+  id               String          @id @default(uuid())
+  name             String          @db.VarChar(160)
+  operatorName     String?         @db.VarChar(160)
+  latitude         Float
+  longitude        Float
+  address          String?         @db.VarChar(300)
+  city             String?         @db.VarChar(100)
+  status           EvStationStatus @default(unknown)
+  accessType       EvAccessType    @default(unknown)
+  pricingText      String?         @db.VarChar(500)
+  openingHoursText String?         @db.VarChar(300)
+  phone            String?         @db.VarChar(32)
+  sourceName       String?         @db.VarChar(200)
+  sourceUrl        String?         @db.VarChar(2048)
+  lastVerifiedAt   DateTime?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  connectors       EvConnector[]
+
+  @@index([latitude, longitude])
+  @@index([longitude])
+  @@index([status, latitude])
+  @@map("ev_charging_stations")
+}
+
+model EvConnector {
+  id        String            @id @default(uuid())
+  stationId String
+  station   EvChargingStation @relation(fields: [stationId], references: [id], onDelete: Cascade)
+  type      EvConnectorType
+  powerKw   Float
+  quantity  Int
+
+  @@index([stationId, type, powerKw])
+  @@map("ev_connectors")
+}
+
+model CarServiceBusiness {
+  id                 String                   @id @db.VarChar(120)
+  nameAr             String                   @db.VarChar(200)
+  nameEn             String                   @db.VarChar(200)
+  latitude           Float?
+  longitude          Float?
+  mapReady           Boolean                  @default(false)
+  coordinateAccuracy String                   @db.VarChar(80)
+  coordinateNoteAr   String?                  @db.VarChar(500)
+  coordinateNoteEn   String?                  @db.VarChar(500)
+  addressAr          String?                  @db.VarChar(300)
+  addressEn          String?                  @db.VarChar(300)
+  phone              String?                  @db.VarChar(32)
+  website            String?                  @db.VarChar(2048)
+  openingHoursText   String?                  @db.VarChar(300)
+  servicesAr         String[]
+  servicesEn         String[]
+  pricing            Json?
+  operatingStatus    String                   @db.VarChar(80)
+  verificationStatus String                   @db.VarChar(80)
+  sourceName         String                   @db.VarChar(200)
+  sourceUrl          String                   @db.VarChar(2048)
+  secondarySourceUrl String?                  @db.VarChar(2048)
+  lastCheckedAt      DateTime
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+  categories         CarServiceCategoryLink[]
+
+  @@index([latitude, longitude])
+  @@index([mapReady, latitude, longitude])
+  @@map("car_service_businesses")
+}
+
+model CarServiceCategoryLink {
+  businessId String             @db.VarChar(120)
+  category   CarServiceCategory
+  business   CarServiceBusiness @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@id([businessId, category])
+  @@index([category])
+  @@map("car_service_category_links")
+}
+
+model TourismPlace {
+  id                        String                     @id @db.VarChar(120)
+  nameAr                    String                     @db.VarChar(200)
+  nameEn                    String                     @db.VarChar(200)
+  primaryCategory           TourismPlaceCategory
+  descriptionAr             String?                    @db.VarChar(1000)
+  cityAr                    String?                    @db.VarChar(100)
+  regionAr                  String?                    @db.VarChar(120)
+  addressAr                 String?                    @db.VarChar(300)
+  latitude                  Float?
+  longitude                 Float?
+  mapReady                  Boolean                    @default(false)
+  coordinateReferenceSystem String?                    @db.VarChar(40)
+  coordinateSourceUrl       String?                    @db.VarChar(2048)
+  locationStatus            String                     @db.VarChar(80)
+  coordinateMeaning         String?                    @db.VarChar(120)
+  locationNoteAr            String?                    @db.VarChar(700)
+  navigationEntrance        Json?
+  fieldVerified             Boolean                    @default(false)
+  openingHours              Json?
+  entryFee                  Json?
+  isFreeEntry               Boolean?
+  publicAccessConfirmed     Boolean?
+  phone                     String?                    @db.VarChar(32)
+  email                     String?                    @db.VarChar(254)
+  website                   String?                    @db.VarChar(2048)
+  imageUrl                  String?                    @db.VarChar(2048)
+  sourceImageUrl            String?                    @db.VarChar(2048)
+  imageLicense              String?                    @db.VarChar(300)
+  imageUsageRightsVerified  Boolean                    @default(false)
+  accessibility             Json?
+  toiletsAvailable          Boolean?
+  parkingAvailable          Boolean?
+  nearbyParkingIds          String[]
+  officialSourceId          Int?
+  sources                   Json
+  sourcesCheckedOn          DateTime
+  createdAt                 DateTime                   @default(now())
+  updatedAt                 DateTime                   @updatedAt
+  categories                TourismPlaceCategoryLink[]
+
+  @@index([latitude, longitude])
+  @@index([mapReady, latitude, longitude])
+  @@map("tourism_places")
+}
+
+model TourismPlaceCategoryLink {
+  placeId  String               @db.VarChar(120)
+  category TourismPlaceCategory
+  place    TourismPlace         @relation(fields: [placeId], references: [id], onDelete: Cascade)
+
+  @@id([placeId, category])
+  @@index([category])
+  @@map("tourism_place_category_links")
+}
+
+model OutboxEvent {
+  id          String    @id @default(uuid())
+  topic       String
+  userId      String?
+  payload     Json
+  deliveredAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([deliveredAt, createdAt])
+  @@map("outbox_events")
+}
+
+enum RideStatus {
+  open
+  cancelled
+  completed
+}
+
+enum RideBookingStatus {
+  pending
+  accepted
+  declined
+  cancelled
+  completed
+}
+
+/// A driver going from one city to another, sharing fuel costs with passengers.
+model Ride {
+  id           String        @id @default(uuid())
+  driverId     String
+  driver       User          @relation(fields: [driverId], references: [id])
+  vehicleId    String
+  fromCity     String
+  toCity       String
+  meetingPoint String
+  departAt     DateTime
+  seatsTotal   Int
+  pricePerSeat Int
+  womenOnly    Boolean       @default(false)
+  notes        String?
+  status       RideStatus    @default(open)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  bookings     RideBooking[]
+
+  @@index([status, departAt])
+  @@index([driverId, departAt])
+  @@map("rides")
+}
+
+model RideBooking {
+  id              String            @id @default(uuid())
+  rideId          String
+  ride            Ride              @relation(fields: [rideId], references: [id])
+  passengerId     String
+  passenger       User              @relation(fields: [passengerId], references: [id])
+  seats           Int
+  amount          Int
+  status          RideBookingStatus @default(pending)
+  /// Rating the passenger gave the driver (1-5).
+  driverRating    Int?
+  /// Rating the driver gave the passenger (1-5).
+  passengerRating Int?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  @@index([rideId, status])
+  @@index([passengerId, createdAt])
+  @@map("ride_bookings")
+}
+
+enum SpotBookingStatus {
+  pending
+  confirmed
+  declined
+  cancelled
+  active
+  completed
+}
+
+/// A private parking space a resident rents out (driveway, yard, garage).
+model HostSpot {
+  id            String        @id @default(uuid())
+  hostId        String
+  host          User          @relation(fields: [hostId], references: [id])
+  title         String
+  description   String?
+  city          String
+  /// Shown to everyone: neighbourhood or nearby landmark only.
+  areaHint      String
+  /// Shown only to drivers with a confirmed booking.
+  fullAddress   String
+  latitude      Float
+  longitude     Float
+  vehicleSize   String        @default("car")
+  covered       Boolean       @default(false)
+  hourlyRate    Int
+  dailyRate     Int?
+  /// 0 = Sunday … 6 = Saturday.
+  weekdays      Int[]
+  availableFrom String
+  availableTo   String
+  instantBook   Boolean       @default(false)
+  active        Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  bookings      SpotBooking[]
+
+  @@index([active, city])
+  @@index([hostId])
+  @@map("host_spots")
+}
+
+model SpotBooking {
+  id           String            @id @default(uuid())
+  spotId       String
+  spot         HostSpot          @relation(fields: [spotId], references: [id])
+  driverId     String
+  driver       User              @relation(fields: [driverId], references: [id])
+  startTime    DateTime
+  endTime      DateTime
+  amount       Int
+  status       SpotBookingStatus @default(pending)
+  hostRating   Int?
+  driverRating Int?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@index([spotId, startTime, endTime])
+  @@index([driverId, startTime])
+  @@index([status, endTime])
+  @@map("spot_bookings")
+}
+
+/// One car's stay in a lot, from the entry event to the exit event.
+model ParkingVisit {
+  id            String      @id @default(uuid())
+  parkingZoneId String
+  zone          ParkingZone @relation(fields: [parkingZoneId], references: [id])
+  /// Digits only, the same normalisation vehicles use.
+  plateNumber   String
+  /// Null when the plate is not registered in ParkFlow.
+  vehicleId     String?
+  enteredAt     DateTime
+  exitedAt      DateTime?
+  /// camera | qr | manual
+  entrySource   String
+  exitSource    String?
+  entryDeviceId String?
+  exitDeviceId  String?
+  /// Session started automatically by a QR gate scan, stopped again on exit.
+  sessionId     String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  violations    Violation[]
+
+  @@index([parkingZoneId, exitedAt])
+  @@index([plateNumber, exitedAt])
+  @@index([exitedAt])
+  @@map("parking_visits")
+}
+
+/// A plate camera or QR scanner at a lot's gate. Cameras authenticate with a key.
+model GateDevice {
+  id            String      @id @default(uuid())
+  parkingZoneId String
+  zone          ParkingZone @relation(fields: [parkingZoneId], references: [id])
+  name          String
+  /// camera | qr_scanner
+  kind          String
+  keyHash       String      @unique
+  active        Boolean     @default(true)
+  lastSeenAt    DateTime?
+  createdAt     DateTime    @default(now())
+
+  @@index([parkingZoneId])
+  @@map("gate_devices")
+}
+
+enum CrashEventOutcome {
+  cancelled
+  called
+  call_failed
+  no_number
+}
+
+/// A possible crash detected on the driver's phone, and what happened next.
+model CrashEvent {
+  id          String            @id @default(uuid())
+  userId      String
+  user        User              @relation(fields: [userId], references: [id])
+  detectedAt  DateTime
+  latitude    Float?
+  longitude   Float?
+  speedKmh    Float?
+  peakG       Float
+  rotationDeg Float?
+  outcome     CrashEventOutcome
+  calledNumber String?
+  createdAt   DateTime          @default(now())
+
+  @@index([userId, detectedAt])
+  @@map("crash_events")
+}

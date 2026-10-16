@@ -1,0 +1,1721 @@
+{
+  "schemaVersion": "1.0.0",
+  "datasetId": "parkflow-ramallah-albireh-tourism",
+  "titleAr": "طبقة السياحة والمعالم — رام الله والبيرة",
+  "preparedOn": "2026-10-09",
+  "coverageAr": "قائمة أولية موثقة لرام الله والبيرة؛ ليست حصرًا شاملًا لجميع الأماكن.",
+  "categories": [
+    {
+      "id": "historic_landmark",
+      "labelAr": "معالم تاريخية"
+    },
+    {
+      "id": "museum",
+      "labelAr": "متاحف"
+    },
+    {
+      "id": "park_garden",
+      "labelAr": "حدائق ومنتزهات"
+    },
+    {
+      "id": "visitor_attraction",
+      "labelAr": "أماكن زيارة"
+    }
+  ],
+  "statistics": {
+    "totalPlaces": 26,
+    "placesWithCoordinates": 23,
+    "placesAwaitingCoordinates": 3,
+    "coordinateSourceCounts": {
+      "officialTourismMap": 20,
+      "secondaryMap": 3
+    }
+  },
+  "dataPolicyAr": [
+    "كل معلومة غير مثبتة تُترك null؛ المصفوفة الفارغة تعني عدم ربط بيانات حتى الآن، ولا تعني عدم وجودها.",
+    "تاريخ مراجعة المصدر لا يضمن حداثة بياناته أو استمرار تشغيل المكان.",
+    "الإحداثيات متاحة من المصادر وليست تحققًا ميدانيًا؛ mapReady يعبّر عن إمكانية رسم العلامة فقط.",
+    "الأماكن الدينية والمرافق الثقافية ليست مؤكدة الإتاحة للزيارة دون ترتيب مسبق.",
+    "sourceImageUrl رابط صورة منشورة في المصدر، وليس ترخيصًا لإعادة استخدامها؛ imageUrl يبقى null حتى التأكد من الحقوق.",
+    "الأسماء الإنجليزية من الخريطة الرسمية عند توفرها، وأسماء السجلات الإضافية تسميات تعريفية؛ لم يُثبت أنها أسماء تجارية رسمية."
+  ],
+  "integrationNotesAr": [
+    "هذا ملف بيانات مستقل؛ يجب مواءمة حقوله مع مستورد خدمات السيارات الموجود قبل استيراده.",
+    "الاستيراد يعتمد id مفتاحًا ثابتًا ويحدّث السجل الموجود لتجنب التكرار.",
+    "عرض العلامات فقط عندما mapReady=true والإحداثيات أرقام صالحة. لا تحول null إلى صفر.",
+    "الفلاتر تعتمد categories؛ يمكن للمكان أن يظهر في عدة تصنيفات بعلامة واحدة.",
+    "أخفِ الحقول الفارغة في بطاقة المكان، ولا تعرض ساعات أو أسعارًا افتراضية.",
+    "يمكن توجيه المستخدم إلى نقطة المكان المتاحة مع توضيح أن مدخل الزيارة غير مؤكد؛ navigationEntrance يحتاج تحققًا منفصلًا.",
+    "ربط المواقف القريبة يتم لاحقًا من بيانات المواقف الفعلية في التطبيق؛ nearbyParkingIds ليس بيانات جاهزة.",
+    "متحف محمود درويش وحديقته سجل واحد، وميدان ياسر عرفات سجل مستقل عن متحف ياسر عرفات.",
+    "يجب الحفاظ على إسناد المصادر ومراجعة شروط إعادة استخدام الصور وبيانات الخرائط قبل النشر."
+  ],
+  "places": [
+    {
+      "id": "tourism-qattan-foundation",
+      "nameAr": "مؤسسة عبد المحسن القطان",
+      "nameEn": "Abdul Mohsen Al-Qattan Foundation",
+      "primaryCategory": "visitor_attraction",
+      "categories": [
+        "visitor_attraction"
+      ],
+      "descriptionAr": "مؤسسة ثقافية مدرجة ضمن دليل زيارة رام الله، وتُدرج هنا كوجهة ثقافية.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.9098984,
+      "longitude": 35.1812838,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://visitramallah.ramallah.ps/api/v1/map",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "source_poi_point_not_verified_entrance",
+      "locationNoteAr": "نقطة منشورة في الخريطة السياحية الرسمية؛ لم يُتحقق ميدانيًا من المدخل أو إتاحة الدخول.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": "https://visitramallah.ramallah.ps/public/storage/galleries/1366x768/s374-1.png",
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": 374,
+      "sources": [
+        {
+          "url": "https://visitramallah.ramallah.ps/api/v1/map",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "nameEn",
+            "latitude",
+            "longitude",
+            "sourceImageUrl"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://visitramallah.ramallah.ps/en/Article/374/Abdul-Mohsen-Al-Qattan-Foundation",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-al-kamandjati",
+      "nameAr": "جمعية الكمنجاتي",
+      "nameEn": "Al-Kamandjati Institution",
+      "primaryCategory": "visitor_attraction",
+      "categories": [
+        "visitor_attraction"
+      ],
+      "descriptionAr": "جمعية موسيقية مدرجة ضمن الدليل السياحي للمدينة. تفاصيل الزيارات والفعاليات تحتاج تأكيدًا قبل عرضها.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.9031096,
+      "longitude": 35.195526,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://visitramallah.ramallah.ps/api/v1/map",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "source_poi_point_not_verified_entrance",
+      "locationNoteAr": "نقطة منشورة في الخريطة السياحية الرسمية؛ لم يُتحقق ميدانيًا من المدخل أو إتاحة الدخول.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": "https://visitramallah.ramallah.ps/public/storage/galleries/1366x768/s406-1.jpg",
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": 406,
+      "sources": [
+        {
+          "url": "https://visitramallah.ramallah.ps/api/v1/map",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "nameEn",
+            "latitude",
+            "longitude",
+            "sourceImageUrl"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://visitramallah.ramallah.ps/en/Article/406/Al-Kamandjati-Institution",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-al-manara-square",
+      "nameAr": "ميدان المنارة",
+      "nameEn": "Al-Manara Square",
+      "primaryCategory": "visitor_attraction",
+      "categories": [
+        "visitor_attraction"
+      ],
+      "descriptionAr": "ميدان مركزي في رام الله يتميز بنصب الأسود ويشكّل نقطة معروفة للتعرّف على وسط المدينة.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.9049534,
+      "longitude": 35.2044571,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://visitramallah.ramallah.ps/api/v1/map",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "source_poi_point_not_verified_entrance",
+      "locationNoteAr": "نقطة منشورة في الخريطة السياحية الرسمية؛ لم يُتحقق ميدانيًا من المدخل أو إتاحة الدخول.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": "https://visitramallah.ramallah.ps/public/storage/galleries/1366x768/s381-1.jpg",
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": 381,
+      "sources": [
+        {
+          "url": "https://visitramallah.ramallah.ps/api/v1/map",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "nameEn",
+            "latitude",
+            "longitude",
+            "sourceImageUrl"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://visitramallah.ramallah.ps/en/Article/381/Al-Manara-Square",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-al-qasaba",
+      "nameAr": "مسرح وسينما القصبة",
+      "nameEn": "Al-Qasaba Theatre and Cinematheque",
+      "primaryCategory": "visitor_attraction",
+      "categories": [
+        "visitor_attraction"
+      ],
+      "descriptionAr": "وجهة للمسرح والسينما في رام الله. مواعيد العروض والتذاكر تُراجع من الجهة المنظمة.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.9034861,
+      "longitude": 35.2045229,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://visitramallah.ramallah.ps/api/v1/map",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "source_poi_point_not_verified_entrance",
+      "locationNoteAr": "نقطة منشورة في الخريطة السياحية الرسمية؛ لم يُتحقق ميدانيًا من المدخل أو إتاحة الدخول.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": "https://visitramallah.ramallah.ps/public/storage/galleries/1366x768/s375-1.jpg",
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": 375,
+      "sources": [
+        {
+          "url": "https://visitramallah.ramallah.ps/api/v1/map",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "nameEn",
+            "latitude",
+            "longitude",
+            "sourceImageUrl"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://visitramallah.ramallah.ps/en/Article/375/Al-Qasaba-Theatre-and-Cinematheque",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-ashtar-theatre",
+      "nameAr": "مسرح عشتار",
+      "nameEn": "Ashtar Theatre",
+      "primaryCategory": "visitor_attraction",
+      "categories": [
+        "visitor_attraction"
+      ],
+      "descriptionAr": "مسرح مدرج ضمن الوجهات الثقافية في دليل المدينة. إمكانية الزيارة مرتبطة ببرنامج الجهة.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.9184431,
+      "longitude": 35.2067729,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://visitramallah.ramallah.ps/api/v1/map",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "source_poi_point_not_verified_entrance",
+      "locationNoteAr": "نقطة منشورة في الخريطة السياحية الرسمية؛ لم يُتحقق ميدانيًا من المدخل أو إتاحة الدخول.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": "https://visitramallah.ramallah.ps/public/storage/galleries/1366x768/s377-1.jpg",
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": 377,
+      "sources": [
+        {
+          "url": "https://visitramallah.ramallah.ps/api/v1/map",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "nameEn",
+            "latitude",
+            "longitude",
+            "sourceImageUrl"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://visitramallah.ramallah.ps/en/Article/377/Ashtar-Theatre",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-holy-family-church",
+      "nameAr": "كنيسة العائلة المقدسة وديرين اللاتين و راهبات مار يوسف",
+      "nameEn": "Church of the Holy Family, Latin Convent, and Sisters of St. Joseph",
+      "primaryCategory": "historic_landmark",
+      "categories": [
+        "historic_landmark",
+        "visitor_attraction"
+      ],
+      "descriptionAr": "موقع كنسي مدرج في دليل رام الله ويضم كنيسة العائلة المقدسة ودير اللاتين وراهبات مار يوسف. السماح بالزيارة يحتاج تأكيدًا.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.9048832,
+      "longitude": 35.1996333,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://visitramallah.ramallah.ps/api/v1/map",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "source_poi_point_not_verified_entrance",
+      "locationNoteAr": "نقطة منشورة في الخريطة السياحية الرسمية؛ لم يُتحقق ميدانيًا من المدخل أو إتاحة الدخول.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": "https://visitramallah.ramallah.ps/public/storage/galleries/1366x768/s360-1.jpg",
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": 360,
+      "sources": [
+        {
+          "url": "https://visitramallah.ramallah.ps/api/v1/map",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "nameEn",
+            "latitude",
+            "longitude",
+            "sourceImageUrl"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://visitramallah.ramallah.ps/en/Article/360/Church-of-the-Holy-Family-Latin-Convent-and-Sisters-of-St-Joseph",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-dar-zahran",
+      "nameAr": "مبنى دار زهران التراثي",
+      "nameEn": "Dar Zahran Heritage House",
+      "primaryCategory": "historic_landmark",
+      "categories": [
+        "historic_landmark",
+        "visitor_attraction"
+      ],
+      "descriptionAr": "بيت تراثي في البلدة القديمة يعرض جوانب من تراث رام الله وصورها والحرف المحلية.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.9050984,
+      "longitude": 35.1967139,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://visitramallah.ramallah.ps/api/v1/map",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "source_poi_point_not_verified_entrance",
+      "locationNoteAr": "نقطة منشورة في الخريطة السياحية الرسمية؛ لم يُتحقق ميدانيًا من المدخل أو إتاحة الدخول.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": "https://visitramallah.ramallah.ps/public/storage/galleries/1366x768/s355-1.jpg",
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": 355,
+      "sources": [
+        {
+          "url": "https://visitramallah.ramallah.ps/api/v1/map",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "nameEn",
+            "latitude",
+            "longitude",
+            "sourceImageUrl"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://visitramallah.ramallah.ps/en/Article/355/Dar-Zahran-Heritage-House",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-greek-orthodox-church",
+      "nameAr": "كنيسة الروم الارثوذكس",
+      "nameEn": "Greek Orthodox Church",
+      "primaryCategory": "historic_landmark",
+      "categories": [
+        "historic_landmark",
+        "visitor_attraction"
+      ],
+      "descriptionAr": "كنيسة الروم الأرثوذكس، إحدى الوجهات الدينية المدرجة في دليل رام الله. ترتيبات الزيارة غير مؤكدة.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.903885,
+      "longitude": 35.196896,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://visitramallah.ramallah.ps/api/v1/map",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "source_poi_point_not_verified_entrance",
+      "locationNoteAr": "نقطة منشورة في الخريطة السياحية الرسمية؛ لم يُتحقق ميدانيًا من المدخل أو إتاحة الدخول.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": "https://visitramallah.ramallah.ps/public/storage/galleries/1366x768/s430-1.jpg",
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": 430,
+      "sources": [
+        {
+          "url": "https://visitramallah.ramallah.ps/api/v1/map",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "nameEn",
+            "latitude",
+            "longitude",
+            "sourceImageUrl"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://visitramallah.ramallah.ps/en/Article/430/Greek-Orthodox-Church",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-sakakini-center",
+      "nameAr": "مركز خليل السكاكيني الثقافي",
+      "nameEn": "Khalil Sakakini Cultural Center",
+      "primaryCategory": "visitor_attraction",
+      "categories": [
+        "visitor_attraction",
+        "historic_landmark"
+      ],
+      "descriptionAr": "مركز ثقافي في مبنى تاريخي يستضيف معارض وأنشطة فنية وثقافية.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.8986665,
+      "longitude": 35.2016805,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://visitramallah.ramallah.ps/api/v1/map",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "source_poi_point_not_verified_entrance",
+      "locationNoteAr": "نقطة منشورة في الخريطة السياحية الرسمية؛ لم يُتحقق ميدانيًا من المدخل أو إتاحة الدخول.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": "https://visitramallah.ramallah.ps/public/storage/galleries/1366x768/s373-1.jpg",
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": 373,
+      "sources": [
+        {
+          "url": "https://visitramallah.ramallah.ps/api/v1/map",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "nameEn",
+            "latitude",
+            "longitude",
+            "sourceImageUrl"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://visitramallah.ramallah.ps/en/Article/373/Khalil-Sakakini-Cultural-Center",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-khirbet-al-tira",
+      "nameAr": "خربة الطيرة",
+      "nameEn": "Khirbet Al-Tira",
+      "primaryCategory": "historic_landmark",
+      "categories": [
+        "historic_landmark"
+      ],
+      "descriptionAr": "موقع أثري في رام الله يضم بقايا كنائس بيزنطية وأرضيات فسيفسائية. الوصول ومواعيد الزيارة يحتاجان تأكيدًا.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.9134503,
+      "longitude": 35.1835645,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://visitramallah.ramallah.ps/api/v1/map",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "source_poi_point_not_verified_entrance",
+      "locationNoteAr": "نقطة منشورة في الخريطة السياحية الرسمية؛ لم يُتحقق ميدانيًا من المدخل أو إتاحة الدخول.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": "https://visitramallah.ramallah.ps/public/storage/galleries/1366x768/s365-1.jpg",
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": 365,
+      "sources": [
+        {
+          "url": "https://visitramallah.ramallah.ps/api/v1/map",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "nameEn",
+            "latitude",
+            "longitude",
+            "sourceImageUrl"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://visitramallah.ramallah.ps/en/Article/365/Khirbet-Al-Tira",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://www.travelpalestine.ps/en/Site/13/Khirbet-al-Tira-(Ruin)",
+          "publisher": "Travel Palestine",
+          "type": "official",
+          "supports": [
+            "descriptionAr"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-mahmoud-darwish-museum",
+      "nameAr": "متحف محمود درويش",
+      "nameEn": "Mahmoud Darwish Museum",
+      "primaryCategory": "museum",
+      "categories": [
+        "museum",
+        "park_garden",
+        "visitor_attraction"
+      ],
+      "descriptionAr": "متحف وموقع تذكاري لمحمود درويش يضم مقتنيات مرتبطة به، وحديقة وضريحًا. جُمعت الحديقة والمتحف في سجل واحد لتجنب تكرار العلامات.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.8907887,
+      "longitude": 35.1916093,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://visitramallah.ramallah.ps/api/v1/map",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "source_poi_point_not_verified_entrance",
+      "locationNoteAr": "نقطة منشورة في الخريطة السياحية الرسمية؛ لم يُتحقق ميدانيًا من المدخل أو إتاحة الدخول.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": "https://visitramallah.ramallah.ps/public/storage/galleries/1366x768/s371-1.jpg",
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": 371,
+      "sources": [
+        {
+          "url": "https://visitramallah.ramallah.ps/api/v1/map",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "nameEn",
+            "latitude",
+            "longitude",
+            "sourceImageUrl"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://visitramallah.ramallah.ps/en/Article/371/Mahmoud-Darwish-Museum",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-yasser-arafat-square",
+      "nameAr": "ميدان الشهيد ياسر عرفات",
+      "nameEn": "Martyr Yasser Arafat Square (Clock Roundabout)",
+      "primaryCategory": "visitor_attraction",
+      "categories": [
+        "visitor_attraction"
+      ],
+      "descriptionAr": "ميدان الشهيد ياسر عرفات، المعروف بدوار الساعة، ضمن معالم وسط رام الله.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.9035884,
+      "longitude": 35.203361,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://visitramallah.ramallah.ps/api/v1/map",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "source_poi_point_not_verified_entrance",
+      "locationNoteAr": "نقطة منشورة في الخريطة السياحية الرسمية؛ لم يُتحقق ميدانيًا من المدخل أو إتاحة الدخول.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": "https://visitramallah.ramallah.ps/public/storage/galleries/1366x768/s372-1.jpg",
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": 372,
+      "sources": [
+        {
+          "url": "https://visitramallah.ramallah.ps/api/v1/map",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "nameEn",
+            "latitude",
+            "longitude",
+            "sourceImageUrl"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://visitramallah.ramallah.ps/en/Article/372/Martyr-Yasser-Arafat-Square-Clock-Roundabout",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-nelson-mandela-square",
+      "nameAr": "ميدان نيلسون مانديلا",
+      "nameEn": "Nelson Mandela Square",
+      "primaryCategory": "visitor_attraction",
+      "categories": [
+        "visitor_attraction"
+      ],
+      "descriptionAr": "ميدان عام يحمل اسم نيلسون مانديلا ويضم تمثاله، ومدرج ضمن معالم دليل المدينة.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.9140868,
+      "longitude": 35.179855,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://visitramallah.ramallah.ps/api/v1/map",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "source_poi_point_not_verified_entrance",
+      "locationNoteAr": "نقطة منشورة في الخريطة السياحية الرسمية؛ لم يُتحقق ميدانيًا من المدخل أو إتاحة الدخول.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": "https://visitramallah.ramallah.ps/public/storage/galleries/1366x768/s376-1.jpg",
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": 376,
+      "sources": [
+        {
+          "url": "https://visitramallah.ramallah.ps/api/v1/map",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "nameEn",
+            "latitude",
+            "longitude",
+            "sourceImageUrl"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://visitramallah.ramallah.ps/en/Article/376/Nelson-Mandela-Square",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-ramallah-cultural-palace",
+      "nameAr": "قصر رام الله الثقافي",
+      "nameEn": "Ramallah Cultural Palace",
+      "primaryCategory": "visitor_attraction",
+      "categories": [
+        "visitor_attraction"
+      ],
+      "descriptionAr": "مرفق ثقافي يستضيف عروضًا وفعاليات. مواعيد الدخول وأسعار الفعاليات غير مثبتة في هذا الملف.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.8917984,
+      "longitude": 35.1912008,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://visitramallah.ramallah.ps/api/v1/map",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "source_poi_point_not_verified_entrance",
+      "locationNoteAr": "نقطة منشورة في الخريطة السياحية الرسمية؛ لم يُتحقق ميدانيًا من المدخل أو إتاحة الدخول.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": "https://visitramallah.ramallah.ps/public/storage/galleries/1366x768/s378-1.jpg",
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": 378,
+      "sources": [
+        {
+          "url": "https://visitramallah.ramallah.ps/api/v1/map",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "nameEn",
+            "latitude",
+            "longitude",
+            "sourceImageUrl"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://visitramallah.ramallah.ps/en/Article/378/Ramallah-Cultural-Palace",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-ramallah-municipality-park",
+      "nameAr": "منتزه بلدية رام الله",
+      "nameEn": "Ramallah Municipality Park",
+      "primaryCategory": "park_garden",
+      "categories": [
+        "park_garden"
+      ],
+      "descriptionAr": "منتزه بلدية رام الله، مساحة خضراء للتنزه والأنشطة العامة بحسب دليل المدينة.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.9016791,
+      "longitude": 35.1997988,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://visitramallah.ramallah.ps/api/v1/map",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "source_poi_point_not_verified_entrance",
+      "locationNoteAr": "نقطة منشورة في الخريطة السياحية الرسمية؛ لم يُتحقق ميدانيًا من المدخل أو إتاحة الدخول.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": "https://visitramallah.ramallah.ps/public/storage/galleries/1366x768/s386-1.jpg",
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": 386,
+      "sources": [
+        {
+          "url": "https://visitramallah.ramallah.ps/api/v1/map",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "nameEn",
+            "latitude",
+            "longitude",
+            "sourceImageUrl"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://visitramallah.ramallah.ps/en/Article/386/Ramallah-Municipality-Park",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-ramallah-public-library",
+      "nameAr": "مكتبة رام الله العامة",
+      "nameEn": "Ramallah Public Library",
+      "primaryCategory": "visitor_attraction",
+      "categories": [
+        "visitor_attraction"
+      ],
+      "descriptionAr": "مكتبة رام الله العامة، مدرجة ضمن دليل الوجهات في المدينة. خدمات الزوار ومواعيدها تحتاج تأكيدًا.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.9011461,
+      "longitude": 35.2017996,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://visitramallah.ramallah.ps/api/v1/map",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "source_poi_point_not_verified_entrance",
+      "locationNoteAr": "نقطة منشورة في الخريطة السياحية الرسمية؛ لم يُتحقق ميدانيًا من المدخل أو إتاحة الدخول.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": "https://visitramallah.ramallah.ps/public/storage/galleries/1366x768/s379-1.jpg",
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": 379,
+      "sources": [
+        {
+          "url": "https://visitramallah.ramallah.ps/api/v1/map",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "nameEn",
+            "latitude",
+            "longitude",
+            "sourceImageUrl"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://visitramallah.ramallah.ps/en/Article/379/Ramallah-Public-Library",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-ramallah-tourist-information",
+      "nameAr": "مركز رام الله السياحي",
+      "nameEn": "Ramallah Tourist Information Center",
+      "primaryCategory": "visitor_attraction",
+      "categories": [
+        "visitor_attraction"
+      ],
+      "descriptionAr": "مركز رام الله السياحي، نقطة معلومات للزوار مدرجة في الخريطة الرسمية.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.9024692,
+      "longitude": 35.1995816,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://visitramallah.ramallah.ps/api/v1/map",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "source_poi_point_not_verified_entrance",
+      "locationNoteAr": "نقطة منشورة في الخريطة السياحية الرسمية؛ لم يُتحقق ميدانيًا من المدخل أو إتاحة الدخول.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": "https://visitramallah.ramallah.ps/public/storage/galleries/1366x768/s396-1.jpg",
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": 396,
+      "sources": [
+        {
+          "url": "https://visitramallah.ramallah.ps/api/v1/map",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "nameEn",
+            "latitude",
+            "longitude",
+            "sourceImageUrl"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://visitramallah.ramallah.ps/en/Article/396/Ramallah-Tourist-Information-Center",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-yasser-arafat-museum",
+      "nameAr": "متحف الرئيس الراحل ياسر عرفات",
+      "nameEn": "The Late President Yasser Arafat Museum",
+      "primaryCategory": "museum",
+      "categories": [
+        "museum",
+        "visitor_attraction"
+      ],
+      "descriptionAr": "متحف في منطقة المقاطعة يعرض سيرة ياسر عرفات ومحطات من التاريخ الفلسطيني المعاصر.",
+      "cityAr": null,
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.9112911,
+      "longitude": 35.2088104,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://visitramallah.ramallah.ps/api/v1/map",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "source_poi_point_not_verified_entrance",
+      "locationNoteAr": "نقطة منشورة في الخريطة السياحية الرسمية؛ لم يُتحقق ميدانيًا من المدخل أو إتاحة الدخول. المدينة الإدارية الدقيقة تُترك غير محددة؛ الموقع ضمن منطقة رام الله والبيرة.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": "https://visitramallah.ramallah.ps/public/storage/galleries/1366x768/s357-2.jpg",
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": 357,
+      "sources": [
+        {
+          "url": "https://visitramallah.ramallah.ps/api/v1/map",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "nameEn",
+            "latitude",
+            "longitude",
+            "sourceImageUrl"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://visitramallah.ramallah.ps/en/Article/357/The-Late-President-Yasser-Arafat-Museum",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-old-omari-mosque-ramallah",
+      "nameAr": "المسجد القديم - العمري (رام الله التحتا)",
+      "nameEn": "The Old Mosque – Al-Omari",
+      "primaryCategory": "historic_landmark",
+      "categories": [
+        "historic_landmark"
+      ],
+      "descriptionAr": "المسجد العمري القديم في رام الله التحتا. هذا السجل يخص مسجد رام الله، ولا يخص المسجد المجاور لكنيسة البيرة.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.9041239,
+      "longitude": 35.1961383,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://visitramallah.ramallah.ps/api/v1/map",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "source_poi_point_not_verified_entrance",
+      "locationNoteAr": "نقطة منشورة في الخريطة السياحية الرسمية؛ لم يُتحقق ميدانيًا من المدخل أو إتاحة الدخول.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": "https://visitramallah.ramallah.ps/public/storage/galleries/1366x768/s370-1.jpg",
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": 370,
+      "sources": [
+        {
+          "url": "https://visitramallah.ramallah.ps/api/v1/map",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "nameEn",
+            "latitude",
+            "longitude",
+            "sourceImageUrl"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://visitramallah.ramallah.ps/en/Article/370/The-Old-Mosque-Al-Omari",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-ramallah-old-town",
+      "nameAr": "البلدة القديمة (رام الله التحتا)",
+      "nameEn": "The Old Town (downtown Ramallah)",
+      "primaryCategory": "historic_landmark",
+      "categories": [
+        "historic_landmark",
+        "visitor_attraction"
+      ],
+      "descriptionAr": "البلدة القديمة، أو رام الله التحتا، منطقة للتعرّف على عمران المدينة وتراثها. الإحداثية تمثل المنطقة وليست مدخلًا محددًا.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.9037956,
+      "longitude": 35.1960496,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://visitramallah.ramallah.ps/api/v1/map",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "representative_area_point",
+      "locationNoteAr": "نقطة منشورة في الخريطة السياحية الرسمية؛ لم يُتحقق ميدانيًا من المدخل أو إتاحة الدخول.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": "https://visitramallah.ramallah.ps/public/storage/galleries/1366x768/s356-1.jpg",
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": 356,
+      "sources": [
+        {
+          "url": "https://visitramallah.ramallah.ps/api/v1/map",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "nameEn",
+            "latitude",
+            "longitude",
+            "sourceImageUrl"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://visitramallah.ramallah.ps/en/Article/356/The-Old-Town-downtown-Ramallah",
+          "publisher": "دليل زيارة رام الله — بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-ramallah-history-museum",
+      "nameAr": "متحف رام الله",
+      "nameEn": "Ramallah History Museum",
+      "primaryCategory": "museum",
+      "categories": [
+        "museum"
+      ],
+      "descriptionAr": "متحف للتعرّف على تاريخ رام الله من خلال مواد وعروض فنية وتاريخية.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.90513,
+      "longitude": 35.19711,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://mapcarta.com/N432294730",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "source_poi_point_not_verified_entrance",
+      "locationNoteAr": "إحداثية من فهرس خرائط ثانوي، ولم يُتحقق ميدانيًا من المدخل.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": null,
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": null,
+      "sources": [
+        {
+          "url": "https://ramallah.ps/en/Article/9291/The-Ramallah-History-Museum",
+          "publisher": "بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://mapcarta.com/N432294730",
+          "publisher": "Mapcarta",
+          "type": "secondary_map",
+          "supports": [
+            "latitude",
+            "longitude"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-ottoman-court",
+      "nameAr": "المحكمة العثمانية",
+      "nameEn": "Ottoman Court",
+      "primaryCategory": "historic_landmark",
+      "categories": [
+        "historic_landmark",
+        "visitor_attraction"
+      ],
+      "descriptionAr": "مبنى تاريخي ارتبط بالمحكمة العثمانية في رام الله، وله استخدامات ثقافية وفق الدليل السياحي.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.90407,
+      "longitude": 35.1982,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://mapcarta.com/28458914",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "source_poi_point_not_verified_entrance",
+      "locationNoteAr": "إحداثية من فهرس خرائط ثانوي، ولم يُتحقق ميدانيًا من المدخل.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": null,
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": null,
+      "sources": [
+        {
+          "url": "https://www.travelpalestine.ps/en/Site/4/Ottoman-Court",
+          "publisher": "Travel Palestine",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://mapcarta.com/28458914",
+          "publisher": "Mapcarta",
+          "type": "secondary_map",
+          "supports": [
+            "latitude",
+            "longitude"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-al-zaytouna-garden",
+      "nameAr": "حديقة الزيتونة",
+      "nameEn": "Al-Zaytouna Garden",
+      "primaryCategory": "park_garden",
+      "categories": [
+        "park_garden"
+      ],
+      "descriptionAr": "حديقة في رام الله مذكورة في موقع البلدية. لم تُثبت ساعات فتحها أو مرافقها الحالية.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": 31.91663,
+      "longitude": 35.18504,
+      "mapReady": true,
+      "coordinateReferenceSystem": "WGS84",
+      "coordinateSourceUrl": "https://mapcarta.com/28450542",
+      "locationStatus": "source_point_available",
+      "coordinateMeaning": "source_poi_point_not_verified_entrance",
+      "locationNoteAr": "إحداثية من فهرس خرائط ثانوي، ولم يُتحقق ميدانيًا من المدخل.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": null,
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": null,
+      "sources": [
+        {
+          "url": "https://www.ramallah.ps/ar/Article/3125/حديقة-الزيتونة",
+          "publisher": "بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        },
+        {
+          "url": "https://mapcarta.com/28450542",
+          "publisher": "Mapcarta",
+          "type": "secondary_map",
+          "supports": [
+            "latitude",
+            "longitude"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-family-park",
+      "nameAr": "حديقة العائلة",
+      "nameEn": "Family Park",
+      "primaryCategory": "park_garden",
+      "categories": [
+        "park_garden"
+      ],
+      "descriptionAr": "حديقة في منطقة بطن الهوى بحسب موقع بلدية رام الله. تحتاج إلى إحداثية مؤكدة قبل عرض علامتها.",
+      "cityAr": "رام الله",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": null,
+      "longitude": null,
+      "mapReady": false,
+      "coordinateReferenceSystem": null,
+      "coordinateSourceUrl": null,
+      "locationStatus": "needs_coordinate_verification",
+      "coordinateMeaning": null,
+      "locationNoteAr": "تُحفظ القائمة دون علامة على الخريطة إلى حين التحقق من الإحداثية؛ لا تستخدم إحداثيات تخمينية.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": null,
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": null,
+      "sources": [
+        {
+          "url": "https://www.ramallah.ps/en/Article/9300/Family-Park",
+          "publisher": "بلدية رام الله",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-khan-al-bireh",
+      "nameAr": "خان البيرة",
+      "nameEn": "Khan Al-Bireh",
+      "primaryCategory": "historic_landmark",
+      "categories": [
+        "historic_landmark"
+      ],
+      "descriptionAr": "موقع تراثي وأثري في البيرة مدرج في دليل السياحة. توصيف التشغيل الحالي والإحداثية يحتاجان تأكيدًا.",
+      "cityAr": "البيرة",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": null,
+      "longitude": null,
+      "mapReady": false,
+      "coordinateReferenceSystem": null,
+      "coordinateSourceUrl": null,
+      "locationStatus": "needs_coordinate_verification",
+      "coordinateMeaning": null,
+      "locationNoteAr": "تُحفظ القائمة دون علامة على الخريطة إلى حين التحقق من الإحداثية؛ لا تستخدم إحداثيات تخمينية.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": null,
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": null,
+      "sources": [
+        {
+          "url": "https://www.travelpalestine.ps/en/Site/11/Khan-Al-Bireh",
+          "publisher": "Travel Palestine",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    },
+    {
+      "id": "tourism-al-bireh-church",
+      "nameAr": "كنيسة البيرة التاريخية",
+      "nameEn": "Al-Bireh Church",
+      "primaryCategory": "historic_landmark",
+      "categories": [
+        "historic_landmark"
+      ],
+      "descriptionAr": "بقايا كنيسة تاريخية في البيرة، بجوار المسجد العمري وفق دليل السياحة. لم تُثبت نقطة الوصول.",
+      "cityAr": "البيرة",
+      "regionAr": "رام الله والبيرة",
+      "addressAr": null,
+      "latitude": null,
+      "longitude": null,
+      "mapReady": false,
+      "coordinateReferenceSystem": null,
+      "coordinateSourceUrl": null,
+      "locationStatus": "needs_coordinate_verification",
+      "coordinateMeaning": null,
+      "locationNoteAr": "تُحفظ القائمة دون علامة على الخريطة إلى حين التحقق من الإحداثية؛ لا تستخدم إحداثيات تخمينية.",
+      "navigationEntrance": null,
+      "fieldVerified": false,
+      "openingHours": null,
+      "entryFee": null,
+      "isFreeEntry": null,
+      "publicAccessConfirmed": null,
+      "phone": null,
+      "email": null,
+      "website": null,
+      "imageUrl": null,
+      "sourceImageUrl": null,
+      "imageLicense": null,
+      "imageUsageRightsVerified": false,
+      "accessibility": null,
+      "toiletsAvailable": null,
+      "parkingAvailable": null,
+      "nearbyParkingIds": [],
+      "officialSourceId": null,
+      "sources": [
+        {
+          "url": "https://www.travelpalestine.ps/en/Site/28/Al-Bireh-Church",
+          "publisher": "Travel Palestine",
+          "type": "official",
+          "supports": [
+            "nameAr",
+            "descriptionAr",
+            "categories"
+          ],
+          "accessedOn": "2026-10-09"
+        }
+      ],
+      "sourcesCheckedOn": "2026-10-09"
+    }
+  ]
+}

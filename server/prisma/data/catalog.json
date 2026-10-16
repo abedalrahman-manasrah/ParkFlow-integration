@@ -1,0 +1,2039 @@
+{
+  "zones": [
+    {
+      "id": "zone_irsal",
+      "code": "RML-023",
+      "name": "Al-Irsal Street",
+      "nameAr": "شارع الإرسال",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "street",
+      "location": {
+        "latitude": 31.9075,
+        "longitude": 35.1978
+      },
+      "supportedModes": [
+        "start_stop",
+        "prepaid"
+      ],
+      "defaultMode": "start_stop",
+      "tariff": {
+        "id": "tar_irsal",
+        "name": "Al-Irsal standard",
+        "hourlyRate": 300,
+        "currency": "ILS",
+        "incrementMinutes": 15,
+        "freeMinutes": 5,
+        "minimumCharge": 100,
+        "maxStayMinutes": 180,
+        "validFrom": "2026-01-01T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 1,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 2,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 3,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 4,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 5,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": true
+        },
+        {
+          "weekday": 6,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        }
+      ],
+      "availability": "available",
+      "operatorName": "Ramallah Municipality",
+      "supportedEntryMethods": [
+        "gps",
+        "qr",
+        "zone_code"
+      ],
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "zone_manara",
+      "code": "RML-001",
+      "name": "Al-Manara Square",
+      "nameAr": "دوار المنارة",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "street",
+      "location": {
+        "latitude": 31.9038,
+        "longitude": 35.2034
+      },
+      "supportedModes": [
+        "prepaid"
+      ],
+      "defaultMode": "prepaid",
+      "tariff": {
+        "id": "tar_manara",
+        "name": "Al-Manara centre",
+        "hourlyRate": 400,
+        "currency": "ILS",
+        "incrementMinutes": 15,
+        "freeMinutes": 5,
+        "minimumCharge": 100,
+        "maxStayMinutes": 120,
+        "validFrom": "2026-01-01T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "08:00",
+          "closesAt": "20:00",
+          "closed": false
+        },
+        {
+          "weekday": 1,
+          "opensAt": "08:00",
+          "closesAt": "20:00",
+          "closed": false
+        },
+        {
+          "weekday": 2,
+          "opensAt": "08:00",
+          "closesAt": "20:00",
+          "closed": false
+        },
+        {
+          "weekday": 3,
+          "opensAt": "08:00",
+          "closesAt": "20:00",
+          "closed": false
+        },
+        {
+          "weekday": 4,
+          "opensAt": "08:00",
+          "closesAt": "20:00",
+          "closed": false
+        },
+        {
+          "weekday": 5,
+          "opensAt": "08:00",
+          "closesAt": "20:00",
+          "closed": true
+        },
+        {
+          "weekday": 6,
+          "opensAt": "08:00",
+          "closesAt": "20:00",
+          "closed": false
+        }
+      ],
+      "availability": "limited",
+      "operatorName": "Ramallah Municipality",
+      "supportedEntryMethods": [
+        "gps",
+        "zone_code"
+      ],
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "zone_rukab",
+      "code": "RML-007",
+      "name": "Rukab Street",
+      "nameAr": "شارع ركب",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "street",
+      "location": {
+        "latitude": 31.9029,
+        "longitude": 35.2052
+      },
+      "supportedModes": [
+        "start_stop",
+        "prepaid"
+      ],
+      "defaultMode": "start_stop",
+      "tariff": {
+        "id": "tar_rukab",
+        "name": "Rukab standard",
+        "hourlyRate": 300,
+        "currency": "ILS",
+        "incrementMinutes": 15,
+        "freeMinutes": 5,
+        "minimumCharge": 100,
+        "maxStayMinutes": 180,
+        "validFrom": "2026-01-01T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "08:00",
+          "closesAt": "20:00",
+          "closed": false
+        },
+        {
+          "weekday": 1,
+          "opensAt": "08:00",
+          "closesAt": "20:00",
+          "closed": false
+        },
+        {
+          "weekday": 2,
+          "opensAt": "08:00",
+          "closesAt": "20:00",
+          "closed": false
+        },
+        {
+          "weekday": 3,
+          "opensAt": "08:00",
+          "closesAt": "20:00",
+          "closed": false
+        },
+        {
+          "weekday": 4,
+          "opensAt": "08:00",
+          "closesAt": "20:00",
+          "closed": false
+        },
+        {
+          "weekday": 5,
+          "opensAt": "08:00",
+          "closesAt": "20:00",
+          "closed": true
+        },
+        {
+          "weekday": 6,
+          "opensAt": "08:00",
+          "closesAt": "20:00",
+          "closed": false
+        }
+      ],
+      "availability": "full",
+      "operatorName": "Ramallah Municipality",
+      "supportedEntryMethods": [
+        "gps",
+        "qr",
+        "zone_code"
+      ],
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "zone_hospital",
+      "code": "RML-041",
+      "name": "Ramallah Hospital",
+      "nameAr": "مستشفى رام الله",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "lot",
+      "location": {
+        "latitude": 31.9098,
+        "longitude": 35.2019
+      },
+      "supportedModes": [
+        "start_stop"
+      ],
+      "defaultMode": "start_stop",
+      "tariff": {
+        "id": "tar_hospital",
+        "name": "Hospital lot",
+        "hourlyRate": 200,
+        "currency": "ILS",
+        "incrementMinutes": 15,
+        "freeMinutes": 15,
+        "minimumCharge": 100,
+        "maxStayMinutes": 480,
+        "validFrom": "2026-01-01T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "00:00",
+          "closesAt": "23:59"
+        },
+        {
+          "weekday": 1,
+          "opensAt": "00:00",
+          "closesAt": "23:59"
+        },
+        {
+          "weekday": 2,
+          "opensAt": "00:00",
+          "closesAt": "23:59"
+        },
+        {
+          "weekday": 3,
+          "opensAt": "00:00",
+          "closesAt": "23:59"
+        },
+        {
+          "weekday": 4,
+          "opensAt": "00:00",
+          "closesAt": "23:59"
+        },
+        {
+          "weekday": 5,
+          "opensAt": "00:00",
+          "closesAt": "23:59"
+        },
+        {
+          "weekday": 6,
+          "opensAt": "00:00",
+          "closesAt": "23:59"
+        }
+      ],
+      "availability": "available",
+      "capacity": 120,
+      "operatorName": "Ramallah Municipality",
+      "supportedEntryMethods": [
+        "gps",
+        "qr"
+      ],
+      "updatedAt": "2026-01-01T00:00:00.000Z",
+      "accessibleSpots": 3
+    },
+    {
+      "id": "zone_plaza",
+      "code": "RML-G12",
+      "name": "Plaza Mall Garage",
+      "nameAr": "كراج بلازا مول",
+      "city": "Al-Bireh",
+      "cityAr": "البيرة",
+      "kind": "garage",
+      "location": {
+        "latitude": 31.9265,
+        "longitude": 35.2101
+      },
+      "supportedModes": [
+        "start_stop"
+      ],
+      "defaultMode": "start_stop",
+      "tariff": {
+        "id": "tar_plaza",
+        "name": "Plaza garage",
+        "hourlyRate": 500,
+        "currency": "ILS",
+        "incrementMinutes": 15,
+        "freeMinutes": 30,
+        "minimumCharge": 100,
+        "validFrom": "2026-01-01T00:00:00.000Z",
+        "dailyCap": 3000
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "00:00",
+          "closesAt": "23:59"
+        },
+        {
+          "weekday": 1,
+          "opensAt": "00:00",
+          "closesAt": "23:59"
+        },
+        {
+          "weekday": 2,
+          "opensAt": "00:00",
+          "closesAt": "23:59"
+        },
+        {
+          "weekday": 3,
+          "opensAt": "00:00",
+          "closesAt": "23:59"
+        },
+        {
+          "weekday": 4,
+          "opensAt": "00:00",
+          "closesAt": "23:59"
+        },
+        {
+          "weekday": 5,
+          "opensAt": "00:00",
+          "closesAt": "23:59"
+        },
+        {
+          "weekday": 6,
+          "opensAt": "00:00",
+          "closesAt": "23:59"
+        }
+      ],
+      "availability": "available",
+      "capacity": 340,
+      "facilityId": "fac_plaza",
+      "operatorName": "Plaza Parking",
+      "supportedEntryMethods": [
+        "anpr",
+        "qr",
+        "gps"
+      ],
+      "updatedAt": "2026-01-01T00:00:00.000Z",
+      "accessibleSpots": 2
+    },
+    {
+      "id": "zone_balou",
+      "code": "BRH-014",
+      "name": "Al-Balou Street",
+      "nameAr": "شارع البالوع",
+      "city": "Al-Bireh",
+      "cityAr": "البيرة",
+      "kind": "street",
+      "location": {
+        "latitude": 31.9148,
+        "longitude": 35.2188
+      },
+      "supportedModes": [
+        "start_stop",
+        "prepaid"
+      ],
+      "defaultMode": "prepaid",
+      "tariff": {
+        "id": "tar_balou",
+        "name": "Al-Balou standard",
+        "hourlyRate": 200,
+        "currency": "ILS",
+        "incrementMinutes": 15,
+        "freeMinutes": 5,
+        "minimumCharge": 100,
+        "maxStayMinutes": 180,
+        "validFrom": "2026-01-01T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 1,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 2,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 3,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 4,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 5,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": true
+        },
+        {
+          "weekday": 6,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        }
+      ],
+      "availability": "available",
+      "operatorName": "Al-Bireh Municipality",
+      "supportedEntryMethods": [
+        "gps",
+        "zone_code"
+      ],
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "zone_municipality",
+      "code": "RML-G03",
+      "name": "Municipality Garage",
+      "nameAr": "كراج البلدية",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "garage",
+      "location": {
+        "latitude": 31.9021,
+        "longitude": 35.2003
+      },
+      "supportedModes": [
+        "start_stop"
+      ],
+      "defaultMode": "start_stop",
+      "tariff": {
+        "id": "tar_muni_garage",
+        "name": "Municipality garage",
+        "hourlyRate": 400,
+        "currency": "ILS",
+        "incrementMinutes": 15,
+        "freeMinutes": 5,
+        "minimumCharge": 100,
+        "maxStayMinutes": 180,
+        "validFrom": "2026-01-01T00:00:00.000Z",
+        "dailyCap": 2500
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "07:00",
+          "closesAt": "22:00",
+          "closed": false
+        },
+        {
+          "weekday": 1,
+          "opensAt": "07:00",
+          "closesAt": "22:00",
+          "closed": false
+        },
+        {
+          "weekday": 2,
+          "opensAt": "07:00",
+          "closesAt": "22:00",
+          "closed": false
+        },
+        {
+          "weekday": 3,
+          "opensAt": "07:00",
+          "closesAt": "22:00",
+          "closed": false
+        },
+        {
+          "weekday": 4,
+          "opensAt": "07:00",
+          "closesAt": "22:00",
+          "closed": false
+        },
+        {
+          "weekday": 5,
+          "opensAt": "07:00",
+          "closesAt": "22:00",
+          "closed": true
+        },
+        {
+          "weekday": 6,
+          "opensAt": "07:00",
+          "closesAt": "22:00",
+          "closed": false
+        }
+      ],
+      "availability": "limited",
+      "capacity": 180,
+      "facilityId": "fac_municipality",
+      "operatorName": "Ramallah Municipality",
+      "supportedEntryMethods": [
+        "gps",
+        "qr",
+        "zone_code"
+      ],
+      "updatedAt": "2026-01-01T00:00:00.000Z",
+      "accessibleSpots": 1
+    },
+    {
+      "id": "zone_masyoun",
+      "code": "RML-018",
+      "name": "Al-Masyoun",
+      "nameAr": "المصيون",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "street",
+      "location": {
+        "latitude": 31.9012,
+        "longitude": 35.1902
+      },
+      "supportedModes": [
+        "start_stop"
+      ],
+      "defaultMode": "start_stop",
+      "tariff": {
+        "id": "tar_masyoun",
+        "name": "Al-Masyoun standard",
+        "hourlyRate": 200,
+        "currency": "ILS",
+        "incrementMinutes": 15,
+        "freeMinutes": 5,
+        "minimumCharge": 100,
+        "maxStayMinutes": 180,
+        "validFrom": "2026-01-01T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 1,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 2,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 3,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 4,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 5,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": true
+        },
+        {
+          "weekday": 6,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        }
+      ],
+      "availability": "available",
+      "operatorName": "Ramallah Municipality",
+      "supportedEntryMethods": [
+        "gps",
+        "zone_code"
+      ],
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "zone_tireh",
+      "code": "RML-030",
+      "name": "Al-Tireh Road",
+      "nameAr": "شارع الطيرة",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "street",
+      "location": {
+        "latitude": 31.8961,
+        "longitude": 35.1935
+      },
+      "supportedModes": [
+        "prepaid"
+      ],
+      "defaultMode": "prepaid",
+      "tariff": {
+        "id": "tar_tireh",
+        "name": "Al-Tireh standard",
+        "hourlyRate": 200,
+        "currency": "ILS",
+        "incrementMinutes": 15,
+        "freeMinutes": 5,
+        "minimumCharge": 100,
+        "maxStayMinutes": 240,
+        "validFrom": "2026-01-01T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 1,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 2,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 3,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 4,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 5,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": true
+        },
+        {
+          "weekday": 6,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        }
+      ],
+      "availability": "unknown",
+      "operatorName": "Ramallah Municipality",
+      "supportedEntryMethods": [
+        "gps",
+        "zone_code"
+      ],
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "zone_ersal_north",
+      "code": "RML-024",
+      "name": "Al-Irsal North",
+      "nameAr": "الإرسال الشمالي",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "street",
+      "location": {
+        "latitude": 31.9101,
+        "longitude": 35.1966
+      },
+      "supportedModes": [
+        "start_stop",
+        "prepaid"
+      ],
+      "defaultMode": "start_stop",
+      "tariff": {
+        "id": "tar_irsal_n",
+        "name": "Al-Irsal north",
+        "hourlyRate": 300,
+        "currency": "ILS",
+        "incrementMinutes": 15,
+        "freeMinutes": 5,
+        "minimumCharge": 100,
+        "maxStayMinutes": 180,
+        "validFrom": "2026-01-01T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 1,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 2,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 3,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 4,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        },
+        {
+          "weekday": 5,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": true
+        },
+        {
+          "weekday": 6,
+          "opensAt": "08:00",
+          "closesAt": "18:00",
+          "closed": false
+        }
+      ],
+      "availability": "limited",
+      "operatorName": "Ramallah Municipality",
+      "supportedEntryMethods": [
+        "gps",
+        "qr",
+        "zone_code"
+      ],
+      "updatedAt": "2026-01-01T00:00:00.000Z"
+    },
+    {
+      "id": "rml_manara_municipal_complex",
+      "ownership": "municipal",
+      "parkingAllowed": true,
+      "prototypeData": true,
+      "code": "RML-101",
+      "name": "Al-Manara Municipal Parking Complex",
+      "nameAr": "مجمع المنارة البلدي للمواقف",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "garage",
+      "location": {
+        "latitude": 31.9058532,
+        "longitude": 35.2041163
+      },
+      "supportedModes": [
+        "start_stop",
+        "prepaid"
+      ],
+      "defaultMode": "start_stop",
+      "tariff": {
+        "id": "tar_rml_manara_municipal_complex",
+        "name": "Al-Manara Municipal Parking Complex prototype tariff",
+        "hourlyRate": 300,
+        "currency": "ILS",
+        "incrementMinutes": 60,
+        "freeMinutes": 0,
+        "minimumCharge": 300,
+        "maxStayMinutes": 180,
+        "validFrom": "2026-09-27T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        },
+        {
+          "weekday": 1,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        },
+        {
+          "weekday": 2,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        },
+        {
+          "weekday": 3,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        },
+        {
+          "weekday": 4,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        },
+        {
+          "weekday": 5,
+          "opensAt": "08:00",
+          "closesAt": "14:00",
+          "closed": true
+        },
+        {
+          "weekday": 6,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        }
+      ],
+      "availability": "limited",
+      "capacity": 434,
+      "operatorName": "Ramallah Municipality",
+      "supportedEntryMethods": [
+        "gps",
+        "qr",
+        "zone_code"
+      ],
+      "updatedAt": "2026-09-27T00:00:00.000Z",
+      "accessibleSpots": 2
+    },
+    {
+      "id": "rml_al_bireh_municipal_complex",
+      "ownership": "municipal",
+      "parkingAllowed": true,
+      "prototypeData": true,
+      "code": "RML-102",
+      "name": "Al-Malki Commercial Complex - Al-Bireh Municipality",
+      "nameAr": "مجمع المالكي التجاري - مجمع بلدية البيرة",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "lot",
+      "location": {
+        "latitude": 31.9047348,
+        "longitude": 35.2073092
+      },
+      "supportedModes": [
+        "start_stop",
+        "prepaid"
+      ],
+      "defaultMode": "prepaid",
+      "tariff": {
+        "id": "tar_rml_al_bireh_municipal_complex",
+        "name": "Al-Malki Commercial Complex - Al-Bireh Municipality prototype tariff",
+        "hourlyRate": 200,
+        "currency": "ILS",
+        "incrementMinutes": 60,
+        "freeMinutes": 0,
+        "minimumCharge": 200,
+        "maxStayMinutes": 180,
+        "validFrom": "2026-09-27T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        },
+        {
+          "weekday": 1,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        },
+        {
+          "weekday": 2,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        },
+        {
+          "weekday": 3,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        },
+        {
+          "weekday": 4,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        },
+        {
+          "weekday": 5,
+          "opensAt": "08:00",
+          "closesAt": "14:00",
+          "closed": true
+        },
+        {
+          "weekday": 6,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        }
+      ],
+      "availability": "available",
+      "operatorName": "Al-Bireh Municipality",
+      "supportedEntryMethods": [
+        "gps",
+        "qr",
+        "zone_code"
+      ],
+      "updatedAt": "2026-09-27T00:00:00.000Z"
+    },
+    {
+      "id": "rml_municipality_al_ayyam_lot",
+      "ownership": "municipal",
+      "parkingAllowed": true,
+      "prototypeData": true,
+      "code": "RML-103",
+      "name": "Ramallah Municipality Parking - Al Ayyam Street",
+      "nameAr": "موقف بلدية رام الله - شارع الأيام",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "lot",
+      "location": {
+        "latitude": 31.8933219,
+        "longitude": 35.1883224
+      },
+      "supportedModes": [
+        "prepaid"
+      ],
+      "defaultMode": "prepaid",
+      "tariff": {
+        "id": "tar_rml_municipality_al_ayyam_lot",
+        "name": "Ramallah Municipality Parking - Al Ayyam Street prototype tariff",
+        "hourlyRate": 200,
+        "currency": "ILS",
+        "incrementMinutes": 60,
+        "freeMinutes": 0,
+        "minimumCharge": 200,
+        "maxStayMinutes": 120,
+        "validFrom": "2026-09-27T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        },
+        {
+          "weekday": 1,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        },
+        {
+          "weekday": 2,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        },
+        {
+          "weekday": 3,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        },
+        {
+          "weekday": 4,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        },
+        {
+          "weekday": 5,
+          "opensAt": "08:00",
+          "closesAt": "14:00",
+          "closed": true
+        },
+        {
+          "weekday": 6,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        }
+      ],
+      "availability": "unknown",
+      "operatorName": "Ramallah Municipality",
+      "supportedEntryMethods": [
+        "gps",
+        "zone_code"
+      ],
+      "updatedAt": "2026-09-27T00:00:00.000Z"
+    },
+    {
+      "id": "rml_w54r_free_lot",
+      "ownership": "public",
+      "parkingAllowed": true,
+      "prototypeData": true,
+      "code": "RML-104",
+      "name": "W54R Public Free Parking",
+      "nameAr": "موقف عام مجاني - منطقة W54R",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "lot",
+      "location": {
+        "latitude": 31.9068572,
+        "longitude": 35.19103
+      },
+      "supportedModes": [
+        "start_stop"
+      ],
+      "defaultMode": "start_stop",
+      "tariff": {
+        "id": "tar_rml_w54r_free_lot",
+        "name": "W54R Public Free Parking prototype tariff",
+        "hourlyRate": 0,
+        "currency": "ILS",
+        "incrementMinutes": 60,
+        "freeMinutes": 0,
+        "minimumCharge": 0,
+        "validFrom": "2026-09-27T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "00:00",
+          "closesAt": "23:59"
+        },
+        {
+          "weekday": 1,
+          "opensAt": "00:00",
+          "closesAt": "23:59"
+        },
+        {
+          "weekday": 2,
+          "opensAt": "00:00",
+          "closesAt": "23:59"
+        },
+        {
+          "weekday": 3,
+          "opensAt": "00:00",
+          "closesAt": "23:59"
+        },
+        {
+          "weekday": 4,
+          "opensAt": "00:00",
+          "closesAt": "23:59"
+        },
+        {
+          "weekday": 5,
+          "opensAt": "00:00",
+          "closesAt": "23:59"
+        },
+        {
+          "weekday": 6,
+          "opensAt": "00:00",
+          "closesAt": "23:59"
+        }
+      ],
+      "availability": "available",
+      "operatorName": "Unknown public operator",
+      "supportedEntryMethods": [
+        "gps",
+        "manual"
+      ],
+      "updatedAt": "2026-09-27T00:00:00.000Z"
+    },
+    {
+      "id": "rml_adhami_parking",
+      "ownership": "private",
+      "parkingAllowed": true,
+      "prototypeData": true,
+      "code": "RML-105",
+      "name": "Adhami Parking",
+      "nameAr": "موقف الأدهمي للسيارات",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "private",
+      "location": {
+        "latitude": 31.9039569,
+        "longitude": 35.2040681
+      },
+      "supportedModes": [
+        "start_stop"
+      ],
+      "defaultMode": "start_stop",
+      "tariff": {
+        "id": "tar_rml_adhami_parking",
+        "name": "Adhami Parking prototype tariff",
+        "hourlyRate": 500,
+        "currency": "ILS",
+        "incrementMinutes": 60,
+        "freeMinutes": 0,
+        "minimumCharge": 500,
+        "maxStayMinutes": 480,
+        "validFrom": "2026-09-27T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 1,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 2,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 3,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 4,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 5,
+          "opensAt": "10:00",
+          "closesAt": "18:00"
+        },
+        {
+          "weekday": 6,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        }
+      ],
+      "availability": "unknown",
+      "operatorName": "Adhami Parking",
+      "supportedEntryMethods": [
+        "gps",
+        "qr"
+      ],
+      "updatedAt": "2026-09-27T00:00:00.000Z"
+    },
+    {
+      "id": "rml_abu_diak_parking",
+      "ownership": "private",
+      "parkingAllowed": true,
+      "prototypeData": true,
+      "code": "RML-106",
+      "name": "Abu Diak Parking",
+      "nameAr": "موقف أبو دياك",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "private",
+      "location": {
+        "latitude": 31.9037304,
+        "longitude": 35.1976916
+      },
+      "supportedModes": [
+        "start_stop"
+      ],
+      "defaultMode": "start_stop",
+      "tariff": {
+        "id": "tar_rml_abu_diak_parking",
+        "name": "Abu Diak Parking prototype tariff",
+        "hourlyRate": 500,
+        "currency": "ILS",
+        "incrementMinutes": 60,
+        "freeMinutes": 0,
+        "minimumCharge": 500,
+        "maxStayMinutes": 480,
+        "validFrom": "2026-09-27T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 1,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 2,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 3,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 4,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 5,
+          "opensAt": "10:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 6,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        }
+      ],
+      "availability": "unknown",
+      "operatorName": "Abu Diak Parking",
+      "supportedEntryMethods": [
+        "gps",
+        "qr"
+      ],
+      "updatedAt": "2026-09-27T00:00:00.000Z"
+    },
+    {
+      "id": "rml_rukab_west_garage",
+      "ownership": "private",
+      "parkingAllowed": true,
+      "prototypeData": true,
+      "code": "RML-107",
+      "name": "Rukab Street Parking Garage - West",
+      "nameAr": "كراج شارع ركب - الجهة الغربية",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "private",
+      "location": {
+        "latitude": 31.9053191,
+        "longitude": 35.2010578
+      },
+      "supportedModes": [
+        "start_stop"
+      ],
+      "defaultMode": "start_stop",
+      "tariff": {
+        "id": "tar_rml_rukab_west_garage",
+        "name": "Rukab Street Parking Garage - West prototype tariff",
+        "hourlyRate": 500,
+        "currency": "ILS",
+        "incrementMinutes": 60,
+        "freeMinutes": 0,
+        "minimumCharge": 500,
+        "maxStayMinutes": 360,
+        "validFrom": "2026-09-27T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 1,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 2,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 3,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 4,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 5,
+          "opensAt": "10:00",
+          "closesAt": "18:00"
+        },
+        {
+          "weekday": 6,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        }
+      ],
+      "availability": "unknown",
+      "operatorName": "Unknown private operator",
+      "supportedEntryMethods": [
+        "gps",
+        "manual"
+      ],
+      "updatedAt": "2026-09-27T00:00:00.000Z",
+      "accessibleSpots": 2
+    },
+    {
+      "id": "rml_rukab_east_garage",
+      "ownership": "private",
+      "parkingAllowed": true,
+      "prototypeData": true,
+      "code": "RML-108",
+      "name": "Rukab Street Parking Garage - East",
+      "nameAr": "كراج شارع ركب - الجهة الشرقية",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "private",
+      "location": {
+        "latitude": 31.9053122,
+        "longitude": 35.2040755
+      },
+      "supportedModes": [
+        "start_stop"
+      ],
+      "defaultMode": "start_stop",
+      "tariff": {
+        "id": "tar_rml_rukab_east_garage",
+        "name": "Rukab Street Parking Garage - East prototype tariff",
+        "hourlyRate": 500,
+        "currency": "ILS",
+        "incrementMinutes": 60,
+        "freeMinutes": 0,
+        "minimumCharge": 500,
+        "maxStayMinutes": 360,
+        "validFrom": "2026-09-27T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 1,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 2,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 3,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 4,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 5,
+          "opensAt": "10:00",
+          "closesAt": "18:00"
+        },
+        {
+          "weekday": 6,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        }
+      ],
+      "availability": "unknown",
+      "operatorName": "Unknown private operator",
+      "supportedEntryMethods": [
+        "gps",
+        "manual"
+      ],
+      "updatedAt": "2026-09-27T00:00:00.000Z"
+    },
+    {
+      "id": "rml_irsal_central_garage",
+      "ownership": "private",
+      "parkingAllowed": true,
+      "prototypeData": true,
+      "code": "RML-109",
+      "name": "Al-Irsal Street Central Parking Garage",
+      "nameAr": "كراج وسط شارع الإرسال",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "private",
+      "location": {
+        "latitude": 31.9061805,
+        "longitude": 35.2066222
+      },
+      "supportedModes": [
+        "start_stop"
+      ],
+      "defaultMode": "start_stop",
+      "tariff": {
+        "id": "tar_rml_irsal_central_garage",
+        "name": "Al-Irsal Street Central Parking Garage prototype tariff",
+        "hourlyRate": 500,
+        "currency": "ILS",
+        "incrementMinutes": 60,
+        "freeMinutes": 0,
+        "minimumCharge": 500,
+        "maxStayMinutes": 480,
+        "validFrom": "2026-09-27T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 1,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 2,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 3,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 4,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 5,
+          "opensAt": "10:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 6,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        }
+      ],
+      "availability": "unknown",
+      "operatorName": "Unknown private operator",
+      "supportedEntryMethods": [
+        "gps",
+        "qr"
+      ],
+      "updatedAt": "2026-09-27T00:00:00.000Z"
+    },
+    {
+      "id": "rml_maahid_street_garage",
+      "ownership": "private",
+      "parkingAllowed": true,
+      "prototypeData": true,
+      "code": "RML-110",
+      "name": "Al-Maahid Street Parking Garage",
+      "nameAr": "كراج شارع المعاهد",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "private",
+      "location": {
+        "latitude": 31.9006587,
+        "longitude": 35.2035102
+      },
+      "supportedModes": [
+        "start_stop"
+      ],
+      "defaultMode": "start_stop",
+      "tariff": {
+        "id": "tar_rml_maahid_street_garage",
+        "name": "Al-Maahid Street Parking Garage prototype tariff",
+        "hourlyRate": 500,
+        "currency": "ILS",
+        "incrementMinutes": 60,
+        "freeMinutes": 0,
+        "minimumCharge": 500,
+        "maxStayMinutes": 480,
+        "validFrom": "2026-09-27T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 1,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 2,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 3,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 4,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 5,
+          "opensAt": "10:00",
+          "closesAt": "18:00"
+        },
+        {
+          "weekday": 6,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        }
+      ],
+      "availability": "unknown",
+      "operatorName": "Unknown private operator",
+      "supportedEntryMethods": [
+        "gps",
+        "qr"
+      ],
+      "updatedAt": "2026-09-27T00:00:00.000Z"
+    },
+    {
+      "id": "rml_south_parking_garage",
+      "ownership": "private",
+      "parkingAllowed": true,
+      "prototypeData": true,
+      "code": "RML-111",
+      "name": "South Ramallah Parking Garage",
+      "nameAr": "كراج جنوب رام الله",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "private",
+      "location": {
+        "latitude": 31.8878271,
+        "longitude": 35.2050853
+      },
+      "supportedModes": [
+        "start_stop"
+      ],
+      "defaultMode": "start_stop",
+      "tariff": {
+        "id": "tar_rml_south_parking_garage",
+        "name": "South Ramallah Parking Garage prototype tariff",
+        "hourlyRate": 400,
+        "currency": "ILS",
+        "incrementMinutes": 60,
+        "freeMinutes": 0,
+        "minimumCharge": 400,
+        "validFrom": "2026-09-27T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 1,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 2,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 3,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 4,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 5,
+          "opensAt": "10:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 6,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        }
+      ],
+      "availability": "unknown",
+      "operatorName": "Unknown private operator",
+      "supportedEntryMethods": [
+        "gps",
+        "manual"
+      ],
+      "updatedAt": "2026-09-27T00:00:00.000Z",
+      "accessibleSpots": 2
+    },
+    {
+      "id": "rml_north_irsal_garage",
+      "ownership": "private",
+      "parkingAllowed": true,
+      "prototypeData": true,
+      "code": "RML-112",
+      "name": "North Al-Irsal Parking Garage",
+      "nameAr": "كراج شمال شارع الإرسال",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "private",
+      "location": {
+        "latitude": 31.9249079,
+        "longitude": 35.2131198
+      },
+      "supportedModes": [
+        "start_stop"
+      ],
+      "defaultMode": "start_stop",
+      "tariff": {
+        "id": "tar_rml_north_irsal_garage",
+        "name": "North Al-Irsal Parking Garage prototype tariff",
+        "hourlyRate": 400,
+        "currency": "ILS",
+        "incrementMinutes": 60,
+        "freeMinutes": 0,
+        "minimumCharge": 400,
+        "validFrom": "2026-09-27T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 1,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 2,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 3,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 4,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 5,
+          "opensAt": "10:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 6,
+          "opensAt": "07:00",
+          "closesAt": "22:00"
+        }
+      ],
+      "availability": "unknown",
+      "operatorName": "Unknown private operator",
+      "supportedEntryMethods": [
+        "gps",
+        "manual"
+      ],
+      "updatedAt": "2026-09-27T00:00:00.000Z"
+    },
+    {
+      "id": "rml_karaj_wasat",
+      "ownership": "private",
+      "parkingAllowed": true,
+      "prototypeData": true,
+      "code": "RML-113",
+      "name": "Karaj Wasat",
+      "nameAr": "كراج وسط",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "private",
+      "location": {
+        "latitude": 31.9037641,
+        "longitude": 35.2034184
+      },
+      "supportedModes": [
+        "start_stop"
+      ],
+      "defaultMode": "start_stop",
+      "tariff": {
+        "id": "tar_rml_karaj_wasat",
+        "name": "Karaj Wasat prototype tariff",
+        "hourlyRate": 500,
+        "currency": "ILS",
+        "incrementMinutes": 60,
+        "freeMinutes": 0,
+        "minimumCharge": 500,
+        "maxStayMinutes": 480,
+        "validFrom": "2026-09-27T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 1,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 2,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 3,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 4,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        },
+        {
+          "weekday": 5,
+          "opensAt": "10:00",
+          "closesAt": "18:00"
+        },
+        {
+          "weekday": 6,
+          "opensAt": "08:00",
+          "closesAt": "20:00"
+        }
+      ],
+      "availability": "unknown",
+      "operatorName": "Karaj Wasat",
+      "supportedEntryMethods": [
+        "gps",
+        "qr"
+      ],
+      "updatedAt": "2026-09-27T00:00:00.000Z"
+    },
+    {
+      "id": "rml_nablus_terminal_parking",
+      "ownership": "public_transport",
+      "accessRestriction": "May be reserved for public-transport vehicles; verify before offering it to private-car users.",
+      "accessRestrictionAr": "قد يكون مخصصاً لمركبات النقل العام؛ تحقّق قبل استخدامه لسيارات الركاب الخاصة.",
+      "parkingAllowed": false,
+      "prototypeData": true,
+      "code": "RML-114",
+      "name": "Nablus Terminal Parking - Ramallah",
+      "nameAr": "كراجات نابلس في رام الله",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "lot",
+      "location": {
+        "latitude": 31.9054327,
+        "longitude": 35.2069957
+      },
+      "supportedModes": [
+        "start_stop"
+      ],
+      "defaultMode": "start_stop",
+      "tariff": {
+        "id": "tar_rml_nablus_terminal_parking",
+        "name": "Nablus Terminal Parking - Ramallah prototype tariff",
+        "hourlyRate": 200,
+        "currency": "ILS",
+        "incrementMinutes": 60,
+        "freeMinutes": 0,
+        "minimumCharge": 200,
+        "maxStayMinutes": 120,
+        "validFrom": "2026-09-27T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "06:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 1,
+          "opensAt": "06:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 2,
+          "opensAt": "06:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 3,
+          "opensAt": "06:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 4,
+          "opensAt": "06:00",
+          "closesAt": "22:00"
+        },
+        {
+          "weekday": 5,
+          "opensAt": "07:00",
+          "closesAt": "18:00"
+        },
+        {
+          "weekday": 6,
+          "opensAt": "06:00",
+          "closesAt": "22:00"
+        }
+      ],
+      "availability": "unknown",
+      "operatorName": "Unknown terminal operator",
+      "supportedEntryMethods": [
+        "gps",
+        "manual"
+      ],
+      "updatedAt": "2026-09-27T00:00:00.000Z"
+    },
+    {
+      "id": "rml_al_masaif_public_parking",
+      "ownership": "public",
+      "parkingAllowed": true,
+      "prototypeData": true,
+      "code": "RML-115",
+      "name": "Al-Masaif Public Parking - Emil Toma Street",
+      "nameAr": "موقف عام في المصايف - شارع إميل توما",
+      "city": "Ramallah",
+      "cityAr": "رام الله",
+      "kind": "lot",
+      "location": {
+        "latitude": 31.9174197,
+        "longitude": 35.2060938
+      },
+      "supportedModes": [
+        "start_stop",
+        "prepaid"
+      ],
+      "defaultMode": "prepaid",
+      "tariff": {
+        "id": "tar_rml_al_masaif_public_parking",
+        "name": "Al-Masaif Public Parking - Emil Toma Street prototype tariff",
+        "hourlyRate": 200,
+        "currency": "ILS",
+        "incrementMinutes": 60,
+        "freeMinutes": 0,
+        "minimumCharge": 200,
+        "maxStayMinutes": 180,
+        "validFrom": "2026-09-27T00:00:00.000Z"
+      },
+      "operatingHours": [
+        {
+          "weekday": 0,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        },
+        {
+          "weekday": 1,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        },
+        {
+          "weekday": 2,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        },
+        {
+          "weekday": 3,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        },
+        {
+          "weekday": 4,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        },
+        {
+          "weekday": 5,
+          "opensAt": "08:00",
+          "closesAt": "14:00",
+          "closed": true
+        },
+        {
+          "weekday": 6,
+          "opensAt": "08:00",
+          "closesAt": "14:00"
+        }
+      ],
+      "availability": "unknown",
+      "operatorName": "Unknown public operator",
+      "supportedEntryMethods": [
+        "gps",
+        "zone_code"
+      ],
+      "updatedAt": "2026-09-27T00:00:00.000Z"
+    }
+  ],
+  "facilities": [
+    {
+      "id": "fac_plaza",
+      "name": "Plaza Mall Garage",
+      "nameAr": "كراج بلازا مول",
+      "operatorName": "Plaza Parking",
+      "location": {
+        "latitude": 31.9265,
+        "longitude": 35.2101
+      },
+      "levels": 3,
+      "hasAnpr": true,
+      "hasBarrier": true,
+      "availability": "available"
+    },
+    {
+      "id": "fac_municipality",
+      "name": "Ramallah Municipality Garage",
+      "nameAr": "كراج بلدية رام الله",
+      "operatorName": "Ramallah Municipality",
+      "location": {
+        "latitude": 31.9021,
+        "longitude": 35.2003
+      },
+      "levels": 2,
+      "hasAnpr": false,
+      "hasBarrier": true,
+      "availability": "limited"
+    }
+  ],
+  "checkpoints": [
+    {
+      "id": "cp_qalandia",
+      "nameAr": "حاجز قلنديا",
+      "nameEn": "Qalandia Checkpoint",
+      "location": {
+        "latitude": 31.86233,
+        "longitude": 35.22743
+      }
+    },
+    {
+      "id": "cp_container",
+      "nameAr": "حاجز الكونتينر",
+      "nameEn": "Container Checkpoint",
+      "location": {
+        "latitude": 31.74222,
+        "longitude": 35.28928
+      }
+    },
+    {
+      "id": "cp_atara",
+      "nameAr": "حاجز عطارة",
+      "nameEn": "Atara Checkpoint",
+      "location": {
+        "latitude": 31.98284,
+        "longitude": 35.20056
+      }
+    },
+    {
+      "id": "cp_beitel",
+      "nameAr": "حاجز بيت إيل (الارتباط)",
+      "nameEn": "Beit El DCO Checkpoint",
+      "location": {
+        "latitude": 31.923,
+        "longitude": 35.22
+      }
+    },
+    {
+      "id": "cp_jaba",
+      "nameAr": "حاجز جبع",
+      "nameEn": "Jaba Checkpoint",
+      "location": {
+        "latitude": 31.85392,
+        "longitude": 35.2564
+      }
+    },
+    {
+      "id": "cp_huwara",
+      "nameAr": "حاجز حوارة",
+      "nameEn": "Huwara Checkpoint",
+      "location": {
+        "latitude": 32.1633,
+        "longitude": 35.26316
+      }
+    },
+    {
+      "id": "cp_zaatara",
+      "nameAr": "حاجز زعترة",
+      "nameEn": "Zaatara Junction",
+      "location": {
+        "latitude": 32.112,
+        "longitude": 35.276
+      }
+    },
+    {
+      "id": "cp_jalama",
+      "nameAr": "حاجز الجلمة",
+      "nameEn": "Jalama Checkpoint",
+      "location": {
+        "latitude": 32.50991,
+        "longitude": 35.30585
+      }
+    }
+  ]
+}

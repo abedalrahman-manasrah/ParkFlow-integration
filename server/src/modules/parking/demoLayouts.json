@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "lastUpdated": "2026-10-01T00:00:00.000Z",
+  "locations": [
+    { "parkingId": "zone_irsal", "template": "split_zones", "entranceLabel": "Demo entrance", "exitLabel": "Demo exit", "occupied": ["B04", "D07"], "outOfService": ["C10"], "accessible": ["A01", "A02"], "ev": ["D09"] },
+    { "parkingId": "zone_manara", "template": "parallel_rows", "entranceLabel": "Demo entrance", "exitLabel": "Demo exit", "occupied": ["A05", "C06"], "outOfService": ["D10"], "accessible": ["A01"], "ev": ["B09", "B10"] },
+    { "parkingId": "zone_rukab", "template": "u_shape", "entranceLabel": "Demo entrance", "exitLabel": "Demo exit", "occupied": ["B03", "D08"], "outOfService": ["C01"], "accessible": ["A01", "D01"], "ev": ["A09"] },
+    { "parkingId": "zone_hospital", "template": "angled_parking", "entranceLabel": "Demo entrance", "exitLabel": "Demo exit", "occupied": ["A07", "C04"], "outOfService": ["B10"], "accessible": ["A01", "A02"], "ev": ["D09", "D10"] },
+    { "parkingId": "zone_plaza", "template": "split_zones", "entranceLabel": "Demo entrance", "exitLabel": "Demo exit", "occupied": ["B06", "C06"], "outOfService": ["A10"], "accessible": ["D01", "D02"], "ev": ["A08", "A09"] },
+    { "parkingId": "zone_balou", "template": "parallel_rows", "entranceLabel": "Demo entrance", "exitLabel": "Demo exit", "occupied": ["A03", "D04"], "outOfService": ["C01"], "accessible": ["B01"], "ev": ["A09", "A10"] },
+    { "parkingId": "zone_municipality", "template": "u_shape", "entranceLabel": "Demo entrance", "exitLabel": "Demo exit", "occupied": ["A06", "B06", "D02"], "outOfService": ["C10"], "accessible": ["A01"], "ev": ["D09", "D10"] },
+    { "parkingId": "zone_masyoun", "template": "angled_parking", "entranceLabel": "Demo entrance", "exitLabel": "Demo exit", "occupied": ["B07", "D07"], "outOfService": ["A10"], "accessible": ["C01", "C02"], "ev": ["B09"] },
+    { "parkingId": "zone_tireh", "template": "split_zones", "entranceLabel": "Demo entrance", "exitLabel": "Demo exit", "occupied": ["A02", "C03"], "outOfService": ["D01"], "accessible": ["A01"], "ev": ["B09", "B10"] },
+    { "parkingId": "zone_ersal_north", "template": "parallel_rows", "entranceLabel": "Demo entrance", "exitLabel": "Demo exit", "occupied": ["B04", "C06", "D09"], "outOfService": ["A10"], "accessible": ["A01", "D01"], "ev": ["B10"] },
+    { "parkingId": "rml_manara_municipal_complex", "template": "parallel_rows", "entranceLabel": "Al-Manara entrance", "exitLabel": "City-center exit", "occupied": ["A04", "C08"], "outOfService": ["D10"], "accessible": ["A01", "A02"], "ev": ["B09", "B10"] },
+    { "parkingId": "rml_al_bireh_municipal_complex", "template": "u_shape", "entranceLabel": "Commercial entrance", "exitLabel": "Municipality exit", "occupied": ["B03", "D06"], "outOfService": ["C10"], "accessible": ["A01", "D01"], "ev": ["B09"] },
+    { "parkingId": "rml_municipality_al_ayyam_lot", "template": "angled_parking", "entranceLabel": "Al Ayyam entrance", "exitLabel": "Municipal exit", "occupied": ["A07", "C02"], "outOfService": ["D04"], "accessible": ["A01", "A02"], "ev": ["C09", "C10"] },
+    { "parkingId": "rml_w54r_free_lot", "template": "split_zones", "entranceLabel": "Public entrance", "exitLabel": "West exit", "occupied": ["B05"], "outOfService": ["C06", "D06"], "accessible": ["A01"], "ev": ["D09"] },
+    { "parkingId": "rml_adhami_parking", "template": "parallel_rows", "entranceLabel": "Adhami entrance", "exitLabel": "Main-road exit", "occupied": ["A08", "D03"], "outOfService": ["B01"], "accessible": ["A01", "D10"], "ev": ["C09"] },
+    { "parkingId": "rml_abu_diak_parking", "template": "u_shape", "entranceLabel": "Abu Diak entrance", "exitLabel": "Adjacent exit", "occupied": ["C04", "D08"], "outOfService": ["A10"], "accessible": ["A01"], "ev": ["B01", "B02"] },
+    { "parkingId": "rml_rukab_west_garage", "template": "angled_parking", "entranceLabel": "Rukab west entrance", "exitLabel": "Upper-street exit", "occupied": ["B02", "C07"], "outOfService": ["D10"], "accessible": ["A01", "A02"], "ev": ["D08", "D09"] },
+    { "parkingId": "rml_rukab_east_garage", "template": "split_zones", "entranceLabel": "Rukab east entrance", "exitLabel": "Lower-street exit", "occupied": ["A05", "C05"], "outOfService": ["B10"], "accessible": ["A01", "C01"], "ev": ["D09"] },
+    { "parkingId": "rml_irsal_central_garage", "template": "parallel_rows", "entranceLabel": "Al-Irsal entrance", "exitLabel": "Central exit", "occupied": ["B06", "C06"], "outOfService": ["A10"], "accessible": ["D01", "D02"], "ev": ["A08", "A09"] },
+    { "parkingId": "rml_maahid_street_garage", "template": "u_shape", "entranceLabel": "Al-Maahid entrance", "exitLabel": "Street exit", "occupied": ["A03", "D04"], "outOfService": ["C01"], "accessible": ["B01"], "ev": ["A09", "A10"] },
+    { "parkingId": "rml_south_parking_garage", "template": "angled_parking", "entranceLabel": "South entrance", "exitLabel": "Northbound exit", "occupied": ["A06", "B06", "D02"], "outOfService": ["C10"], "accessible": ["A01"], "ev": ["D09", "D10"] },
+    { "parkingId": "rml_north_irsal_garage", "template": "split_zones", "entranceLabel": "North entrance", "exitLabel": "Al-Irsal exit", "occupied": ["B07", "D07"], "outOfService": ["A10"], "accessible": ["C01", "C02"], "ev": ["B09"] },
+    { "parkingId": "rml_karaj_wasat", "template": "parallel_rows", "entranceLabel": "Wasat entrance", "exitLabel": "Market exit", "occupied": ["A02", "C03"], "outOfService": ["D01"], "accessible": ["A01"], "ev": ["B09", "B10"] },
+    { "parkingId": "rml_nablus_terminal_parking", "template": "u_shape", "entranceLabel": "Terminal entrance", "exitLabel": "Terminal exit", "occupied": ["B04", "C06", "D09"], "outOfService": ["A10"], "accessible": ["A01", "D01"], "ev": ["B10"] },
+    { "parkingId": "rml_al_masaif_public_parking", "template": "angled_parking", "entranceLabel": "Emil Toma entrance", "exitLabel": "Al-Masaif exit", "occupied": ["A09", "C04"], "outOfService": ["B01"], "accessible": ["A01", "A02"], "ev": ["D08"] }
+  ]
+}

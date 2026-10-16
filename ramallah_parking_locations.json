@@ -1,0 +1,455 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-27",
+  "city": {
+    "name": "Ramallah",
+    "nameAr": "رام الله",
+    "country": "Palestine",
+    "currency": "ILS"
+  },
+  "usage": "ParkFlow development seed data. Verify operator prices before production use.",
+  "pricingPolicy": {
+    "publicDefaultHourlyRateNis": 2,
+    "privateDefaultHourlyRateNis": 5,
+    "notes": [
+      "Al-Manara Complex uses the municipality-published rate of ILS 3 per hour from a 2021 municipal council notice; current operation should still be reconfirmed.",
+      "The municipality published a metered on-street rate of ILS 2 per hour, but that rate is not proof of the tariff at every municipal lot.",
+      "All prices marked demo_estimate were selected for ParkFlow testing and are not claimed as current operator prices.",
+      "Private demo prices are intentionally higher than the public demo default, as requested for the prototype."
+    ],
+    "sources": [
+      {
+        "title": "Ramallah Municipality prepaid parking meters",
+        "url": "https://ramallahcity.ramallah.ps/ar_page.aspx?id=99C9Kja1556116155a99C9Kj"
+      },
+      {
+        "title": "Ramallah Municipality council session 5-2021 - Al-Manara pricing",
+        "url": "https://ramallahcity.ramallah.ps/ar_page.aspx?id=O2SeTDa5411667558aO2SeTD"
+      },
+      {
+        "title": "Ramallah Municipality - Al-Manara Complex description and capacity",
+        "url": "https://www.ramallah.ps/ar/Article/3128/%D9%85%D8%AC%D9%85%D8%B9-%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%B1%D8%A9"
+      }
+    ]
+  },
+  "parkingLocations": [
+    {
+      "id": "rml_manara_municipal_complex",
+      "code": "RML-101",
+      "name": "Al-Manara Municipal Parking Complex",
+      "nameAr": "مجمع المنارة البلدي للمواقف",
+      "nameStatus": "official_name",
+      "ownership": "municipal",
+      "kind": "multi_storey_garage",
+      "operatorName": "Ramallah Municipality",
+      "operatorNameAr": "بلدية رام الله",
+      "location": {
+        "latitude": 31.9058532,
+        "longitude": 35.2041163
+      },
+      "capacity": 434,
+      "price": {
+        "currency": "ILS",
+        "hourlyRateNis": 3,
+        "billingUnitMinutes": 60,
+        "status": "published_2021_reconfirm_current",
+        "note": "Municipality-published rate: ILS 3 per hour, including partial hours."
+      },
+      "availability": "unknown",
+      "locationSource": {
+        "provider": "Google Maps and Ramallah Municipality",
+        "url": "https://www.google.com/maps/place/Al+Manara+Complex/data=!4m7!3m6!1s0x151d2b9e398a201b:0xab04a579f8de383d!8m2!3d31.9058532!4d35.2041163!16s%2Fg%2F11t4pld_yj"
+      }
+    },
+    {
+      "id": "rml_al_bireh_municipal_complex",
+      "code": "RML-102",
+      "name": "Al-Malki Commercial Complex - Al-Bireh Municipality",
+      "nameAr": "مجمع المالكي التجاري - مجمع بلدية البيرة",
+      "nameStatus": "map_listing_name",
+      "ownership": "municipal",
+      "kind": "parking_lot",
+      "operatorName": "Al-Bireh Municipality",
+      "operatorNameAr": "بلدية البيرة",
+      "location": {
+        "latitude": 31.9047348,
+        "longitude": 35.2073092
+      },
+      "price": {
+        "currency": "ILS",
+        "hourlyRateNis": 2,
+        "billingUnitMinutes": 60,
+        "status": "demo_estimate",
+        "note": "Prototype public-parking price; confirm with Al-Bireh Municipality."
+      },
+      "availability": "unknown",
+      "locationSource": {
+        "provider": "Google Maps",
+        "url": "https://www.google.com/maps/place/%D9%85%D8%AC%D9%85%D8%B9+%D8%A7%D9%84%D9%85%D8%A7%D9%84%D9%83%D9%8A+%D8%A7%D9%84%D8%AA%D8%AC%D8%A7%D8%B1%D9%8A+%D9%85%D8%AC%D9%85%D8%B9+%D8%A8%D9%84%D8%AF%D9%8A%D8%A9+%D8%A7%D9%84%D8%A8%D9%8A%D8%B1%D8%A9/data=!4m7!3m6!1s0x151d2aaf1d53f797:0x3bb21db7b7d2d284!8m2!3d31.9047348!4d35.2073092"
+      }
+    },
+    {
+      "id": "rml_municipality_al_ayyam_lot",
+      "code": "RML-103",
+      "name": "Ramallah Municipality Parking - Al Ayyam Street",
+      "nameAr": "موقف بلدية رام الله - شارع الأيام",
+      "nameStatus": "map_listing_name",
+      "ownership": "municipal",
+      "kind": "parking_lot",
+      "operatorName": "Ramallah Municipality",
+      "operatorNameAr": "بلدية رام الله",
+      "location": {
+        "latitude": 31.8933219,
+        "longitude": 35.1883224
+      },
+      "price": {
+        "currency": "ILS",
+        "hourlyRateNis": 2,
+        "billingUnitMinutes": 60,
+        "status": "demo_estimate",
+        "note": "Prototype municipal price; confirm current tariff and access rules."
+      },
+      "availability": "unknown",
+      "locationSource": {
+        "provider": "Google Maps",
+        "url": "https://www.google.com/maps/place/Ramallah+Municipality+Parking/data=!4m7!3m6!1s0x1502d59240e6ac25:0x336125f9c8271114!8m2!3d31.8933219!4d35.1883224"
+      }
+    },
+    {
+      "id": "rml_w54r_free_lot",
+      "code": "RML-104",
+      "name": "W54R Public Free Parking",
+      "nameAr": "موقف عام مجاني - منطقة W54R",
+      "nameStatus": "descriptive_label",
+      "ownership": "public",
+      "kind": "parking_lot",
+      "operatorName": "Unknown public operator",
+      "operatorNameAr": "مشغل عام غير محدد",
+      "location": {
+        "latitude": 31.9068572,
+        "longitude": 35.19103
+      },
+      "price": {
+        "currency": "ILS",
+        "hourlyRateNis": 0,
+        "billingUnitMinutes": 60,
+        "status": "map_listed_free_reconfirm",
+        "note": "Google Maps labels this as a free parking lot; reconfirm signage on site."
+      },
+      "availability": "unknown",
+      "locationSource": {
+        "provider": "Google Maps",
+        "url": "https://www.google.com/maps/place/Parking/data=!4m7!3m6!1s0x151d2aca24eedb5d:0x87b6c3bca0f499e7!8m2!3d31.9068572!4d35.19103"
+      }
+    },
+    {
+      "id": "rml_adhami_parking",
+      "code": "RML-105",
+      "name": "Adhami Parking",
+      "nameAr": "موقف الأدهمي للسيارات",
+      "nameStatus": "business_listing_name",
+      "ownership": "private",
+      "kind": "parking_lot",
+      "operatorName": "Adhami Parking",
+      "operatorNameAr": "موقف الأدهمي",
+      "address": "14 Ghassan Harb Street, Ramallah",
+      "addressAr": "14 شارع غسان حرب، رام الله",
+      "location": {
+        "latitude": 31.9039569,
+        "longitude": 35.2040681
+      },
+      "price": {
+        "currency": "ILS",
+        "hourlyRateNis": 5,
+        "billingUnitMinutes": 60,
+        "status": "demo_estimate",
+        "note": "Prototype private-parking price; operator price was not published."
+      },
+      "availability": "unknown",
+      "locationSource": {
+        "provider": "Google Maps and BizMidEast",
+        "url": "https://www.google.com/maps/place/%D9%85%D9%88%D9%82%D9%81+%D8%A7%D9%84%D8%A7%D8%AF%D9%87%D9%85%D9%8A+%D9%84%D9%84%D8%B3%D9%8A%D8%A7%D8%B1%D8%A7%D8%AA+Adhami+Parking/data=!4m7!3m6!1s0x151d2aae1ce7e7e9:0x81af726d0de5160f!8m2!3d31.9039569!4d35.2040681"
+      }
+    },
+    {
+      "id": "rml_abu_diak_parking",
+      "code": "RML-106",
+      "name": "Abu Diak Parking",
+      "nameAr": "موقف أبو دياك",
+      "nameStatus": "map_listing_name",
+      "ownership": "private",
+      "kind": "parking_garage",
+      "operatorName": "Abu Diak Parking",
+      "operatorNameAr": "موقف أبو دياك",
+      "location": {
+        "latitude": 31.9037304,
+        "longitude": 35.1976916
+      },
+      "price": {
+        "currency": "ILS",
+        "hourlyRateNis": 5,
+        "billingUnitMinutes": 60,
+        "status": "demo_estimate",
+        "note": "Prototype private-parking price; operator price was not published."
+      },
+      "availability": "unknown",
+      "locationSource": {
+        "provider": "Google Maps",
+        "url": "https://www.google.com/maps/place/Parking+Abu+Diak/data=!4m7!3m6!1s0x151d2ba68b457fcf:0xbc222d7d19c96cd8!8m2!3d31.9037304!4d35.1976916"
+      }
+    },
+    {
+      "id": "rml_rukab_west_garage",
+      "code": "RML-107",
+      "name": "Rukab Street Parking Garage - West",
+      "nameAr": "كراج شارع ركب - الجهة الغربية",
+      "nameStatus": "descriptive_label",
+      "ownership": "private",
+      "kind": "parking_garage",
+      "operatorName": "Unknown private operator",
+      "operatorNameAr": "مشغل خاص غير محدد",
+      "location": {
+        "latitude": 31.9053191,
+        "longitude": 35.2010578
+      },
+      "price": {
+        "currency": "ILS",
+        "hourlyRateNis": 5,
+        "billingUnitMinutes": 60,
+        "status": "demo_estimate",
+        "note": "Prototype private-parking price; operator price was not published."
+      },
+      "availability": "unknown",
+      "locationSource": {
+        "provider": "Google Maps",
+        "url": "https://www.google.com/maps/place/Parking/data=!4m7!3m6!1s0x151d2ab17570e911:0x4cbab919ede6f2f7!8m2!3d31.9053191!4d35.2010578"
+      }
+    },
+    {
+      "id": "rml_rukab_east_garage",
+      "code": "RML-108",
+      "name": "Rukab Street Parking Garage - East",
+      "nameAr": "كراج شارع ركب - الجهة الشرقية",
+      "nameStatus": "descriptive_label",
+      "ownership": "private",
+      "kind": "parking_garage",
+      "operatorName": "Unknown private operator",
+      "operatorNameAr": "مشغل خاص غير محدد",
+      "location": {
+        "latitude": 31.9053122,
+        "longitude": 35.2040755
+      },
+      "price": {
+        "currency": "ILS",
+        "hourlyRateNis": 5,
+        "billingUnitMinutes": 60,
+        "status": "demo_estimate",
+        "note": "Prototype private-parking price; operator price was not published."
+      },
+      "availability": "unknown",
+      "locationSource": {
+        "provider": "Google Maps",
+        "url": "https://www.google.com/maps/place/Parking/data=!4m7!3m6!1s0x151d2aae284c8b91:0x93f03cb5239412b0!8m2!3d31.9053122!4d35.2040755"
+      }
+    },
+    {
+      "id": "rml_irsal_central_garage",
+      "code": "RML-109",
+      "name": "Al-Irsal Street Central Parking Garage",
+      "nameAr": "كراج وسط شارع الإرسال",
+      "nameStatus": "descriptive_label",
+      "ownership": "private",
+      "kind": "parking_garage",
+      "operatorName": "Unknown private operator",
+      "operatorNameAr": "مشغل خاص غير محدد",
+      "location": {
+        "latitude": 31.9061805,
+        "longitude": 35.2066222
+      },
+      "price": {
+        "currency": "ILS",
+        "hourlyRateNis": 5,
+        "billingUnitMinutes": 60,
+        "status": "demo_estimate",
+        "note": "Prototype private-parking price; operator price was not published."
+      },
+      "availability": "unknown",
+      "locationSource": {
+        "provider": "Google Maps",
+        "url": "https://www.google.com/maps/place/Parking/data=!4m7!3m6!1s0x151d2aafa0161d47:0xbf2513a37220bafc!8m2!3d31.9061805!4d35.2066222"
+      }
+    },
+    {
+      "id": "rml_maahid_street_garage",
+      "code": "RML-110",
+      "name": "Al-Maahid Street Parking Garage",
+      "nameAr": "كراج شارع المعاهد",
+      "nameStatus": "descriptive_label",
+      "ownership": "private",
+      "kind": "parking_garage",
+      "operatorName": "Unknown private operator",
+      "operatorNameAr": "مشغل خاص غير محدد",
+      "address": "25 Al-Maahid Street, Ramallah",
+      "addressAr": "25 شارع المعاهد، رام الله",
+      "location": {
+        "latitude": 31.9006587,
+        "longitude": 35.2035102
+      },
+      "price": {
+        "currency": "ILS",
+        "hourlyRateNis": 5,
+        "billingUnitMinutes": 60,
+        "status": "demo_estimate",
+        "note": "Prototype private-parking price; operator price was not published."
+      },
+      "availability": "unknown",
+      "locationSource": {
+        "provider": "Google Maps",
+        "url": "https://www.google.com/maps/place/%D9%85%D9%88%D9%82%D9%81+%D8%B3%D9%8A%D8%A7%D8%B1%D8%A7%D8%AA/data=!4m7!3m6!1s0x151d2bac79a594bf:0x41aa04a04094b96e!8m2!3d31.9006587!4d35.2035102"
+      }
+    },
+    {
+      "id": "rml_south_parking_garage",
+      "code": "RML-111",
+      "name": "South Ramallah Parking Garage",
+      "nameAr": "كراج جنوب رام الله",
+      "nameStatus": "descriptive_label",
+      "ownership": "private",
+      "kind": "parking_garage",
+      "operatorName": "Unknown private operator",
+      "operatorNameAr": "مشغل خاص غير محدد",
+      "location": {
+        "latitude": 31.8878271,
+        "longitude": 35.2050853
+      },
+      "price": {
+        "currency": "ILS",
+        "hourlyRateNis": 4,
+        "billingUnitMinutes": 60,
+        "status": "demo_estimate",
+        "note": "Prototype private-parking price; operator price was not published."
+      },
+      "availability": "unknown",
+      "locationSource": {
+        "provider": "Google Maps",
+        "url": "https://www.google.com/maps/place/Parking/data=!4m7!3m6!1s0x1502d55aa1ac3e41:0x72bddd00777d1a09!8m2!3d31.8878271!4d35.2050853"
+      }
+    },
+    {
+      "id": "rml_north_irsal_garage",
+      "code": "RML-112",
+      "name": "North Al-Irsal Parking Garage",
+      "nameAr": "كراج شمال شارع الإرسال",
+      "nameStatus": "descriptive_label",
+      "ownership": "private",
+      "kind": "parking_garage",
+      "operatorName": "Unknown private operator",
+      "operatorNameAr": "مشغل خاص غير محدد",
+      "location": {
+        "latitude": 31.9249079,
+        "longitude": 35.2131198
+      },
+      "price": {
+        "currency": "ILS",
+        "hourlyRateNis": 4,
+        "billingUnitMinutes": 60,
+        "status": "demo_estimate",
+        "note": "Prototype private-parking price; operator price was not published."
+      },
+      "availability": "unknown",
+      "locationSource": {
+        "provider": "Google Maps",
+        "url": "https://www.google.com/maps/place/Parking/data=!4m7!3m6!1s0x151d2a9d314cf931:0x71de9dfaf0f6e8db!8m2!3d31.9249079!4d35.2131198"
+      }
+    },
+    {
+      "id": "rml_karaj_wasat",
+      "code": "RML-113",
+      "name": "Karaj Wasat",
+      "nameAr": "كراج وسط",
+      "nameStatus": "map_listing_name",
+      "ownership": "private",
+      "kind": "parking_lot",
+      "operatorName": "Karaj Wasat",
+      "operatorNameAr": "كراج وسط",
+      "address": "W633+G93, Central Ramallah",
+      "addressAr": "W633+G93، وسط رام الله",
+      "location": {
+        "latitude": 31.9037641,
+        "longitude": 35.2034184
+      },
+      "price": {
+        "currency": "ILS",
+        "hourlyRateNis": 5,
+        "billingUnitMinutes": 60,
+        "status": "demo_estimate",
+        "note": "Prototype private-parking price; operator price was not published."
+      },
+      "availability": "unknown",
+      "locationSource": {
+        "provider": "Google Maps",
+        "url": "https://www.google.com/maps/place/%D9%83%D8%B1%D8%A7%D8%AC+%D9%88%D8%B3%D8%B7/@31.9037641,35.2034184,17z"
+      }
+    },
+    {
+      "id": "rml_nablus_terminal_parking",
+      "code": "RML-114",
+      "name": "Nablus Terminal Parking - Ramallah",
+      "nameAr": "كراجات نابلس في رام الله",
+      "nameStatus": "map_listing_name",
+      "ownership": "public_transport",
+      "kind": "transport_terminal_parking",
+      "operatorName": "Unknown terminal operator",
+      "operatorNameAr": "مشغل المجمع غير محدد",
+      "address": "W644+5QH, Ramallah Terminal",
+      "addressAr": "W644+5QH، مجمع رام الله",
+      "location": {
+        "latitude": 31.9054327,
+        "longitude": 35.2069957
+      },
+      "price": {
+        "currency": "ILS",
+        "hourlyRateNis": 2,
+        "billingUnitMinutes": 60,
+        "status": "demo_estimate",
+        "note": "Prototype public-terminal price; actual fee and eligibility were not published."
+      },
+      "availability": "unknown",
+      "accessRestriction": "May be reserved for public-transport vehicles; verify before offering it to private-car users.",
+      "locationSource": {
+        "provider": "Google Maps",
+        "url": "https://www.google.com/maps/place/%D9%83%D8%B1%D8%A7%D8%AC%D8%A7%D8%AA+%D9%86%D8%A7%D8%A8%D9%84%D8%B3+%D9%81%D9%8A+%D8%B1%D8%A7%D9%85+%D8%A7%D9%84%D9%84%D9%87/data=!4m7!3m6!1s0x151d2b9ea8a07e19:0x889335bc35aabcb2!8m2!3d31.9054327!4d35.2069957"
+      }
+    },
+    {
+      "id": "rml_al_masaif_public_parking",
+      "code": "RML-115",
+      "name": "Al-Masaif Public Parking - Emil Toma Street",
+      "nameAr": "موقف عام في المصايف - شارع إميل توما",
+      "nameStatus": "descriptive_label",
+      "mapListingNameAr": "الحادثة الكبرى",
+      "ownership": "public",
+      "kind": "public_parking_space",
+      "operatorName": "Unknown public operator",
+      "operatorNameAr": "مشغل عام غير محدد",
+      "address": "Emil Toma Street, Al-Masaif, Ramallah",
+      "addressAr": "شارع إميل توما، المصايف، رام الله",
+      "location": {
+        "latitude": 31.9174197,
+        "longitude": 35.2060938
+      },
+      "price": {
+        "currency": "ILS",
+        "hourlyRateNis": 2,
+        "billingUnitMinutes": 60,
+        "status": "demo_estimate",
+        "note": "Prototype public-parking price; confirm the current tariff and signage on site."
+      },
+      "availability": "unknown",
+      "locationSource": {
+        "provider": "Google Maps",
+        "url": "https://www.google.com/maps/place/%D8%A7%D9%84%D8%AD%D8%A7%D8%AF%D8%AB%D8%A9+%D8%A7%D9%84%D9%83%D8%A8%D8%B1%D9%89/data=!4m7!3m6!1s0x151d2bbaf26745cf:0x848e219c8a303cb9!8m2!3d31.9174197!4d35.2060938"
+      }
+    }
+  ]
+}
