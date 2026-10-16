@@ -81,6 +81,20 @@ describe('admin workspace API', () => {
     expect(response.body).toEqual(expect.arrayContaining([expect.objectContaining({ id: driver.user.id, email: 'driver-workspace@example.com' })]));
   });
 
+  it('finds older accounts by email, name, phone, or ID beyond the latest 200 users', async () => {
+    await db.user.update({ where: { id: driver.user.id }, data: { fullName: 'Older Parking Owner', phone: '+970599000123', createdAt: new Date('2020-01-01T00:00:00Z') } });
+    await db.user.createMany({ data: Array.from({ length: 205 }, (_, index) => ({ email: `recent-search-${index}@example.com`, createdAt: new Date('2026-10-16T12:00:00Z') })) });
+    const latest = await request(app).get('/api/v1/admin/users').auth(administrator.session.accessToken, { type: 'bearer' });
+    expect(latest.body).toHaveLength(200);
+    expect(latest.body.some((entry: { id: string }) => entry.id === driver.user.id)).toBe(false);
+    for (const query of ['DRIVER-WORKSPACE@EXAMPLE.COM', 'older parking', '+970599000123', driver.user.id]) {
+      const response = await request(app).get('/api/v1/admin/users').query({ query }).auth(administrator.session.accessToken, { type: 'bearer' });
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual([expect.objectContaining({ id: driver.user.id })]);
+    }
+    expect((await request(app).get('/api/v1/admin/users').query({ query: 'x'.repeat(201) }).auth(administrator.session.accessToken, { type: 'bearer' })).status).toBe(400);
+    expect((await request(app).get('/api/v1/admin/users').query({ query: 'owner' }).auth(driver.session.accessToken, { type: 'bearer' })).status).toBe(403);
+  });
   it('persists a permission change, revokes sessions, and identifies the audit actor', async () => {
     const response = await request(app).patch(`/api/v1/admin/users/${driver.user.id}`).auth(administrator.session.accessToken, { type: 'bearer' }).send({ role: 'PARKING_OPERATOR', status: 'SUSPENDED' });
     expect(response.status).toBe(200);

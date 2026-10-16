@@ -93,6 +93,24 @@ describe('integration gate authorization and privacy', () => {
     await expect(gates.createDevice(operator, 'city-lot', { name: 'Gate', kind: 'camera' })).rejects.toMatchObject({ code: 'FORBIDDEN' });
   });
 
+  it.each(['visits', 'patrol'] as const)('limits %s overstay refreshes to the authorized lot while the worker still covers all lots', async (action) => {
+    await db.operatorUser.update({ where: { operatorId_userId: { operatorId: 'city', userId: operator.userId } }, data: { memberRole: 'attendant' } });
+    const otherVehicle = await db.vehicle.create({ data: { plateNumber: '7654321' } });
+    await db.userVehicle.create({ data: { userId: driver, vehicleId: otherVehicle.id, verifiedAt: new Date() } });
+    await db.parkingVisit.createMany({ data: [
+      { parkingZoneId: 'city-lot', vehicleId, plateNumber: '1234567', enteredAt: minutes(11), entrySource: 'manual' },
+      { parkingZoneId: 'mall-lot', vehicleId: otherVehicle.id, plateNumber: '7654321', enteredAt: minutes(11), entrySource: 'manual' },
+    ] });
+    if (action === 'visits') await gates.visits(operator, 'city-lot');
+    else await gates.patrolCheck(operator, 'city-lot', '1234567');
+    expect(await db.violation.count({ where: { parkingZoneId: 'city-lot' } })).toBe(1);
+    expect(await db.violation.count({ where: { parkingZoneId: 'mall-lot' } })).toBe(0);
+    expect(await db.notification.count({ where: { userId: driver, type: 'violation_issued' } })).toBe(1);
+    await gates.checkOverstays();
+    expect(await db.violation.count({ where: { parkingZoneId: 'mall-lot' } })).toBe(1);
+    expect(await db.violation.count({ where: { parkingZoneId: 'city-lot' } })).toBe(1);
+  });
+
   it('does not disclose gate activity or enforcement records to an unverified plate link', async () => {
     const observer = await person();
     await db.userVehicle.create({ data: { userId: observer, vehicleId } });

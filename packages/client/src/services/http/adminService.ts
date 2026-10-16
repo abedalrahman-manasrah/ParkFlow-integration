@@ -8,7 +8,7 @@ import type {
   AdminUser,
   AdminZone,
 } from '@parkflow/contracts/services';
-import { api, segment } from './apiClient';
+import { api, query, segment } from './apiClient';
 
 /**
  * Admin calls stay behind one boundary so the rest of the app never needs to
@@ -17,7 +17,7 @@ import { api, segment } from './apiClient';
  */
 export const httpAdminService: AdminService = {
   summary: () => api<AdminSummary>('/admin/summary'),
-  users: () => api<AdminUser[]>('/admin/users'),
+  users: (search = '') => api<AdminUser[]>('/admin/users' + query({ query: search.trim() || undefined })),
   updateUser: (id, input) => api<{ id: string; role: AdminUser['role']; status: AdminUser['status'] }>(`/admin/users/${segment(id)}`, { method: 'PATCH', body: input }),
   zones: () => api<AdminZone[]>('/admin/parking-zones'),
   updateAvailability: (zoneId, input) =>

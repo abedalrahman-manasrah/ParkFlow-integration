@@ -13,7 +13,7 @@ import * as notifications from '../../modules/notifications/service';
 import * as admin from '../../modules/admin/service';
 import { routingService } from '../../modules/routing/service';
 import * as managementSchemas from '../management/schemas';
-route('get','/admin/users',empty,()=>admin.users(),admins);
+route('get','/admin/users',z.object({query:z.string().trim().max(200).optional()}).strict(),(r,b)=>admin.users(b.query),admins);
 route('patch','/admin/users/:id',z.object({role:z.enum(['USER','ADMIN','PARKING_OPERATOR','ENFORCEMENT_OFFICER']).optional(),status:z.enum(['ACTIVE','SUSPENDED']).optional()}).strict(),(r,b)=>admin.role(actor(r),param(r),b),admins);
 route('get','/admin/summary',empty,()=>admin.summary(),admins);
 route('get','/admin/parking-zones',empty,r=>admin.zones(actor(r)),operators);

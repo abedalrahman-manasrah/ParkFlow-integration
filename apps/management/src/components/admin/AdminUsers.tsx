@@ -62,14 +62,15 @@ export function AdminUsers() {
   const queryClient = useQueryClient();
   const currentUser = useAuthStore((state) => state.user);
   const currentUserId = currentUser?.id;
-  const usersQueryKey = ['admin', 'users', currentUserId] as const;
+  const [search, setSearch] = useState('');
+  const [submittedSearch, setSubmittedSearch] = useState('');
+  const usersQueryKey = ['admin', 'users', currentUserId, submittedSearch] as const;
   const usersQuery = useQuery({
     queryKey: usersQueryKey,
-    queryFn: services.admin.users,
+    queryFn: () => services.admin.users(submittedSearch),
     enabled: currentUser?.role === 'ADMIN',
   });
 
-  const [search, setSearch] = useState('');
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [selected, setSelected] = useState<AdminUser | null>(null);
   const [draftRole, setDraftRole] = useState<Role>('USER');
@@ -106,6 +107,13 @@ export function AdminUsers() {
   const activeCount = users.filter((item) => item.status === 'ACTIVE').length;
   const suspendedCount = users.filter((item) => item.status === 'SUSPENDED').length;
 
+  const submitSearch = () => {
+    const next = search.trim();
+    setSubmittedSearch(next);
+    setVisibleCount(PAGE_SIZE);
+    if (next === submittedSearch) void usersQuery.refetch();
+  };
+
   const openEditor = (user: AdminUser) => {
     setSelected(user);
     setDraftRole(user.role);
@@ -141,11 +149,13 @@ export function AdminUsers() {
 
       <TextField
         label={locale === 'ar' ? 'البحث عن مستخدم' : 'Search users'}
-        value={search}
+        value={search} maxLength={200} returnKeyType="search" onSubmitEditing={submitSearch}
         onChangeText={(value) => { setSearch(value); setVisibleCount(PAGE_SIZE); }}
         placeholder={locale === 'ar' ? 'الاسم أو البريد أو الهاتف' : 'Name, email, phone or ID'}
         leading={<Search size={20} color={colors.textTertiary} />}
       />
+      <AppButton label={locale === 'ar' ? 'بحث' : 'Search'} variant="secondary" size="sm" onPress={submitSearch} disabled={usersQuery.isFetching || updateUser.isPending} />
+      <AppText variant="caption" color="textSecondary">{locale === 'ar' ? 'تظهر أحدث ٢٠٠ حساب مطابق كحد أقصى. استخدم البحث للعثور على الحسابات الأقدم.' : 'Up to the latest 200 matching accounts are shown. Search to find older accounts.'}</AppText>
       <AppText variant="caption" color="textSecondary">{filtered.length} {locale === 'ar' ? 'نتيجة' : 'results'}</AppText>
 
       {visibleUsers.length === 0 ? <Card padding="lg"><AppText color="textSecondary">{locale === 'ar' ? 'لم يتم العثور على مستخدمين.' : 'No users found.'}</AppText></Card> : null}

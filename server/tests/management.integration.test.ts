@@ -140,6 +140,23 @@ describe("management permissions and safe changes", () => {
     expect(r.status).toBe(200);
     expect(r.body.source).toBe("OPERATOR");
   });
+  it.each(["mg-owner", "mg-manager", "mg-attendant"])("rejects impossible availability counts from %s without writing a snapshot", async (userId) => {
+    await assignRoles();
+    const token = userId === "mg-owner" ? ownerToken : userId === "mg-manager" ? managerToken : attendantToken;
+    for (const counts of [{ availableSpaces: 21 }, { occupiedSpaces: 21 }]) {
+      const result = await api("post", "/operator/zones/mg-zone/availability", token, {
+        availability: "available", confidence: 1, ...counts,
+      });
+      expect(result.status).toBe(400);
+      expect(result.body.error.code).toBe("VALIDATION");
+    }
+    expect(await db.availabilitySnapshot.count({ where: { zoneId: "mg-zone" } })).toBe(0);
+    const accepted = await api("post", "/operator/zones/mg-zone/availability", token, {
+      availability: "available", confidence: 1, availableSpaces: 20, occupiedSpaces: 0,
+    });
+    expect(accepted.status).toBe(200);
+    expect(accepted.body).toMatchObject({ availableSpaces: 20, occupiedSpaces: 0, source: "OPERATOR" });
+  });
   it("restricts list/detail to the assigned organization", async () => {
     expect((await api("get", "/management/zones", otherToken)).body).toEqual(
       [],

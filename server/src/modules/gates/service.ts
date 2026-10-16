@@ -270,9 +270,9 @@ async function assessVisitOverstay(tx: Tx, visit: ParkingVisit & { zone: ZoneWit
  * for the stay. Paying again (extending) restarts the count from the new end.
  * Cars whose plate is not in ParkFlow are only flagged to the operator.
  */
-export async function checkOverstays(evaluatedAt?: Date) {
+export async function checkOverstays(evaluatedAt?: Date, scope?: { zoneId: string }) {
   const open = await db.parkingVisit.findMany({
-    where: { exitedAt: null, vehicleId: { not: null } },
+    where: { exitedAt: null, vehicleId: { not: null }, ...(scope ? { parkingZoneId: scope.zoneId } : {}) },
     select: { id: true, parkingZoneId: true, vehicleId: true, plateNumber: true }, take: 1000,
   });
   for (const candidate of open) {
@@ -320,7 +320,7 @@ async function visitView(visit: ParkingVisit, zone: ParkingZone, now: Date, sess
 
 export async function visits(staff: Staff, zoneId: string) {
   const zone = await zoneFor(staff, zoneId);
-  await checkOverstays();
+  await checkOverstays(undefined, { zoneId });
   const now = new Date();
   const rows = await db.parkingVisit.findMany({
     where: { parkingZoneId: zoneId, OR: [{ exitedAt: null }, { exitedAt: { gte: new Date(now.getTime() - 12 * 3_600_000) } }] },
@@ -380,7 +380,7 @@ export async function cameraEvent(key: string, input: { plate: string; direction
 /** "Is this car allowed to be here right now?" for an officer standing next to it. */
 export async function patrolCheck(staff: Staff, zoneId: string, plate: string) {
   const zone = await zoneFor(staff, zoneId, true);
-  await checkOverstays();
+  await checkOverstays(undefined, { zoneId });
   const plateNumber = normalizePlate(plate);
   const vehicle = await db.vehicle.findUnique({ where: { plateNumber_region: { plateNumber, region: 'PS' } } });
   const now = new Date();

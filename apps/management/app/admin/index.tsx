@@ -112,7 +112,9 @@ export default function AdminHome() {
       {tab === 'audit' ? <AdminAudit /> : null}
       {tab === 'operations' ? (
         <View style={{ gap: spacing.md }}>
-          {zones.length === 0 ? <Card padding="lg"><AppText color="textSecondary">{t('admin.noZones')}</AppText></Card> : zones.map((zone) => (
+          {zonesQuery.error ? <ErrorState compact error={zonesQuery.error} onRetry={() => { void zonesQuery.refetch(); }} /> : null}
+          {zonesQuery.isPending ? <AppText color="textSecondary">{t('common.loading')}…</AppText> : null}
+          {!zonesQuery.isPending && !zonesQuery.error && zones.length === 0 ? <Card padding="lg"><AppText color="textSecondary">{t('admin.noZones')}</AppText></Card> : zones.map((zone) => (
             <Card key={zone.id} padding="lg" style={{ gap: spacing.md }}>
               <View style={{ flexDirection: row, alignItems: 'center', gap: spacing.md }}>
                 <View style={{ flex: 1, gap: spacing.xs }}>

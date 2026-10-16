@@ -436,7 +436,7 @@ export interface AdminAnalytics {
 
 export interface AdminService {
   summary(): Promise<AdminSummary>;
-  users(): Promise<AdminUser[]>;
+  users(search?: string): Promise<AdminUser[]>;
   updateUser(id: string, input: { role?: Exclude<AdminRole, undefined>; status?: AdminStatus }): Promise<{ id: string; role: Exclude<AdminRole, undefined>; status: AdminStatus }>;
   zones(): Promise<AdminZone[]>;
   updateAvailability(zoneId: string, input: { availability: OperatorAvailability; availableSpaces?: number; occupiedSpaces?: number; source: 'ADMIN'; confidence: number; reason?: string }): Promise<Record<string, unknown>>;

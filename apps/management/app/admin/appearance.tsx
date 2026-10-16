@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { View, useWindowDimensions } from 'react-native';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { AppButton, AppHeader, AppText, Card, ErrorState, InlineNotice, Screen, Segmented, SwitchRow, TextField } from '@parkflow/client/components/ui';
 import { ConfiguredWelcome } from '@parkflow/client/components/brand/ConfiguredWelcome';
 import { useLocale } from '@parkflow/client/hooks/useLocale';
 import { useAuthStore } from '@parkflow/client/store/authStore';
 import { useAppConfigStore } from '@parkflow/client/store/appConfigStore';
 import { appConfigService } from '@parkflow/client/services/http/appConfigService';
+import { captureLoginGuard } from '@parkflow/client/services/http/apiClient';
 import { ThemeProvider, useTheme } from '@parkflow/client/theme/ThemeProvider';
 import { configuredColors } from '@parkflow/design/appConfigColors';
 import { darkColors, lightColors } from '@parkflow/design/colors';
@@ -23,12 +24,19 @@ function BilingualField({ label, value, onChange, maxLength, multiline = false }
 }
 
 export default function AppearanceEditor() {
+  const userId = useAuthStore(state => state.user?.id);
+  return <AccountAppearanceEditor key={userId ?? 'anonymous'} userId={userId} />;
+}
+
+function AccountAppearanceEditor({ userId }: { userId?: string }) {
   const { locale, row } = useLocale();
   const { colors, isDark } = useTheme();
   const { width } = useWindowDimensions();
   const s = (en: string, ar: string) => locale === 'ar' ? ar : en;
   const isAdmin = useAuthStore(state => state.user?.role === 'ADMIN');
-  const current = useQuery({ queryKey: ['admin', 'app-config'], queryFn: appConfigService.admin, enabled: isAdmin });
+  const queryClient = useQueryClient();
+  const queryKey = ['admin', 'app-config', userId] as const;
+  const current = useQuery({ queryKey, queryFn: appConfigService.admin, enabled: isAdmin });
   const [snapshot, setSnapshot] = useState<AdminAppConfig | null>(null);
   const [config, setConfig] = useState<AppConfig>(() => appConfigSchema.parse(defaultAppConfig));
   const [saved, setSaved] = useState('');
@@ -44,6 +52,8 @@ export default function AppearanceEditor() {
   const [error, setError] = useState<unknown>(null);
   const [notice, setNotice] = useState('');
   const pending = useRef(false);
+  const mounted = useRef(true);
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
   const serialized = JSON.stringify(config);
   const dirty = serialized !== saved;
   const validation = appConfigSchema.safeParse(config);
@@ -54,13 +64,29 @@ export default function AppearanceEditor() {
   };
   useEffect(() => { if (current.data && !snapshot) accept(current.data); }, [current.data, snapshot]);
 
-  async function run(action: () => Promise<void>) {
+  const acceptLatest = async (next: AdminAppConfig, ensureCurrent: () => void) => {
+    ensureCurrent();
+    await queryClient.cancelQueries({ queryKey, exact: true });
+    ensureCurrent();
+    queryClient.setQueryData(queryKey, next);
+    accept(next);
+  };
+
+  async function run(action: (ensureCurrent: () => void) => Promise<void>) {
     if (pending.current) return;
     pending.current = true; setBusy(true); setError(null); setNotice('');
-    try { await action(); } catch (cause) { setError(cause); } finally { pending.current = false; setBusy(false); }
+    const ensureLogin = captureLoginGuard();
+    const ensureCurrent = () => {
+      ensureLogin();
+      if (!mounted.current) throw new Error('Appearance editor was closed');
+    };
+    try { await action(ensureCurrent); } catch (cause) {
+      try { ensureCurrent(); setError(cause); } catch { /* A previous login cannot report into this editor. */ }
+    } finally { pending.current = false; setBusy(false); }
   }
-  const loadHistory = async (before?: number) => {
+  const loadHistory = async (before?: number, ensureCurrent = captureLoginGuard()) => {
     const result = await appConfigService.history(before);
+    ensureCurrent();
     setHistory(previous => before ? [...previous, ...result.items] : result.items);
     setNextHistory(result.nextBeforeVersion);
   };
@@ -91,16 +117,16 @@ export default function AppearanceEditor() {
       <AppText variant="title">{s(`Editor version ${snapshot.version} · ${dirty ? 'Unsaved changes' : snapshot.draft ? 'Saved draft' : 'Published appearance'}`, `إصدار المحرر ${snapshot.version} · ${dirty ? 'تغييرات غير محفوظة' : snapshot.draft ? 'مسودة محفوظة' : 'المظهر المنشور'}`)}</AppText>
       <AppText color="textSecondary">{s('Changes stay private until published. The sign-up and login buttons always remain available.', 'تبقى التغييرات خاصة حتى النشر. أزرار التسجيل والدخول تبقى متاحة دائماً.')}</AppText>
       <View style={{ flexDirection: row, flexWrap: 'wrap', gap: spacing.sm }}>
-        <AppButton label={s('Save draft', 'حفظ المسودة')} size="sm" fullWidth={false} disabled={busy || !validation.success || !dirty} loading={busy} onPress={() => { void run(async () => { if (!validation.success) return; accept(await appConfigService.saveDraft(snapshot.version, validation.data)); setNotice(s('Draft saved. Review the preview before publishing.', 'تم حفظ المسودة. راجع المعاينة قبل النشر.')); }); }} />
+        <AppButton label={s('Save draft', 'حفظ المسودة')} size="sm" fullWidth={false} disabled={busy || !validation.success || !dirty} loading={busy} onPress={() => { void run(async ensureCurrent => { if (!validation.success) return; const next = await appConfigService.saveDraft(snapshot.version, validation.data); await acceptLatest(next, ensureCurrent); setNotice(s('Draft saved. Review the preview before publishing.', 'تم حفظ المسودة. راجع المعاينة قبل النشر.')); }); }} />
         <AppButton label={s('Preview changes', 'معاينة التغييرات')} size="sm" fullWidth={false} variant="secondary" disabled={busy || !validation.success} onPress={openPreview} />
         <AppButton label={s('Review publication', 'مراجعة النشر')} size="sm" fullWidth={false} variant="secondary" disabled={busy || dirty || !snapshot.draftRevisionId || previewed !== serialized} onPress={() => { setConfirm('publish'); setTab('preview'); setHistoryPreview(null); }} />
-        <AppButton label={s(dirty ? 'Reload (discard local edits)' : 'Reload latest', dirty ? 'إعادة التحميل (إلغاء التعديلات المحلية)' : 'تحميل أحدث إصدار')} size="sm" fullWidth={false} variant="ghost" disabled={busy} onPress={() => { void run(async () => { const next = await appConfigService.admin(); accept(next); setPreviewed(''); }); }} />
+        <AppButton label={s(dirty ? 'Reload (discard local edits)' : 'Reload latest', dirty ? 'إعادة التحميل (إلغاء التعديلات المحلية)' : 'تحميل أحدث إصدار')} size="sm" fullWidth={false} variant="ghost" disabled={busy} onPress={() => { void run(async ensureCurrent => { const next = await appConfigService.admin(); await acceptLatest(next, ensureCurrent); setPreviewed(''); }); }} />
       </View>
     </Card>
     {error ? <InlineNotice tone="danger" title={s('Change could not be applied', 'تعذر تطبيق التغيير')} body={error instanceof Error ? error.message : s('Please try again.', 'يرجى المحاولة مجدداً.')} /> : null}
     {notice ? <InlineNotice tone="success" title={notice} /> : null}
     {!validation.success ? <InlineNotice tone="warning" title={s('Check these fields before saving or previewing', 'تحقق من الحقول قبل الحفظ أو المعاينة')} body={validation.error.issues.slice(0, 6).map(issue => `${issue.path.join(' / ')}: ${issue.message}`).join('\n')} /> : null}
-    <Segmented value={tab} onChange={next => { setTab(next); setConfirm(null); if (next === 'history') void run(() => loadHistory()); if (next === 'preview') { setHistoryPreview(null); if (validation.success) setPreviewed(serialized); } }} options={[{ value: 'edit', label: s('Edit', 'تحرير') }, { value: 'preview', label: s('Preview', 'معاينة') }, { value: 'history', label: s('History', 'سجل النسخ') }]} />
+    <Segmented value={tab} onChange={next => { setTab(next); setConfirm(null); if (next === 'history') void run(ensureCurrent => loadHistory(undefined, ensureCurrent)); if (next === 'preview') { setHistoryPreview(null); if (validation.success) setPreviewed(serialized); } }} options={[{ value: 'edit', label: s('Edit', 'تحرير') }, { value: 'preview', label: s('Preview', 'معاينة') }, { value: 'history', label: s('History', 'سجل النسخ') }]} />
 
     {tab === 'edit' ? <View pointerEvents={busy ? 'none' : 'auto'} style={{ gap: spacing.xl }}>
       <View style={{ flexDirection: width > 850 ? row : 'column', gap: spacing.xl }}>
@@ -151,9 +177,9 @@ export default function AppearanceEditor() {
       <AppText variant="h3">{confirm === 'publish' ? s('Publish this saved draft?', 'نشر هذه المسودة المحفوظة؟') : s('Restore this published version?', 'استعادة هذه النسخة المنشورة؟')}</AppText>
       <AppText>{s('This replaces the live welcome and brand settings and clears the current draft. A new version and audit record are saved; history remains available.', 'سيُستبدل الترحيب والهوية المنشوران وتُمسح المسودة الحالية. تُحفظ نسخة جديدة وسجل تدقيق مع الاحتفاظ بسجل النسخ.')}</AppText>
       <TextField label={s('Reason for this change', 'سبب التغيير')} hint={s('At least 5 characters.', 'خمسة أحرف على الأقل.')} value={reason} onChangeText={setReason} maxLength={500} multiline />
-      <AppButton label={confirm === 'publish' ? s('Publish now', 'نشر الآن') : s('Restore now', 'استعادة الآن')} loading={busy} disabled={reason.trim().length < 5 || busy || (confirm === 'publish' && (dirty || previewed !== serialized))} onPress={() => { void run(async () => {
+      <AppButton label={confirm === 'publish' ? s('Publish now', 'نشر الآن') : s('Restore now', 'استعادة الآن')} loading={busy} disabled={reason.trim().length < 5 || busy || (confirm === 'publish' && (dirty || previewed !== serialized))} onPress={() => { void run(async ensureCurrent => {
         const next = confirm === 'publish' ? await appConfigService.publish(snapshot.version, snapshot.draftRevisionId!, reason.trim()) : await appConfigService.rollback(snapshot.version, historyPreview!.id, reason.trim());
-        accept(next); setReason(''); setNotice(s('Published successfully. Drivers will receive this version when the app refreshes.', 'تم النشر. سيظهر الإصدار للمستخدمين عند تحديث التطبيق.')); await useAppConfigStore.getState().refresh({ force: true });
+        await acceptLatest(next, ensureCurrent); setReason(''); setNotice(s('Published successfully. Drivers will receive this version when the app refreshes.', 'تم النشر. سيظهر الإصدار للمستخدمين عند تحديث التطبيق.')); await useAppConfigStore.getState().refresh({ force: true });
       }); }} />
       <AppButton label={s('Cancel', 'إلغاء')} variant="ghost" disabled={busy} onPress={() => setConfirm(null)} />
     </Card> : null}
@@ -168,7 +194,7 @@ export default function AppearanceEditor() {
         {revision.publication?.reason ? <AppText color="textSecondary">{revision.publication.reason}</AppText> : null}
         <AppButton label={s('Preview version', 'معاينة النسخة')} variant="secondary" size="sm" disabled={busy} onPress={() => { setHistoryPreview(revision); setConfirm(null); setTab('preview'); }} />
       </Card>)}
-      {nextHistory ? <AppButton label={s('Load older versions', 'تحميل النسخ الأقدم')} loading={busy} variant="secondary" onPress={() => { void run(() => loadHistory(nextHistory)); }} /> : null}
+      {nextHistory ? <AppButton label={s('Load older versions', 'تحميل النسخ الأقدم')} loading={busy} variant="secondary" onPress={() => { void run(ensureCurrent => loadHistory(nextHistory, ensureCurrent)); }} /> : null}
     </View> : null}
   </Screen>;
 }

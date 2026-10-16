@@ -13,7 +13,15 @@ import * as managementSchemas from '../management/schemas';
 export interface Actor {userId:string;role:Role;ip?:string;userAgent?:string}
 async function audit(tx:Tx,a:Actor,action:string,resourceType:string,resourceId:string,before:unknown,after:unknown){await tx.auditLog.create({data:{actorUserId:a.userId,action,resourceType,resourceId,before:before==null?undefined:json(before),after:after==null?undefined:json(after),ip:a.ip,userAgent:a.userAgent}});}
 export const zonePermission=scopedZonePermission;
-export async function users(){return db.user.findMany({take:200,orderBy:{createdAt:'desc'},select:{id:true,phone:true,email:true,fullName:true,role:true,status:true,createdAt:true}});}
+export async function users(query?:string){
+ const search=query?.trim();
+ return db.user.findMany({where:search?{OR:[
+  {id:{contains:search,mode:'insensitive'}},
+  {fullName:{contains:search,mode:'insensitive'}},
+  {email:{contains:search,mode:'insensitive'}},
+  {phone:{contains:search}},
+ ]}:undefined,take:200,orderBy:{createdAt:'desc'},select:{id:true,phone:true,email:true,fullName:true,role:true,status:true,createdAt:true}});
+}
 export async function summary(){
  const [activeUsers,suspendedUsers,activeZones,visibleReports,openAppeals,totalReservations,checkedInReservations]=await Promise.all([
   db.user.count({where:{status:'ACTIVE'}}),

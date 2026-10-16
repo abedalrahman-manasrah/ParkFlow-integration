@@ -126,7 +126,7 @@ export function ZoneEditor({
     increment: "15",
     dailyCap: "",
     maxStay: "",
-    from: new Date(Date.now() + 60000).toISOString(),
+    from: "",
     to: "",
   });
   const [closure, setClosure] = useState({
@@ -252,7 +252,9 @@ export function ZoneEditor({
         ...(rate.maxStay
           ? { maxStayMinutes: numeric(rate.maxStay, badNumber) }
           : {}),
-        validFrom: isoDate(rate.from, badDate),
+        validFrom: rate.from.trim()
+          ? isoDate(rate.from, badDate)
+          : new Date(Date.now()).toISOString(),
         ...(rate.to ? { validTo: isoDate(rate.to, badDate) } : {}),
       };
       run(() => service.tariff(zone.id, zone.version, input));
@@ -722,6 +724,10 @@ export function ZoneEditor({
                 label={text(
                   "بداية السريان مع المنطقة الزمنية",
                   "Effective from, including timezone",
+                )}
+                hint={text(
+                  "اتركه فارغاً لتطبيق السعر عند الحفظ.",
+                  "Leave blank to apply the tariff when saved.",
                 )}
                 value={rate.from}
                 onChangeText={(v) => setRate((r) => ({ ...r, from: v }))}

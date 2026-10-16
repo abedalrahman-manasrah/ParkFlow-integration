@@ -166,7 +166,9 @@ export async function availability(
   },
 ) {
   return atomic(async (tx) => {
-    await operatorZonePermission(tx, actor, zoneId);
+    const zone = await operatorZonePermission(tx, actor, zoneId);
+    assert(input.availableSpaces === undefined || !zone.capacity || input.availableSpaces <= zone.capacity, 'VALIDATION', 'Available spaces exceed capacity');
+    assert(input.occupiedSpaces === undefined || !zone.capacity || input.occupiedSpaces <= zone.capacity, 'VALIDATION', 'Occupied spaces exceed capacity');
     const { reason: _reason, source: _source, ...values } = input;
     const snapshot = await tx.availabilitySnapshot.create({
       data: { zoneId, ...values, source: actor.role === 'ADMIN' ? 'ADMIN' : 'OPERATOR' },
@@ -189,13 +191,22 @@ export async function availability(
 
 export async function reservations(actor: Actor, zoneId: string) {
   await operatorZonePermission(db, actor, zoneId);
-  const rows = await db.parkingReservation.findMany({
-    where: { parkingZoneId: zoneId },
-    include: { user: { select: { id: true, fullName: true, phone: true, email: true } } },
-    orderBy: { startTime: 'asc' },
+  const include = { user: { select: { id: true, fullName: true, phone: true, email: true } } } as const;
+  const activeWhere = { parkingZoneId: zoneId, status: { in: activeReservationStatuses }, endTime: { gt: new Date() } };
+  // Old bookings must not push the reservations staff can still operate out of the list.
+  const active = await db.parkingReservation.findMany({
+    where: activeWhere,
+    include,
+    orderBy: [{ startTime: 'asc' }, { id: 'asc' }],
     take: 200,
   });
-  return rows.map(reservationDto);
+  const history = active.length < 200 ? await db.parkingReservation.findMany({
+    where: { parkingZoneId: zoneId, NOT: activeWhere, id: { notIn: active.map(row => row.id) } },
+    include,
+    orderBy: [{ startTime: 'desc' }, { id: 'desc' }],
+    take: 200 - active.length,
+  }) : [];
+  return [...active, ...history].map(reservationDto);
 }
 
 export async function checkIn(actor: Actor, reservationId: string, input: { qrToken?: string } = {}) {

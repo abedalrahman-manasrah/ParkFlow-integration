@@ -84,7 +84,7 @@ describe('operator access and feed health', () => {
   });
 
   afterAll(async () => {
-    await db.parkingReservation.deleteMany({ where: { id: { in: [assignedReservationId, otherReservationId] } } });
+    await db.parkingReservation.deleteMany({ where: { parkingZoneId: { in: [assignedZoneId, otherZoneId] } } });
     await db.parkingReport.deleteMany({ where: { zoneId: { in: [assignedZoneId, otherZoneId] } } });
     await db.availabilitySnapshot.deleteMany({ where: { zoneId: { in: [assignedZoneId, otherZoneId] } } });
     await db.operatorUser.deleteMany({ where: { operatorId: parkingOperatorId } });
@@ -113,6 +113,32 @@ describe('operator access and feed health', () => {
     expect(health.zones[0]?.feedHealth).toMatchObject({ stale: true, conflict: true });
     expect(await db.availabilitySnapshot.findFirst({ where: { zoneId: assignedZoneId } })).toMatchObject({ availability: 'full' });
     expect(await db.parkingReport.findFirst({ where: { zoneId: assignedZoneId } })).toMatchObject({ availability: 'available' });
+  });
+
+  it('keeps current and upcoming reservations visible after more than 200 past bookings without exposing another organization', async () => {
+    const now = Date.now();
+    await db.parkingReservation.createMany({ data: Array.from({ length: 205 }, (_, index) => ({
+      id: `history-${suffix}-${index}`, parkingZoneId: assignedZoneId, userId: operatorUserId,
+      startTime: new Date(now - (206 - index) * 3_600_000), endTime: new Date(now - (205 - index) * 3_600_000),
+      durationMinutes: 60, hourlyRateSnapshot: 500, estimatedTotalPriceSnapshot: 500, status: 'completed' as const,
+      publicCode: `H-${suffix.slice(0, 20)}-${index}`, qrToken: `history-token-${suffix}-${index}`,
+    })) });
+    const upcoming = await db.parkingReservation.create({ data: {
+      parkingZoneId: assignedZoneId, userId: operatorUserId,
+      startTime: new Date(now + 3_600_000), endTime: new Date(now + 7_200_000),
+      durationMinutes: 60, hourlyRateSnapshot: 500, estimatedTotalPriceSnapshot: 500,
+      publicCode: `UPCOMING-${suffix.slice(0, 20)}`, qrToken: `upcoming-token-${suffix}`,
+    } });
+    try {
+      const listed = await operator.reservations({ userId: operatorUserId, role: 'PARKING_OPERATOR' }, assignedZoneId);
+      expect(listed).toHaveLength(200);
+      expect(listed.slice(0, 2).map(row => row.id)).toEqual([assignedReservationId, upcoming.id]);
+      expect(listed[2]?.id).toBe(`history-${suffix}-204`);
+      expect(listed.some(row => row.id === otherReservationId)).toBe(false);
+      expect(await db.parkingReservation.count({ where: { parkingZoneId: assignedZoneId } })).toBe(207);
+    } finally {
+      await db.parkingReservation.deleteMany({ where: { parkingZoneId: assignedZoneId, id: { not: assignedReservationId } } });
+    }
   });
 
   it('allows an assigned operator to update availability, list scoped reservations, and check in a valid reservation', async () => {
