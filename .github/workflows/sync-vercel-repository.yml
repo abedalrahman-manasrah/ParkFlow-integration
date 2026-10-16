@@ -1,0 +1,46 @@
+name: Sync Vercel repository
+
+on:
+  push:
+    branches:
+      - main
+
+# The workflow reads this repository only. The cross-repository write uses a
+# narrowly scoped GitHub secret.
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the pushed revision
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Fast-forward the Vercel repository
+        env:
+          TARGET_REPOSITORY: halaawwad/parkflow-web
+          TARGET_TOKEN: ${{ secrets.PARKFLOW_VERCEL_SYNC_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "$TARGET_TOKEN" ]; then
+            echo "Missing PARKFLOW_VERCEL_SYNC_TOKEN."
+            exit 1
+          fi
+
+          target_url="https://x-access-token:${TARGET_TOKEN}@github.com/${TARGET_REPOSITORY}.git"
+          git fetch "$target_url" main
+          target_sha="$(git rev-parse FETCH_HEAD)"
+
+          # A divergent target branch is intentionally not changed. This
+          # prevents a deployment sync from overwriting independent work.
+          if ! git merge-base --is-ancestor "$target_sha" "$GITHUB_SHA"; then
+            echo "Target main is not an ancestor of the pushed source revision; refusing to overwrite it."
+            exit 1
+          fi
+
+          git push "$target_url" "${GITHUB_SHA}:refs/heads/main"
